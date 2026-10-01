@@ -1,0 +1,1103 @@
+/* ══════════════════════════════════════════════════════════════
+   LA FICHA DE AMENAZA
+   Cálculo (Manual de Monstruos, Cap. 1 y Apéndice B) y las tarjetas de
+   las cuatro pestañas: Perfil · Combate · Rasgos · Notas.
+
+   Toda cifra sale de calcCr(): tabla por NA → Rol → Tamaño → Rasgos →
+   estructura (jefe, horda) → ajustes a mano. Nada se guarda calculado:
+   la amenaza solo recuerda sus decisiones (NA, tipo, tamaño, Rol,
+   Rasgos…) y los valores que el Director haya fijado a mano.
+══════════════════════════════════════════════════════════════ */
+Object.assign(app, {
+  ATTRS: ['FUE', 'DES', 'CON', 'INT', 'SAB', 'CAR'],
+  ATTR_N: { FUE: 'Fuerza', DES: 'Destreza', CON: 'Constitución', INT: 'Inteligencia', SAB: 'Sabiduría', CAR: 'Carisma' },
+  /* «La criatura en ocho tiradas» (Manual de Monstruos, Cap. 9) */
+  AZAR_TIPO: ['bestia', 'bestia', 'bestia', 'humanoide', 'gigante', 'monstruosidad', 'monstruosidad', 'dragon', 'no_muerto', 'no_muerto',
+    'espiritu', 'constructo', 'maquina', 'elemental', 'extraplanar', 'feerico', 'aberracion', 'planta_u_hongo', 'cieno', 'mutante'],
+  AZAR_ROL: ['bruto', 'hostigador', 'controlador', 'comandante', 'soporte', 'explorador', 'artillero', 'emboscador', 'guardian', ''],
+  ORDEN_TAM: ['diminuto', 'pequeno', 'mediano', 'grande', 'enorme', 'colosal'],
+  UD: ['Ud12', 'Ud10', 'Ud8', 'Ud6', 'Ud4'],
+
+  /* ── Modelo ───────────────────────────────────────────────────── */
+  nuevaCr() {
+    const cr = {
+      v: 1, nombre: '', idea: '', retrato: '',
+      na: 1, tipo: 'bestia', tam: 'mediano', rol: '', estructura: 'normal', miembros: 6,
+      salv: ['DES', 'CON'], manual: {}, ataqueNombre: '', danoTipo: '',
+      rasgos: [], moralNoTira: false, pvAct: null,
+      senal: '', contexto: '', habitat: '', quiere: '', pelea: '', botin: '', notas: '',
+      jefe: { fases: '', guarida: '', victoria: '' }, revision: [false, false, false, false],
+    };
+    this._ponerRasgosDeTipo(cr);
+    return cr;
+  },
+
+  /** Deja cualquier amenaza —guardada, importada o del bestiario— con
+      todos sus campos, del tipo correcto y sin HTML dentro. */
+  normalizarCr(d) {
+    const base = {
+      v: 1, nombre: '', idea: '', retrato: '', na: 1, tipo: 'bestia', tam: 'mediano', rol: '', estructura: 'normal',
+      miembros: 6, salv: [], manual: {}, ataqueNombre: '', danoTipo: '', rasgos: [], moralNoTira: false, pvAct: null,
+      senal: '', contexto: '', habitat: '', quiere: '', pelea: '', botin: '', notas: '',
+      jefe: { fases: '', guarida: '', victoria: '' }, revision: [false, false, false, false],
+    };
+    d = (d && typeof d === 'object' && !Array.isArray(d)) ? d : {};
+    const txt = v => this._sanitize(typeof v === 'string' ? v : '').slice(0, 6000);
+    const cr = { ...base };
+    ['nombre', 'idea', 'ataqueNombre', 'danoTipo', 'senal', 'contexto', 'habitat', 'quiere', 'pelea', 'botin', 'notas',
+     'fuente', 'equipo', 'rolNota', 'salvTxt'].forEach(k => { if (d[k] != null) cr[k] = txt(d[k]); });
+    cr.nombre = cr.nombre.slice(0, 80);
+    cr.retrato = this._retratoOk(d.retrato) ? d.retrato : '';
+    const na = parseInt(d.na, 10);
+    cr.na = Number.isFinite(na) ? Math.max(0, Math.min(15, na)) : 1;
+    cr.tipo = this.DB.tipos[d.tipo] ? d.tipo : 'bestia';
+    cr.tam = this.DB.tamanos[d.tam] ? d.tam : 'mediano';
+    cr.rol = this.DB.roles[d.rol] ? d.rol : '';
+    cr.estructura = ['normal', 'jefe', 'horda'].includes(d.estructura) ? d.estructura : 'normal';
+    const m = parseInt(d.miembros, 10);
+    cr.miembros = Number.isFinite(m) ? Math.max(2, Math.min(999, m)) : 6;
+    cr.salv = Array.isArray(d.salv) ? d.salv.filter(a => this.ATTRS.includes(a)).slice(0, 2) : [];
+    if (cr.salv.length < 2) cr.salv = (this.DB.tipos[cr.tipo]?.salvDef || ['FUE', 'CON']).slice(0, 2);
+    cr.moralNoTira = !!d.moralNoTira;
+    cr.pvAct = Number.isFinite(parseInt(d.pvAct, 10)) ? Math.max(0, parseInt(d.pvAct, 10)) : null;
+    cr.manual = {};
+    if (d.manual && typeof d.manual === 'object') {
+      ['pv', 'guardia', 'armadura', 'ataque', 'pa', 'vel', 'ini', 'moral'].forEach(k => {
+        const n = parseInt(d.manual[k], 10);
+        if (Number.isFinite(n)) cr.manual[k] = n;
+      });
+      if (typeof d.manual.dano === 'string' && this._parseDano(d.manual.dano)) cr.manual.dano = d.manual.dano.replace('−', '-');
+    }
+    cr.rasgos = (Array.isArray(d.rasgos) ? d.rasgos : []).slice(0, 60).map(r => this._normalizarRasgo(r)).filter(Boolean);
+    const j = d.jefe && typeof d.jefe === 'object' ? d.jefe : {};
+    cr.jefe = { fases: txt(j.fases), guarida: txt(j.guarida), victoria: txt(j.victoria) };
+    cr.revision = [0, 1, 2, 3].map(i => !!(Array.isArray(d.revision) && d.revision[i]));
+    if (d.impreso && typeof d.impreso === 'object') cr.impreso = d.impreso;
+    return cr;
+  },
+
+  _normalizarRasgo(r) {
+    if (!r || typeof r !== 'object') return null;
+    const s = v => this._sanitize(typeof v === 'string' ? v : '').slice(0, 1500);
+    const o = { uid: typeof r.uid === 'string' && r.uid ? r.uid : this._uid() };
+    if (r.custom || !r.id) {
+      o.custom = true;
+      o.name = s(r.name) || 'Rasgo propio';
+      o.tipo = ['Rasgo', 'Aptitud', 'Reacción', 'Modificador', 'Aura', 'Debilidad'].includes(r.tipo) ? r.tipo : 'Rasgo';
+      const p = parseInt(r.peso, 10);
+      o.peso = Number.isFinite(p) ? Math.max(-1, Math.min(3, p)) : 0;
+      o.txt = s(r.txt);
+      if (r.coste) o.coste = s(r.coste).slice(0, 40);
+      if (r.frec) o.frec = s(r.frec).slice(0, 40);
+      if (r.mod && typeof r.mod === 'object') {
+        o.mod = {};
+        ['a', 'g', 'vel', 'pa', 'moral'].forEach(k => { const n = parseInt(r.mod[k], 10); if (Number.isFinite(n)) o.mod[k] = n; });
+      }
+    } else {
+      o.id = String(r.id).slice(0, 60);
+      if (r.txt) o.txt = s(r.txt);
+    }
+    if (r.nota) o.nota = s(r.nota).slice(0, 160);
+    if (r.gratis) { o.gratis = true; o.origen = r.origen === 'plantilla' ? 'plantilla' : 'tipo'; }
+    if (typeof r.udAct === 'string' && (this.UD.includes(r.udAct) || r.udAct === 'agotada')) o.udAct = r.udAct;
+    if (r.usada) o.usada = true;
+    return o;
+  },
+
+  /* ── Biblioteca: índice por id ────────────────────────────────── */
+  _libIdx() {
+    if (this._libCache && this._libCacheDB === this.DB.rasgos) return this._libCache;
+    const idx = {};
+    Object.entries(this.DB.rasgos || {}).forEach(([fam, lista]) => (lista || []).forEach(e => { if (e && e.id) idx[e.id] = { fam, e }; }));
+    this._libCache = idx; this._libCacheDB = this.DB.rasgos;
+    return idx;
+  },
+
+  /** Lo que un Rasgo ES en este momento: la pieza de la Biblioteca más lo
+      que la amenaza le haya puesto encima (nota, texto concreto). */
+  rasgoInfo(r) {
+    if (r.custom) {
+      return { name: r.name, tipo: r.tipo, peso: r.peso || 0, txt: r.txt || '', coste: r.coste || '', frec: r.frec || '',
+               fam: '', mod: r.mod || null, custom: true };
+    }
+    const hit = this._libIdx()[r.id];
+    if (!hit) return { name: r.id, tipo: 'Rasgo', peso: 0, txt: r.txt || '', coste: '', frec: '', fam: '', mod: null, perdido: true };
+    const e = hit.e;
+    return { name: e.name, tipo: e.tipo, peso: e.peso || 0, txt: r.txt || e.txt || '', txtBase: e.txt || '', coste: e.coste || '',
+             frec: e.frec || '', fam: hit.fam, mod: e.mod || null, pide: e.pide || '', multi: !!e.multi };
+  },
+
+  /** Rasgos gratuitos del tipo: fuera los del tipo anterior, dentro los nuevos. */
+  _ponerRasgosDeTipo(cr) {
+    const t = this.DB.tipos[cr.tipo] || {};
+    cr.rasgos = (cr.rasgos || []).filter(r => !(r.gratis && r.origen === 'tipo'));
+    const nuevos = [];
+    (t.gratis || []).forEach(g => nuevos.push({ uid: this._uid(), id: g.id, gratis: true, origen: 'tipo', ...(g.nota ? { nota: g.nota } : {}) }));
+    (t.elige || []).forEach(grupo => { if (grupo && grupo[0]) nuevos.push({ uid: this._uid(), id: grupo[0], gratis: true, origen: 'tipo' }); });
+    cr.rasgos = nuevos.concat(cr.rasgos);
+  },
+
+  /* ── Cálculo ──────────────────────────────────────────────────── */
+  _parseDano(s) {
+    const m = String(s || '').replace('−', '-').match(/^\s*(\d+)d(\d+)\s*([+-]\s*\d+)?\s*$/i);
+    if (!m) return null;
+    return { n: +m[1], caras: +m[2], bono: m[3] ? parseInt(m[3].replace(/\s/g, ''), 10) : 0 };
+  },
+  _fmtDano(d) { return `${d.n}d${d.caras}${d.bono > 0 ? '+' + d.bono : d.bono < 0 ? d.bono : ''}`; },
+  _mediaDano(d) { return d.n * (d.caras + 1) / 2 + d.bono; },
+
+  /** Tamaño de horda (Manual de Monstruos, Cap. 6). */
+  _horda(miembros) {
+    if (miembros <= 6)  return { n: 'Grupo', na: 1, dados: 0 };
+    if (miembros <= 12) return { n: 'Banda', na: 2, dados: 1 };
+    if (miembros <= 30) return { n: 'Turba', na: 3, dados: 2 };
+    return { n: 'Marea', na: 3, dados: 2, marea: true };
+  },
+
+  calcCr(cr) {
+    const na = cr.na;
+    const B = this.DB.na[na] || this.DB.na[1];
+    const rol = this.DB.roles[cr.rol] || {};
+    const tam = this.DB.tamanos[cr.tam] || { pv: 1, g: 0 };
+    const tipo = this.DB.tipos[cr.tipo] || {};
+    const jefe = cr.estructura === 'jefe', horda = cr.estructura === 'horda', esbirro = !!rol.esbirro;
+
+    // Rasgos: qué son y cuál sale gratis por el tipo (Monstruosidad, Mutante)
+    const infos = cr.rasgos.map(r => ({ r, i: this.rasgoInfo(r) }));
+    let autoGratis = null;
+    if (tipo.gratisFam) {
+      autoGratis = infos.find(x => !x.r.gratis && x.i.fam === tipo.gratisFam.fam && x.i.peso > 0 &&
+        (tipo.gratisFam.peso == null || x.i.peso === tipo.gratisFam.peso)) || null;
+    }
+    const esGratis = x => !!x.r.gratis || x === autoGratis;
+    const suma = k => infos.reduce((a, x) => a + ((x.i.mod && Number(x.i.mod[k])) || 0), 0);
+
+    // PV: (base ± Rol) × Tamaño, al entero más cercano; ×2 el jefe
+    let pvUno = esbirro ? Math.max(1, na * 2) : Math.max(1, Math.round((B.pv + (rol.pvNa || 0) * na) * (tam.pv || 1)));
+    infos.forEach(x => { if (x.i.mod && x.i.mod.pvMult) pvUno = Math.max(1, Math.round(pvUno * x.i.mod.pvMult)); });
+    let pv = pvUno * (jefe ? 2 : 1);
+    const H = horda ? this._horda(cr.miembros) : null;
+    if (H) pv = pvUno * cr.miembros;
+    const naEf = na + (H ? H.na : 0);
+
+    const guardia = B.g + (rol.g || 0) + (tam.g || 0) + suma('g');
+    const armadura = Math.max(0, Math.min(B.a + (rol.a || 0) + suma('a'), na + 3));
+    const dBase = this._parseDano(B.dano) || { n: 1, caras: 4, bono: 0 };
+    const d = { n: dBase.n + (H ? H.dados : 0), caras: dBase.caras, bono: dBase.bono + (rol.dano || 0) };
+    const calc = {
+      pv, guardia, armadura, ataque: B.atk, dano: this._fmtDano(d),
+      pa: B.pa + suma('pa'), vel: Math.max(0, 30 + (rol.vel || 0) + suma('vel')), ini: rol.ini || 0,
+      moral: 10 + na + suma('moral'),
+    };
+
+    // Lo que el Director haya fijado a mano manda sobre la curva
+    const M = cr.manual || {};
+    const S = { calc, na, naEf, B, rol, tam, tipo, jefe, horda, esbirro, H, pvUno, infos, autoGratis, esGratis };
+    ['pv', 'guardia', 'armadura', 'ataque', 'dano', 'pa', 'vel', 'ini', 'moral'].forEach(k => {
+      S[k] = (M[k] != null && M[k] !== '') ? M[k] : calc[k];
+    });
+    S.aMano = Object.keys(calc).filter(k => M[k] != null && M[k] !== '' && String(M[k]) !== String(calc[k]));
+    S.danoBase = B.dano;
+    S.cd = 10 + na;
+    S.sf = B.sf; S.sd = B.sd;
+    S.noMoral = !!cr.moralNoTira || tipo.noMoral === 'nunca' || esbirro ||
+      infos.some(x => x.i.mod && x.i.mod.noMoral) || (horda && cr.rasgos.some(r => r.id === 'enjambre'));
+
+    // Peso (Cap. 3): presupuesto por NA, +2 el jefe; cada Debilidad devuelve 1, hasta 2
+    const debs = infos.filter(x => !esGratis(x) && (x.i.tipo === 'Debilidad' || x.i.peso < 0));
+    S.pesoBase = esbirro ? 0 : B.peso + (jefe ? 2 : 0);
+    S.devuelto = Math.min(2, debs.length);
+    S.pesoMax = S.pesoBase + S.devuelto;
+    S.pesoGastado = infos.reduce((a, x) => a + (!esGratis(x) && x.i.peso > 0 ? x.i.peso : 0), 0);
+    S.exceso = Math.max(0, S.pesoGastado - S.pesoMax);
+    S.nDebs = debs.length;
+
+    // Valor de Amenaza (Guía, Cap. 2): se duplica con cada NA; cada 2 de exceso de Peso, +1 NA
+    S.naVA = naEf + Math.floor(S.exceso / 2);
+    S.va = Math.pow(2, S.naVA) * (jefe ? 2 : 1) / (esbirro ? 4 : 1);
+    return S;
+  },
+
+  /** Avisos de «fuera de la curva» (Guía, Cap. 16). */
+  _avisosCurva(S) {
+    const av = [];
+    const c = S.calc;
+    if (S.aMano.includes('ataque') && S.ataque > c.ataque + 1)
+      av.push(`Ataque ${this._signo(S.ataque)} frente a ${this._signo(c.ataque)} de la curva: la amenaza vive en el daño, no en acertar más.`);
+    if (S.armadura > S.na + 3) av.push(`Armadura ${S.armadura}: nunca más de NA + 3 (${S.na + 3}).`);
+    if (S.aMano.includes('pv') && c.pv && Math.abs(S.pv - c.pv) / c.pv > .25) av.push(`PV ${S.pv}: la curva da ${c.pv}.`);
+    if (S.aMano.includes('guardia') && Math.abs(S.guardia - c.guardia) >= 3) av.push(`Guardia ${S.guardia}: la curva da ${c.guardia}.`);
+    if (S.aMano.includes('dano')) {
+      const a = this._parseDano(S.dano), b = this._parseDano(c.dano);
+      if (a && b && Math.abs(this._mediaDano(a) - this._mediaDano(b)) / this._mediaDano(b) > .3) av.push(`Daño ${S.dano}: la curva da ${c.dano}.`);
+    }
+    return av;
+  },
+
+  /* ── Pintado general ──────────────────────────────────────────── */
+  /** Repinta la ficha desde app.cr. `todo` reescribe también los campos de
+      texto (al abrir una amenaza o al cancelar una edición). */
+  pintarFicha(todo) {
+    const cr = this.cr; if (!cr) return;
+    this._pintando = true;
+    const S = this._S = this.calcCr(cr);
+    try {
+      this._pintarPersonal(S, todo);
+      this._pintarIdentidad(S);
+      this._pintarEstado(S);
+      this._pintarStats(S);
+      this._pintarAtaque(S);
+      this._pintarSalv(S);
+      this._pintarRasgos(S);
+      this._pintarSenal(S);
+      this._pintarJefe(S);
+      this._pintarRevision(S);
+      if (todo) {
+        const n = document.getElementById('char_notes'); if (n) n.value = cr.notas || '';
+        Object.keys(this.SECS).forEach(s => {
+          if (this._enEdicion(s) && typeof this['_editar_' + s] === 'function') this['_editar_' + s]();
+        });
+      }
+    } finally { this._pintando = false; }
+    if (typeof this._refrescarPlegables === 'function') this._refrescarPlegables();
+  },
+
+  /** Un cambio hecho desde la ficha: marca «sin guardar» y repinta. */
+  cambio(todo) {
+    this._markUnsaved();
+    this.pintarFicha(todo);
+  },
+
+  /** Campos fijos del HTML (nombre, idea, notas, PV actuales). */
+  _enlazarFicha() {
+    const on = (id, ev, fn) => document.getElementById(id)?.addEventListener(ev, fn);
+    on('char_name', 'input', e => { this.cr.nombre = e.target.value; this._markUnsaved(); this._pintarPersonal(this._S, false); });
+    on('char_concept', 'input', e => { this.cr.idea = e.target.value; this._markUnsaved(); this._pintarPersonal(this._S, false); });
+    on('char_notes', 'input', e => { this.cr.notas = e.target.value; this._markUnsaved(); });
+    on('cur_pv', 'input', e => {
+      const n = parseInt(e.target.value, 10);
+      this.cr.pvAct = Number.isFinite(n) ? Math.max(0, n) : 0;
+      this._markUnsaved(); this._updateResBars(); this._notaEstado(this._S);
+    });
+    // Los ± de PV escriben en el campo; aquí se recoge en la amenaza.
+    const _adj = this.adjustRes;
+    this.adjustRes = function (curId) {
+      const r = _adj.apply(this, arguments);
+      if (curId === 'cur_pv' && this.cr) {
+        this.cr.pvAct = parseInt(document.getElementById('cur_pv').value, 10) || 0;
+        this._notaEstado(this._S);
+        if (typeof this._refrescarPlegables === 'function') this._refrescarPlegables();
+      }
+      return r;
+    };
+  },
+
+  /* ── Perfil ───────────────────────────────────────────────────── */
+  _editar_personal() {
+    const n = document.getElementById('char_name'), c = document.getElementById('char_concept');
+    if (n && document.activeElement !== n) n.value = this.cr.nombre || '';
+    if (c && document.activeElement !== c) c.value = this.cr.idea || '';
+  },
+
+  _pintarPersonal(S, todo) {
+    const cr = this.cr;
+    const a = document.getElementById('char_img'), b = document.getElementById('char_img_summary');
+    const src = this._retratoOk(cr.retrato) ? cr.retrato : DEFAULT_PORTRAIT;
+    if (a && a.getAttribute('src') !== src) a.src = src;
+    if (b && b.getAttribute('src') !== src) b.setAttribute('src', src);
+    if (todo) this._editar_personal();
+    const set = (id, t) => { const e = document.getElementById(id); if (e) e.textContent = t; };
+    set('sum_name_ov', cr.nombre || 'Sin nombre');
+    set('sum_lvl_ov', [this._etiquetaNA(cr), this.DB.roles[cr.rol]?.name].filter(Boolean).join(' · '));
+    set('sum_bio_ov', cr.idea || '');
+  },
+
+  nombreAlAzar() {
+    this.cr.nombre = this._nombreAzar();
+    const n = document.getElementById('char_name'); if (n) n.value = this.cr.nombre;
+    this.cambio();
+  },
+  /** «el Tejedor del Pozo», «Mórdax Carroñera», «la Madre de las Horas». */
+  _nombreAzar() {
+    const T = this.DB.tablas;
+    const epi = this._azar(T.nomEpiteto.filas);
+    if (Math.random() < .5) return `${this._azar(T.nomNucleo.filas)} ${epi}`.replace(/^./, c => c.toUpperCase());
+    const raiz = this._azar(T.nomRaiz.filas).replace(/-$/, '');
+    return `${raiz}${this._azar(T.nomFin.filas)} ${epi}`;
+  },
+
+  _pintarIdentidad(S) {
+    const cr = this.cr;
+    const fila = document.getElementById('id_fila'); if (!fila) return;
+    fila.textContent = '';
+    const badge = (cls, t) => { const s = this.h('span', 'ibadge ' + cls); s.appendChild(this.h('span', null, t)); return s; };
+    const tipo = this.DB.tipos[cr.tipo]?.name || '—';
+    const tam = this.DB.tamanos[cr.tam]?.name || '';
+    fila.append(badge('ib-desc', 'NA ' + cr.na), badge('ib-arq', `${tipo} ${tam.toLowerCase()}`.trim()),
+      badge('ib-bg', this.DB.roles[cr.rol]?.name || 'Sin Rol'));
+    const host = document.getElementById('identity_summary_view');
+    let extra = host.querySelector('.dir-nota');
+    if (!extra) { extra = this.h('p', 'dir-nota dir-centro'); host.appendChild(extra); }
+    const partes = [];
+    if (S.jefe) partes.push('Jefe: PV ×2 · Peso +2');
+    if (S.horda) partes.push(`${S.H.marea ? 'Marea: registro Planetario' : `${S.H.n} de ${cr.miembros}`} · NA efectivo ${S.naEf}`);
+    if (S.esbirro) partes.push('Esbirro: cuatro cuentan como una criatura');
+    partes.push('Valor de Amenaza ' + this._fmtVA(S.va));
+    extra.textContent = partes.join(' · ');
+  },
+  _fmtVA(v) { return v < 1 ? String(v).replace('.', ',') : Math.round(v).toLocaleString('es'); },
+
+  /** Campo con rótulo. */
+  _campo(rotulo, control, nota) {
+    const d = this.h('div', 'dir-campo');
+    const l = this.h('span', 'fl', rotulo);
+    if (nota) { l.appendChild(document.createTextNode(' ')); l.appendChild(this.h('span', 'is-field-note', '— ' + nota)); }
+    d.append(l, control);
+    return d;
+  },
+  _select(opciones, valor, alCambiar, etiqueta) {
+    const s = document.createElement('select');
+    if (etiqueta) s.setAttribute('aria-label', etiqueta);
+    opciones.forEach(([v, t]) => s.appendChild(new Option(t, v)));
+    s.value = valor;
+    s.addEventListener('change', () => alCambiar(s.value));
+    return s;
+  },
+  /** − valor + */
+  _paso(valor, min, max, alCambiar, etiqueta, texto) {
+    const w = this.h('span', 'dir-paso');
+    const mk = (t, d) => {
+      const b = this.h('button', 'dir-pm', t);
+      b.type = 'button';
+      b.setAttribute('aria-label', `${d < 0 ? 'Bajar' : 'Subir'} ${etiqueta || ''}`.trim());
+      b.disabled = d < 0 ? valor <= min : valor >= max;
+      b.addEventListener('click', () => alCambiar(Math.max(min, Math.min(max, valor + d))));
+      return b;
+    };
+    w.append(mk('−', -1), this.h('span', 'dir-paso-v', texto != null ? texto : String(valor)), mk('+', 1));
+    return w;
+  },
+  _seg(opciones, valor, alCambiar, etiqueta) {
+    const g = this.h('div', 'seg seg-n' + opciones.length);
+    g.setAttribute('role', 'group');
+    if (etiqueta) g.setAttribute('aria-label', etiqueta);
+    opciones.forEach(([v, t]) => {
+      const b = this.h('button', 'seg-btn' + (v === valor ? ' active' : ''), t);
+      b.type = 'button';
+      b.setAttribute('aria-pressed', String(v === valor));
+      b.addEventListener('click', () => alCambiar(v));
+      g.appendChild(b);
+    });
+    return g;
+  },
+  _info(texto) { const d = this.h('div', 'infobox'); d.textContent = texto; return d; },
+  /** Botón pequeño de dado para tirar en una tabla. */
+  _botonDado(etiqueta, alPulsar) {
+    const b = this.h('button', 'btn btn-g dir-dado');
+    b.type = 'button';
+    b.setAttribute('aria-label', etiqueta);
+    b.title = etiqueta;
+    b.innerHTML = '<svg class="ico ico-solo" aria-hidden="true"><use href="#i-d20"/></svg>';
+    b.addEventListener('click', alPulsar);
+    return b;
+  },
+
+  _editar_identity() {
+    const cr = this.cr, S = this._S || this.calcCr(cr);
+    const v = this._vista('identity', 'edit');
+    v.textContent = '';
+    const repintar = () => { this.cambio(); this._editar_identity(); };
+
+    // NA
+    const B = this.DB.na[cr.na] || {};
+    v.appendChild(this._campo('Nivel de Amenaza', this._paso(cr.na, 0, 15, n => { cr.na = n; cr.pvAct = null; repintar(); },
+      'el Nivel de Amenaza', 'NA ' + cr.na + (B.etiqueta ? ' · ' + B.etiqueta : '')),
+      'cuánto pesa en la escena'));
+    v.appendChild(this._info(`PV ${B.pv} · Guardia ${B.g} / Armadura ${B.a} · Ataque ${this._signo(B.atk)} · Daño ${B.dano} · PA ${B.pa} · CD ${B.cd} · Peso ${B.peso}`));
+
+    // Tipo
+    const tipos = Object.entries(this.DB.tipos).map(([k, t]) => [k, t.name]);
+    v.appendChild(this._campo('Tipo', this._select(tipos, cr.tipo, k => {
+      cr.tipo = k;
+      this._ponerRasgosDeTipo(cr);
+      cr.salv = (this.DB.tipos[k].salvDef || cr.salv).slice(0, 2);
+      const t = this.DB.tipos[k];
+      if (t.tamMin && this.ORDEN_TAM.indexOf(cr.tam) < this.ORDEN_TAM.indexOf(t.tamMin)) cr.tam = t.tamMin;
+      repintar();
+    }, 'Tipo de criatura'), 'da Rasgos gratuitos'));
+    const t = this.DB.tipos[cr.tipo] || {};
+    v.appendChild(this._info(`${t.txt || 'Sin Rasgos de tipo.'}\nSalvaciones fuertes: ${t.salv || '—'} · Debilidad coherente: ${t.deb || '—'}`));
+    (t.elige || []).forEach(grupo => {
+      const actual = cr.rasgos.find(r => r.gratis && r.origen === 'tipo' && grupo.includes(r.id));
+      const ops = grupo.map(id => [id, this._libIdx()[id]?.e.name || id]);
+      v.appendChild(this._campo('Rasgo de tipo a elegir', this._seg(ops, actual?.id || grupo[0], id => {
+        if (actual) actual.id = id; else cr.rasgos.unshift({ uid: this._uid(), id, gratis: true, origen: 'tipo' });
+        repintar();
+      }, 'Rasgo de tipo')));
+    });
+
+    // Tamaño
+    const tams = Object.entries(this.DB.tamanos).map(([k, x]) => [k, x.name]);
+    v.appendChild(this._campo('Tamaño', this._select(tams, cr.tam, k => { cr.tam = k; cr.pvAct = null; repintar(); }, 'Tamaño')));
+    const tm = this.DB.tamanos[cr.tam] || {};
+    v.appendChild(this._info(`PV ${tm.pvTxt || '×1'} · Guardia ${tm.g ? this._signo(tm.g) : '—'} · Alcance ${tm.alcance || '—'} · Espacio ${tm.espacio || '—'}`));
+
+    // Rol
+    const roles = [['', 'Sin Rol']].concat(Object.entries(this.DB.roles).map(([k, x]) => [k, x.name]));
+    v.appendChild(this._campo('Rol', this._select(roles, cr.rol, k => { cr.rol = k; cr.pvAct = null; repintar(); }, 'Rol'), 'cómo se comporta en escena'));
+    const r = this.DB.roles[cr.rol];
+    v.appendChild(this._info(r ? `${r.mod}\n${r.hab}: ${r.habTxt}` : 'Usa las estadísticas base de su NA.'));
+
+    // Estructura
+    v.appendChild(this._campo('Estructura', this._seg([['normal', 'Normal'], ['jefe', 'Jefe'], ['horda', 'Horda']], cr.estructura,
+      k => { cr.estructura = k; cr.pvAct = null; repintar(); }, 'Estructura')));
+    if (cr.estructura === 'jefe') v.appendChild(this._info('PV ×2 y +2 de Peso. Debe compensar la economía de acciones con Acción de Jefe, Turno Doble o un séquito, y telegrafiar sus Aptitudes de Peso 3 una ronda antes.'));
+    if (cr.estructura === 'horda') {
+      const inp = document.createElement('input');
+      inp.type = 'number'; inp.min = 2; inp.max = 999; inp.value = cr.miembros; inp.inputMode = 'numeric';
+      inp.setAttribute('aria-label', 'Miembros de la horda');
+      inp.addEventListener('change', () => { cr.miembros = Math.max(2, Math.min(999, parseInt(inp.value, 10) || 2)); cr.pvAct = null; repintar(); });
+      v.appendChild(this._campo('Miembros', inp, 'cada uno con las estadísticas de arriba'));
+      const H = this._horda(cr.miembros);
+      v.appendChild(this._info(H.marea
+        ? 'Marea (31 o más): ya es una entidad de registro Planetario (Guía, Cap. 9) y usa Daño de Escala.'
+        : `${H.n}: NA efectivo ${cr.na + H.na}${H.dados ? ` · daño +${H.dados} dado${H.dados > 1 ? 's' : ''}` : ''}. PV = suma de sus miembros; un solo turno; doble daño de área; a mitad de vida se divide en dos; pierde un dado de daño por cada cuarto de PV perdido.`));
+    }
+    v.appendChild(this._pieEdicion('identity'));
+  },
+
+  /* ── Estado ───────────────────────────────────────────────────── */
+  _pintarEstado(S) {
+    const cr = this.cr;
+    const max = document.getElementById('max_pv'), cur = document.getElementById('cur_pv');
+    if (!max || !cur) return;
+    max.textContent = S.pv;
+    if (cr.pvAct != null && cr.pvAct > S.pv) cr.pvAct = S.pv;
+    if (document.activeElement !== cur) cur.value = cr.pvAct == null ? S.pv : cr.pvAct;
+    this._updateResBars();
+    this._notaEstado(S);
+    const host = document.getElementById('rest_list');
+    if (host && !host.childElementCount) {
+      const op = (t, m, d, fn) => {
+        const b = this.h('button', 'rest-opt'); b.type = 'button';
+        b.append(this.h('span', 'rest-opt-t', t), this.h('span', 'rest-opt-m', m), this.h('span', 'rest-opt-d', d));
+        b.addEventListener('click', fn);
+        return b;
+      };
+      host.append(
+        op('Como nueva', 'PV y Aptitudes', 'PV al máximo y todos los Dados de Uso recargados.', () => this.restablecer(true)),
+        op('Recargar Aptitudes', 'tras un descanso', 'Los Dados de Uso vuelven a su valor y las de 1/combate quedan disponibles.', () => this.restablecer(false)));
+    }
+  },
+  _notaEstado(S) {
+    const el = document.getElementById('estado_nota'); if (!el || !S) return;
+    const cr = this.cr;
+    const act = cr.pvAct == null ? S.pv : cr.pvAct;
+    const t = [];
+    if (S.horda && !S.H.marea) {
+      const cuartos = S.pv ? Math.min(4, Math.floor((S.pv - act) / (S.pv / 4))) : 0;
+      const d = this._parseDano(S.dano);
+      if (d && cuartos > 0) t.push(`Ha perdido ${cuartos} cuarto${cuartos > 1 ? 's' : ''} de sus PV: su daño baja a ${this._fmtDano({ ...d, n: Math.max(1, d.n - cuartos) })}.`);
+      if (act <= S.pv / 2) t.push('A mitad de vida: se divide en dos.');
+    }
+    if (S.esbirro) t.push('Esbirro: cae con cualquier golpe que le quite sus PV.');
+    if (act === 0) t.push('A 0 PV.');
+    else if (!S.esbirro && act <= S.pv / 2) t.push('Por debajo de la mitad: comprueba la Moral' + (cr.rasgos.some(r => r.id === 'fases') ? ' y cambia de Fase' : '') + '.');
+    el.textContent = t.join(' ');
+    el.hidden = !t.length;
+  },
+  restablecer(conPV) {
+    if (conPV) this.cr.pvAct = null;
+    this.cr.rasgos.forEach(r => { delete r.udAct; delete r.usada; });
+    this.cambio();
+    this.toast(conPV ? 'PV y Aptitudes restablecidos' : 'Aptitudes recargadas', 'ok');
+  },
+
+  /* ── Combate: estadísticas ────────────────────────────────────── */
+  _stat(rotulo, valor, alPulsar, etiqueta) {
+    const e = this.h(alPulsar ? 'button' : 'div', 'dir-stat' + (alPulsar ? ' dir-stat-btn' : ''));
+    if (alPulsar) { e.type = 'button'; e.addEventListener('click', alPulsar); if (etiqueta) e.setAttribute('aria-label', etiqueta); }
+    e.append(this.h('span', 'dir-slbl', rotulo), this.h('span', 'dir-sval', valor));
+    return e;
+  },
+
+  _pintarStats(S) {
+    const v = this._vista('stats', 'summary'); if (!v) return;
+    const cr = this.cr;
+    v.textContent = '';
+    const grid = this.h('div', 'def-grid');
+    const celda = (rot, val, cls) => { const c = this.h('div', 'def-cell' + (cls ? ' ' + cls : '')); c.append(this.h('span', 'def-lbl', rot), this.h('span', 'def-val', String(val))); return c; };
+    grid.append(celda('Guardia', S.guardia, 'def-cell--guardia'), celda('Armadura', S.armadura), celda('CD', S.cd));
+    v.appendChild(grid);
+
+    const g1 = this.h('div', 'dir-stats');
+    g1.append(this._stat('PV', String(S.pv)), this._stat('Ataque', this._signo(S.ataque)), this._stat('Daño', S.dano), this._stat('PA', String(S.pa)));
+    const g2 = this.h('div', 'dir-stats dir-stats-3');
+    g2.append(this._stat('Velocidad', S.vel + ' pies'), this._stat('Alcance', (S.tam.alcance || '5 pies').replace(/\s*\(.*\)/, '')),
+      this._stat('Valor de Amenaza', this._fmtVA(S.va)));
+    v.append(g1, g2);
+
+    // Defensas: salen de los Rasgos, que son la única fuente
+    const def = { resistencia: [], inmunidad: [], inmunidad_a_estados: [], vulnerabilidad: [] };
+    S.infos.forEach(x => { if (def[x.r.id]) def[x.r.id].push(x.r.nota || '—'); });
+    const otras = S.infos.filter(x => ['resistencia_sobrenatural', 'incorporeo', 'aversion'].includes(x.r.id));
+    const lineas = [
+      ['Resistencia', def.resistencia.concat(otras.filter(x => x.r.id !== 'aversion').map(x => 'daño no mágico'))],
+      ['Inmunidad', def.inmunidad], ['Inmune a estados', def.inmunidad_a_estados],
+      ['Vulnerabilidad', def.vulnerabilidad.map(x => x + ' (el doble)')],
+      ['Aversión', otras.filter(x => x.r.id === 'aversion').map(x => x.r.nota || '—')],
+    ].filter(l => l[1].length);
+    if (lineas.length) {
+      const box = this.h('div', 'dir-lineas');
+      lineas.forEach(([k, vals]) => { const p = this.h('div', 'dir-linea'); p.append(this.h('span', 'dir-linea-k', k), this.h('span', 'dir-linea-v', [...new Set(vals)].join(' · '))); box.appendChild(p); });
+      v.appendChild(box);
+    }
+    if (S.aMano.length) {
+      const N = { pv: 'PV', guardia: 'Guardia', armadura: 'Armadura', ataque: 'Ataque', dano: 'Daño', pa: 'PA', vel: 'Velocidad', ini: 'Iniciativa', moral: 'Moral' };
+      v.appendChild(this.h('p', 'dir-nota', 'Ajustado a mano: ' + S.aMano.map(k => `${N[k]} (curva ${S.calc[k]})`).join(' · ')));
+    }
+    this._avisosCurva(S).forEach(a => v.appendChild(this.h('p', 'dir-aviso', a)));
+    if (cr.equipo) v.appendChild(this.h('p', 'dir-nota', 'Equipo: ' + cr.equipo));
+  },
+
+  _editar_stats() {
+    const cr = this.cr;
+    const v = this._vista('stats', 'edit');
+    v.textContent = '';
+    const S = this.calcCr(cr);
+    v.appendChild(this.h('p', 'wiz-hint', 'Lo que da la curva para su NA, Rol, Tamaño y Rasgos. Escribe un valor solo si quieres apartarte de ella; vacío vuelve a la curva.'));
+    const g = this.h('div', 'g2 dir-g2');
+    const CAMPOS = [['pv', 'PV'], ['guardia', 'Guardia'], ['armadura', 'Armadura'], ['ataque', 'Ataque'], ['dano', 'Daño'],
+                    ['pa', 'PA'], ['vel', 'Velocidad'], ['ini', 'Iniciativa'], ['moral', 'Moral']];
+    CAMPOS.forEach(([k, n]) => {
+      const inp = document.createElement('input');
+      const esDano = k === 'dano';
+      inp.type = esDano ? 'text' : 'number';
+      if (!esDano) inp.inputMode = 'numeric';
+      inp.placeholder = String(S.calc[k]);
+      inp.value = cr.manual[k] != null ? cr.manual[k] : '';
+      inp.setAttribute('aria-label', `${n} a mano (la curva da ${S.calc[k]})`);
+      inp.autocomplete = 'off';
+      inp.addEventListener('input', () => {
+        const t = inp.value.trim();
+        if (t === '') delete cr.manual[k];
+        else if (esDano) { if (this._parseDano(t)) cr.manual[k] = t.replace('−', '-').replace(/\s/g, ''); else return; }
+        else { const num = parseInt(t, 10); if (Number.isFinite(num)) cr.manual[k] = num; else return; }
+        if (k === 'pv') cr.pvAct = null;
+        this.cambio();
+      });
+      g.appendChild(this._campo(n, inp, 'curva ' + S.calc[k]));
+    });
+    v.appendChild(g);
+    const b = this.h('button', 'btn btn-g dir-ancho'); b.type = 'button';
+    b.innerHTML = this._ico('i-rot-l') + 'Ajustar a la curva';
+    b.addEventListener('click', () => { cr.manual = {}; cr.pvAct = null; this.cambio(); this._editar_stats(); this.toast('Estadísticas de vuelta en la curva', 'ok'); });
+    v.append(b, this._pieEdicion('stats'));
+  },
+
+  /* ── Combate: ataque ──────────────────────────────────────────── */
+  _nombreAtaque() { return this.cr.ataqueNombre || 'Ataque'; },
+  _pintarAtaque(S) {
+    const v = this._vista('attack', 'summary'); if (!v) return;
+    const cr = this.cr;
+    v.innerHTML = `
+      <div class="atk-card">
+        <div class="atk-hdr">
+          <span class="atk-nm"></span>
+          <span class="atk-role-badge"></span>
+        </div>
+        <div class="atk-btns">
+          <button class="abtn abtn-a" type="button" aria-label="Tirar ataque">
+            <span class="abtn-icon" aria-hidden="true"><svg class="ico ico-solo"><use href="#i-sword"/></svg></span>
+            <span class="abtn-text"><span class="asub">Atacar</span><span class="aval" id="atk_bonus_1"></span></span>
+          </button>
+          <div class="atk-btn-sep"></div>
+          <button class="abtn abtn-d" type="button" aria-label="Tirar daño">
+            <span class="abtn-icon" aria-hidden="true"><svg class="ico ico-solo"><use href="#i-d20"/></svg></span>
+            <span class="abtn-text"><span class="asub">Daño</span><span class="aval"></span></span>
+          </button>
+        </div>
+      </div>`;
+    v.querySelector('.atk-nm').textContent = this._nombreAtaque();
+    const badge = v.querySelector('.atk-role-badge');
+    badge.textContent = cr.danoTipo || 'sin tipo';
+    const [ba, bd] = v.querySelectorAll('.abtn');
+    ba.querySelector('.aval').textContent = this._signo(S.ataque);
+    bd.querySelector('.aval').textContent = S.dano;
+    ba.addEventListener('click', () => this.rollCheck('Ataque: ' + this._nombreAtaque(), S.ataque));
+    bd.addEventListener('click', () => this.rollDice(S.dano, 'Daño: ' + this._nombreAtaque()));
+    v.appendChild(this.h('p', 'dir-nota', `Ataque Normal: 2 PA. Daño base de su NA: ${S.danoBase}.`));
+  },
+  _editar_attack() {
+    const cr = this.cr;
+    const v = this._vista('attack', 'edit');
+    v.textContent = '';
+    const n = document.createElement('input');
+    n.type = 'text'; n.value = cr.ataqueNombre || ''; n.placeholder = 'ej. Quelíceros'; n.autocomplete = 'off';
+    n.addEventListener('input', () => { cr.ataqueNombre = n.value; this.cambio(); });
+    const t = document.createElement('input');
+    t.type = 'text'; t.value = cr.danoTipo || ''; t.placeholder = 'ej. Perforante'; t.autocomplete = 'off';
+    t.setAttribute('list', 'dir_danos');
+    t.addEventListener('input', () => { cr.danoTipo = t.value; this.cambio(); });
+    const dl = document.createElement('datalist'); dl.id = 'dir_danos';
+    (this.DB.tablas.danos?.filas || []).forEach(x => dl.appendChild(new Option(x)));
+    v.append(this._campo('Nombre del ataque', n), this._campo('Tipo de daño', t), dl,
+      this.h('p', 'wiz-hint', 'El arma no cambia el daño base: cambia el tipo y sus propiedades. El bono y el dado se ajustan en Estadísticas.'),
+      this._pieEdicion('attack'));
+  },
+
+  /* ── Combate: salvaciones, iniciativa y Moral ─────────────────── */
+  _modSalv(S, a) { return this.cr.salv.includes(a) ? S.sf : S.sd; },
+  _pintarSalv(S) {
+    const v = this._vista('saves', 'summary'); if (!v) return;
+    v.textContent = '';
+    const grid = this.h('div', 'saves-grid dir-sin-filete');
+    this.ATTRS.forEach(a => {
+      const fuerte = this.cr.salv.includes(a);
+      const total = this._modSalv(S, a);
+      const box = this.h('button', 'svsbox' + (fuerte ? ' prof' : ''));
+      box.type = 'button';
+      box.setAttribute('aria-label', `Tirar Salvación de ${this.ATTR_N[a]}`);
+      box.append(this.h('span', 'svslbl', a), document.createTextNode(this._signo(total)));
+      box.addEventListener('click', () => this.rollCheck('Salvación ' + a, total));
+      grid.appendChild(box);
+    });
+    v.appendChild(grid);
+    const g = this.h('div', 'dir-stats dir-stats-2');
+    g.append(
+      this._stat('Iniciativa', this._signo(S.ini), () => this.rollCheck('Iniciativa', S.ini), 'Tirar Iniciativa'),
+      S.noMoral ? this._stat('Moral', 'no tira') : this._stat('Moral', String(S.moral), () => this.tirarMoral(S.moral), 'Tirar Moral'));
+    v.appendChild(g);
+    v.appendChild(this.h('p', 'dir-nota', S.noMoral
+      ? 'No tira Moral: huye o se detiene cuando la pelea deja de tener sentido para ella.'
+      : 'Moral: tira 2d10; si supera la Puntuación, rompe. Compruébala al caer su líder, al perder la mitad del grupo o tras un golpe que le quite media vida.'));
+  },
+  tirarMoral(puntuacion, etiqueta) {
+    const a = this._d(10), b = this._d(10);
+    const rompe = a + b > puntuacion;
+    this.showDiceRoll({ label: `${etiqueta || 'Moral'} · Puntuación ${puntuacion}`, die: 10, finalFaces: [a, b], isCrit: false, isFail: false,
+      detail: rompe ? 'Supera la Puntuación: rompen. Huyen, se rinden o se dispersan.' : 'No la supera: aguantan y siguen luchando.',
+      total: a + b, totalLabel: 'Daño' });
+    return rompe;
+  },
+  _editar_saves() {
+    const cr = this.cr;
+    const v = this._vista('saves', 'edit');
+    v.textContent = '';
+    const S = this.calcCr(cr);
+    v.appendChild(this.h('p', 'wiz-hint', `Elige las dos Salvaciones fuertes (${this._signo(S.sf)}); el resto usa la débil (${this._signo(S.sd)}). Su tipo sugiere: ${S.tipo.salv || '—'}.`));
+    const grid = this.h('div', 'saves-grid dir-sin-filete');
+    this.ATTRS.forEach(a => {
+      const on = cr.salv.includes(a);
+      const box = this.h('button', 'svsbox' + (on ? ' prof' : ''));
+      box.type = 'button';
+      box.setAttribute('aria-pressed', String(on));
+      box.append(this.h('span', 'svslbl', a), document.createTextNode(on ? 'fuerte' : 'débil'));
+      box.addEventListener('click', () => {
+        if (on) cr.salv = cr.salv.filter(x => x !== a);
+        else { cr.salv.push(a); if (cr.salv.length > 2) cr.salv.shift(); }
+        this.cambio(); this._editar_saves();
+      });
+      grid.appendChild(box);
+    });
+    v.appendChild(grid);
+    const forzada = S.tipo.noMoral === 'nunca' || S.esbirro;
+    const fila = this.h('div', 'set-row dir-fila-toggle');
+    const txt = this.h('div', 'set-row-txt');
+    txt.append(this.h('span', 'set-lbl', 'No tira Moral'),
+      this.h('span', 'set-hint', forzada ? 'Por su tipo o por ser esbirro, nunca la tira.' : 'Bestias con INT 4 o menos: huyen cuando la pelea deja de compensar.'));
+    const tg = this.h('button', 'toggle-btn'); tg.type = 'button';
+    tg.setAttribute('aria-pressed', String(forzada || cr.moralNoTira));
+    tg.setAttribute('aria-label', 'No tira Moral');
+    tg.disabled = forzada;
+    tg.addEventListener('click', () => { cr.moralNoTira = !cr.moralNoTira; this.cambio(); this._editar_saves(); });
+    fila.append(txt, tg);
+    v.append(fila, this._pieEdicion('saves'));
+  },
+
+  /* ── Rasgos y Aptitudes ───────────────────────────────────────── */
+  /** Símbolo y clave de color del tipo de pieza (los de los Talentos). */
+  _tipoPieza(tipo) {
+    return { Rasgo: ['◆', 'pasivo'], Aura: ['◆', 'pasivo'], Aptitud: ['✦', 'habilitador'], 'Reacción': ['⚡', 'disparador'],
+             Modificador: ['◈', 'modificador'], Debilidad: ['▽', 'debilidad'] }[tipo] || ['◆', 'pasivo'];
+  },
+  _lineaTipo(i) {
+    const [sim] = this._tipoPieza(i.tipo);
+    return [sim + ' ' + i.tipo, i.coste, i.frec].filter(Boolean).join(' · ');
+  },
+  /** Cifras concretas de un efecto escrito en función del NA. */
+  _concretar(txt, S) {
+    const out = [];
+    const t = String(txt || '');
+    if (/contra (la|su) CD/.test(t) && !/CD \d/.test(t)) out.push('CD ' + S.cd);
+    if (/daño base/.test(t)) {
+      const d = this._parseDano(S.danoBase);
+      out.push('Daño base ' + S.danoBase + (d && /mitad del daño base/.test(t) ? ` (la mitad ≈ ${Math.max(1, Math.floor(this._mediaDano(d) / 2))})` : ''));
+    }
+    const m = t.match(/NA × (\d+)/g);
+    if (m) [...new Set(m)].forEach(x => out.push(`${x} = ${S.na * parseInt(x.slice(5), 10)}`));
+    if (/recupera NA PV|Recupera NA PV/.test(t)) out.push('NA = ' + S.na);
+    return out;
+  },
+
+  _pintarRasgos(S) {
+    const cr = this.cr;
+    const set = (id, t) => { const e = document.getElementById(id); if (e) e.textContent = t; };
+    set('peso_gastado', S.pesoGastado); set('peso_max', '/' + S.pesoMax);
+    set('peso_txt', `${S.pesoGastado}/${S.pesoMax}`);
+    const bar = document.getElementById('peso_bar');
+    if (bar) {
+      bar.style.width = (S.pesoMax ? Math.min(100, S.pesoGastado / S.pesoMax * 100) : (S.pesoGastado ? 100 : 0)) + '%';
+      bar.classList.toggle('dir-exceso', S.exceso > 0);
+    }
+    const warn = document.getElementById('peso_warn');
+    if (warn) {
+      const t = [];
+      if (S.esbirro && S.pesoGastado) t.push('Un esbirro no tiene Rasgos propios, solo los de su tipo');
+      else if (S.exceso) t.push(`Excede en ${S.exceso}` + (S.exceso >= 2 ? `: al calibrar cuenta como NA ${S.naVA}` : ': con 2 de exceso contará como +1 NA'));
+      else if (S.devuelto) t.push(`Presupuesto ${S.pesoBase} + ${S.devuelto} por Debilidad${S.devuelto > 1 ? 'es' : ''}`);
+      warn.textContent = t.join(' · ');
+      warn.style.display = t.length ? 'block' : 'none';
+      warn.classList.toggle('dir-ok', !S.exceso && !(S.esbirro && S.pesoGastado));
+    }
+
+    const host = document.getElementById('rasgos_list'); if (!host) return;
+    const abiertos = new Set([...host.querySelectorAll('.dc.open')].map(d => d.dataset.uid));
+    host.textContent = '';
+    // 1 · la habilidad del Rol, que no gasta Peso
+    if (S.rol && S.rol.hab) {
+      host.appendChild(this._tarjetaRasgo({ uid: 'rol', fijo: true }, { name: S.rol.hab, tipo: S.rol.habTipo, coste: S.rol.habCoste, frec: '', peso: 0,
+        txt: S.rol.habTxt + (cr.rolNota ? '\n' + cr.rolNota : '') }, 'de Rol', S, abiertos.has('rol')));
+    }
+    // 2 · gratis · 3 · pagados · 4 · debilidades
+    const orden = x => this._esGratisVisible(x, S) ? 0 : (x.i.tipo === 'Debilidad' || x.i.peso < 0) ? 2 : 1;
+    S.infos.slice().sort((a, b) => orden(a) - orden(b)).forEach(x => {
+      const gratis = this._esGratisVisible(x, S);
+      const etiqueta = gratis ? (x.r.origen === 'plantilla' ? 'plantilla' : 'de tipo') : (x.i.peso < 0 ? '−1' : x.i.custom && !x.i.peso ? '0' : 'Peso ' + x.i.peso);
+      host.appendChild(this._tarjetaRasgo(x.r, x.i, etiqueta, S, abiertos.has(x.r.uid)));
+    });
+    if (!host.childElementCount) {
+      host.innerHTML = '<div class="empty-state"><span class="es-rune">✦</span><span class="es-line">Aún sin Rasgos</span><div class="es-hint">Empieza por la pieza que sostiene la idea</div></div>';
+    }
+  },
+  _esGratisVisible(x, S) { return S.esGratis(x); },
+
+  _tarjetaRasgo(r, i, etiqueta, S, abierta) {
+    const card = this.h('div', 'dc' + (abierta ? ' open' : ''));
+    card.dataset.uid = r.uid;
+    const dch = this.h('div', 'dch');
+    dch.addEventListener('click', () => card.classList.toggle('open'));
+    const [sim, clave] = this._tipoPieza(i.tipo);
+    const dct = this.h('span', 'dct');
+    const s = this.h('span', 'dir-sim', sim); s.dataset.tipo = clave;
+    dct.append(s, document.createTextNode(' ' + i.name + (r.nota ? ` (${r.nota})` : '')));
+    dch.appendChild(dct);
+    const ud = this._udDe(r, i);
+    if (ud) dch.appendChild(this.h('span', 'dc-gbadge dir-ud' + (ud === 'agotada' ? ' is-agotada' : ''), ud === 'agotada' ? 'agotada' : ud));
+    dch.appendChild(this.h('span', 'dc-gbadge dir-peso', etiqueta));
+    dch.appendChild(this.h('span', 'dca', '▾'));
+    const dcb = this.h('div', 'dcb');
+    const tp = this.h('div', 'tc-tipo', this._lineaTipo(i)); tp.dataset.tipo = clave;
+    dcb.appendChild(tp);
+    if (i.perdido) dcb.appendChild(this.h('div', 'js-grade-block grade-off', 'No está en la versión actual de las reglas: se conserva su nombre y el texto guardado.'));
+    const desc = this.h('div', 'u-pre-wrap', i.txt || 'Sin descripción.'); desc.style.marginBottom = '6px';
+    dcb.appendChild(desc);
+    const cifras = this._concretar(i.txt, S);
+    if (cifras.length) dcb.appendChild(this.h('div', 'js-grade-block grade-on', cifras.join(' · ')));
+    if (r.id === 'uso_de_axiomas') dcb.appendChild(this.h('div', 'js-grade-block grade-on',
+      `Axiomas de hasta Nivel ${Math.min(9, Math.ceil(S.na / 2))} · CD ${S.cd} · Reserva ${S.na * 5} puntos`));
+    if (r.fijo) { card.append(dch, dcb); return card; }
+
+    if (i.pide || r.nota) {
+      const inp = document.createElement('input');
+      inp.type = 'text'; inp.value = r.nota || ''; inp.placeholder = i.pide || 'Detalle'; inp.autocomplete = 'off';
+      inp.setAttribute('aria-label', i.pide || 'Detalle del Rasgo');
+      inp.addEventListener('change', () => { r.nota = inp.value.trim(); if (!r.nota) delete r.nota; this.cambio(); });
+      inp.addEventListener('click', e => e.stopPropagation());
+      dcb.appendChild(this._campo(i.pide || 'Detalle', inp));
+    }
+    const acc = this.h('div', 'dir-acc');
+    if (ud) {
+      const usar = this.h('button', 'btn btn-g'); usar.type = 'button';
+      usar.innerHTML = this._ico('i-d20') + (ud === 'agotada' ? 'Agotada' : `Usar · tira ${ud}`);
+      usar.disabled = ud === 'agotada';
+      usar.addEventListener('click', e => { e.stopPropagation(); this.usarAptitud(r.uid); });
+      acc.appendChild(usar);
+    } else if (/1\/combate/.test(i.frec)) {
+      const usar = this.h('button', 'btn btn-g'); usar.type = 'button';
+      usar.textContent = r.usada ? 'Usada en este combate' : 'Marcar como usada';
+      usar.addEventListener('click', e => { e.stopPropagation(); if (r.usada) delete r.usada; else r.usada = true; this.cambio(); });
+      acc.appendChild(usar);
+    }
+    const quitar = this.h('button', 'bmini br'); quitar.type = 'button';
+    quitar.innerHTML = this._ico('i-x') + 'Quitar';
+    quitar.setAttribute('aria-label', 'Quitar ' + i.name);
+    quitar.addEventListener('click', e => { e.stopPropagation(); this.quitarRasgo(r.uid); });
+    acc.appendChild(quitar);
+    dcb.appendChild(acc);
+    card.append(dch, dcb);
+    return card;
+  },
+
+  /** Dado de Uso actual de una Aptitud («Ud6» → al degradar, «Ud4» → «agotada»). */
+  _udDe(r, i) {
+    const m = String(i.frec || '').match(/Ud(\d+)/);
+    if (!m) return '';
+    return r.udAct || ('Ud' + m[1]);
+  },
+  usarAptitud(uid) {
+    const r = this.cr.rasgos.find(x => x.uid === uid); if (!r) return;
+    const i = this.rasgoInfo(r);
+    const ud = this._udDe(r, i);
+    if (!ud || ud === 'agotada') return;
+    const caras = parseInt(ud.slice(2), 10);
+    const t = this._d(caras);
+    let detalle = `${ud}: ${t} — se mantiene en ${ud}.`;
+    if (t <= 2) {
+      const sig = this.UD[this.UD.indexOf(ud) + 1];
+      r.udAct = sig || 'agotada';
+      detalle = sig ? `${ud}: ${t} — baja a ${sig}.` : `${ud}: ${t} — queda agotada hasta que descanse.`;
+    }
+    this.showDiceRoll({ label: `${i.name} · Dado de Uso`, die: caras, finalFaces: [t], isCrit: false, isFail: t <= 2, detail: detalle, total: t, totalLabel: 'Daño' });
+    this.cambio();
+  },
+  quitarRasgo(uid) {
+    this.cr.rasgos = this.cr.rasgos.filter(r => r.uid !== uid);
+    this.cambio();
+  },
+  /** Añade una pieza de la Biblioteca. Devuelve false si no se puede. */
+  ponerRasgo(id, silencio) {
+    const hit = this._libIdx()[id]; if (!hit) return false;
+    if (!hit.e.multi && this.cr.rasgos.some(r => r.id === id)) return false;
+    this.cr.rasgos.push({ uid: this._uid(), id });
+    if (!silencio) this.cambio();
+    return true;
+  },
+
+  /* ── Notas: señal y contexto ──────────────────────────────────── */
+  CAMPOS_SENAL: [
+    ['senal', 'La señal', 'senal', 'Lo que el grupo percibe antes de verla. Sin señal no hay decisión, solo castigo.'],
+    ['contexto', 'Contexto táctico', '', '¿Qué problema le plantea al grupo? Una o dos frases.'],
+    ['quiere', 'Qué quiere', 'quiere', ''],
+    ['pelea', 'Cómo pelea', 'pelea', ''],
+    ['habitat', 'Hábitat', 'habitat', ''],
+    ['botin', 'Lo que deja al caer', 'botinCae', ''],
+  ],
+  _pintarSenal() {
+    const v = this._vista('senal', 'summary'); if (!v) return;
+    const cr = this.cr;
+    v.textContent = '';
+    const hay = this.CAMPOS_SENAL.filter(([k]) => (cr[k] || '').trim());
+    if (!hay.length) {
+      v.innerHTML = '<div class="empty-state"><span class="es-rune">✦</span><span class="es-line">Sin señal ni contexto</span><div class="es-hint">Si no sabes escribir el contexto, la criatura aún no está terminada</div></div>';
+      return;
+    }
+    hay.forEach(([k, rot]) => {
+      const b = this.h('div', 'dir-bloque');
+      b.append(this.h('span', 'fl', rot), this.h('div', 'u-pre-wrap dir-texto', cr[k]));
+      v.appendChild(b);
+    });
+  },
+  _editar_senal() {
+    const cr = this.cr;
+    const v = this._vista('senal', 'edit');
+    v.textContent = '';
+    this.CAMPOS_SENAL.forEach(([k, rot, tabla, ayuda]) => {
+      const ta = document.createElement('textarea');
+      ta.value = cr[k] || '';
+      ta.style.minHeight = (k === 'contexto' || k === 'senal') ? '64px' : '44px';
+      ta.setAttribute('aria-label', rot);
+      if (ayuda) ta.placeholder = ayuda;
+      ta.addEventListener('input', () => { cr[k] = ta.value; this._markUnsaved(); this._pintarRevision(this._S); });
+      const caja = this.h('div', 'dir-con-dado');
+      caja.appendChild(ta);
+      if (tabla) caja.appendChild(this._botonDado(`Tirar ${rot.toLowerCase()} al azar`, () => {
+        let t = this._azar(this.DB.tablas[tabla].filas);
+        if (k === 'botin') t = t.replace(/NA × (\d+)/g, (_, n) => String(cr.na * parseInt(n, 10)));
+        ta.value = cr[k] = t;
+        this._markUnsaved(); this._pintarRevision(this._S);
+      }));
+      v.appendChild(this._campo(rot, caja));
+    });
+    v.appendChild(this._pieEdicion('senal'));
+  },
+
+  /* ── Notas: jefe, fases y guarida ─────────────────────────────── */
+  _esJefe(S) { return S.jefe || this.cr.rasgos.some(r => ['fases', 'guarida', 'victoria_alternativa', 'accion_de_jefe', 'turno_doble'].includes(r.id)); },
+  _pintarJefe(S) {
+    const card = document.getElementById('fold_jefe'); if (!card) return;
+    const es = this._esJefe(S);
+    card.hidden = !es;
+    if (!es) { if (this._enEdicion('jefe')) this._verSeccion('jefe', false); return; }
+    const v = this._vista('jefe', 'summary');
+    const cr = this.cr;
+    v.textContent = '';
+    const ids = cr.rasgos.map(r => r.id);
+    const eco = ids.includes('accion_de_jefe') ? 'Acción de Jefe' : ids.includes('turno_doble') ? 'Turno Doble' : '';
+    v.appendChild(this.h('p', S.jefe && !eco ? 'dir-aviso' : 'dir-nota', eco
+      ? `Economía de acciones: ${eco}.`
+      : 'Economía de acciones: sin Acción de Jefe ni Turno Doble, necesita un séquito que le compre tiempo.'));
+    [['fases', 'Fases'], ['victoria', 'Victoria alternativa'], ['guarida', 'Su guarida']].forEach(([k, rot]) => {
+      if (!(cr.jefe[k] || '').trim()) return;
+      const b = this.h('div', 'dir-bloque');
+      b.append(this.h('span', 'fl', rot), this.h('div', 'u-pre-wrap dir-texto', cr.jefe[k]));
+      v.appendChild(b);
+    });
+    const acc = this.h('div', 'dir-acc dir-acc-centro');
+    const g = this.h('button', 'btn btn-g'); g.type = 'button';
+    g.innerHTML = this._ico('i-d20') + 'Acción de Guarida';
+    g.addEventListener('click', () => this.tirarTabla('guarida', 'Acción de Guarida'));
+    acc.appendChild(g);
+    v.appendChild(acc);
+    v.appendChild(this.h('p', 'dir-nota', 'La guarida actúa al final de cada ronda, sin gastar PA ni Reacción, y no repite la misma dos rondas seguidas. Toda Aptitud de Peso 3 se anuncia una ronda antes.'));
+  },
+  _editar_jefe() {
+    const cr = this.cr;
+    const v = this._vista('jefe', 'edit');
+    v.textContent = '';
+    [['fases', 'Fases', 'fases', 'Qué cambia al bajar de la mitad de sus PV.'],
+     ['victoria', 'Victoria alternativa', 'victoria', 'El combate termina si el grupo…'],
+     ['guarida', 'Su guarida', '', 'Cómo es el lugar y qué hace cuando actúa.']].forEach(([k, rot, tabla, ayuda]) => {
+      const ta = document.createElement('textarea');
+      ta.value = cr.jefe[k] || ''; ta.placeholder = ayuda; ta.style.minHeight = '56px';
+      ta.setAttribute('aria-label', rot);
+      ta.addEventListener('input', () => { cr.jefe[k] = ta.value; this._markUnsaved(); });
+      const caja = this.h('div', 'dir-con-dado');
+      caja.appendChild(ta);
+      if (tabla) caja.appendChild(this._botonDado(`Tirar ${rot.toLowerCase()} al azar`, () => {
+        const t = this._azar(this.DB.tablas[tabla].filas);
+        ta.value = cr.jefe[k] = (tabla === 'victoria' ? 'El combate termina si el grupo ' + t.replace(/^…/, '') : t);
+        this._markUnsaved();
+      }));
+      v.appendChild(this._campo(rot, caja));
+    });
+    v.appendChild(this._pieEdicion('jefe'));
+  },
+
+  /* ── Notas: revisión final ────────────────────────────────────── */
+  _pintarRevision(S) {
+    const host = document.getElementById('revision_list'); if (!host || !S) return;
+    const cr = this.cr;
+    host.textContent = '';
+    const ids = cr.rasgos.map(r => r.id);
+    const pistas = [
+      (cr.senal || '').trim() ? 'Señal escrita.' : 'Falta la señal.',
+      (cr.contexto || '').trim() ? 'Contexto táctico escrito.' : 'Falta el contexto táctico.',
+      S.nDebs ? `Tiene ${S.nDebs} Debilidad${S.nDebs > 1 ? 'es' : ''}: ¿cómo puede averiguarla${S.nDebs > 1 ? 's' : ''} el grupo?` : 'Sin Debilidades: nada que descubrir.',
+      S.noMoral ? 'No tira Moral: anota cuándo deja de pelear.' : `Moral ${S.moral}.`,
+    ];
+    this.DB.tablas.revision.filas.forEach((q, n) => {
+      const fila = this.h('label', 'dir-check');
+      const chk = document.createElement('input');
+      chk.type = 'checkbox'; chk.checked = !!cr.revision[n];
+      chk.addEventListener('change', () => { cr.revision[n] = chk.checked; this._markUnsaved(); });
+      const t = this.h('span', 'dir-check-t');
+      const [preg, resto] = q.split('? ');
+      t.append(this.h('strong', null, preg + (resto ? '?' : '')), document.createTextNode(resto ? ' ' + resto : ''), this.h('span', 'dir-check-p', pistas[n] || ''));
+      fila.append(chk, t);
+      host.appendChild(fila);
+    });
+    // Comprobaciones de las reglas
+    const av = [];
+    if (S.exceso) av.push(`Peso ${S.pesoGastado} de ${S.pesoMax}: ${S.exceso >= 2 ? `cuenta como NA ${S.naVA} al calibrar el encuentro` : 'un punto por encima del presupuesto'}.`);
+    if (S.esbirro && S.pesoGastado) av.push('Un esbirro no tiene Rasgos propios, solo los de su tipo.');
+    const p3 = S.infos.filter(x => !S.esGratis(x) && x.i.peso === 3).length;
+    if (cr.na < 5 && p3 > 1) av.push('Por debajo de NA 5, una sola pieza de Peso 3 como máximo.');
+    (S.tipo.exige || []).forEach(id => { if (!ids.includes(id)) av.push(`${S.tipo.name}: debe tener ${this._libIdx()[id]?.e.name || id}.`); });
+    if (S.tipo.tamMin && this.ORDEN_TAM.indexOf(cr.tam) < this.ORDEN_TAM.indexOf(S.tipo.tamMin)) av.push(`${S.tipo.name}: tamaño Grande o mayor.`);
+    if (S.jefe && !ids.includes('accion_de_jefe') && !ids.includes('turno_doble')) av.push('Jefe sin Acción de Jefe ni Turno Doble: dale un séquito.');
+    if (S.jefe && S.infos.filter(x => x.i.tipo !== 'Rasgo' || x.i.peso >= 2).length === 0) av.push('Un jefe necesita al menos una mecánica que no sea «más daño».');
+    if (S.nDebs > 2) av.push('Las Debilidades devuelven Peso hasta un máximo de 2.');
+    this._avisosCurva(S).forEach(a => av.push(a));
+    if (av.length) av.forEach(a => host.appendChild(this.h('p', 'dir-aviso', a)));
+    else host.appendChild(this.h('p', 'dir-nota dir-ok', 'Dentro de las reglas: Peso, tipo y curva en orden.'));
+  },
+
+  /* ── Plantillas (Manual de Monstruos, Cap. 4) ─────────────────── */
+  abrirPlantillas() {
+    this.abrirSelector({
+      titulo: 'Plantillas',
+      sub: 'Convierte esta criatura en otra sin reescribirla',
+      buscar: 'Buscar plantilla…',
+      items: () => Object.entries(this.DB.plantillas).map(([k, p]) => ({ k, nombre: p.name, etiqueta: 'NA ' + p.naTxt, texto: p.txt })),
+      alElegir: k => { this.aplicarPlantilla(k); this.cerrarSelector(); return false; },
+    });
+  },
+  aplicarPlantilla(k) {
+    const p = this.DB.plantillas[k]; if (!p) return;
+    const cr = this.cr;
+    cr.na = Math.max(0, Math.min(15, cr.na + (parseInt(p.na, 10) || 0)));
+    if (p.tam) cr.tam = this.ORDEN_TAM[Math.max(0, Math.min(5, this.ORDEN_TAM.indexOf(cr.tam) + p.tam))];
+    if (p.rol && this.DB.roles[p.rol]) cr.rol = p.rol;
+    if (p.horda) { cr.estructura = 'horda'; cr.tam = 'diminuto'; }
+    if (p.tipo && this.DB.tipos[p.tipo]) { cr.tipo = p.tipo; this._ponerRasgosDeTipo(cr); }
+    const idx = this._libIdx();
+    (p.pierdeFam || []).forEach(f => { cr.rasgos = cr.rasgos.filter(r => r.gratis || idx[r.id]?.fam !== f); });
+    if (p.pierdeMayor) {
+      const pagados = cr.rasgos.filter(r => !r.gratis).map(r => ({ r, peso: this.rasgoInfo(r).peso })).sort((a, b) => b.peso - a.peso);
+      if (pagados[0] && pagados[0].peso > 0) cr.rasgos = cr.rasgos.filter(r => r !== pagados[0].r);
+    }
+    (p.gana || []).forEach(id => {
+      if (!idx[id] || cr.rasgos.some(r => r.id === id)) return;
+      const r = { uid: this._uid(), id };
+      if (p.notas && p.notas[id]) r.nota = p.notas[id];
+      cr.rasgos.push(r);
+    });
+    if (p.a) cr.rasgos.push({ uid: this._uid(), custom: true, name: 'Blindaje de plantilla', tipo: 'Rasgo', peso: 0,
+      txt: `${this._signo(p.a)} de Armadura (plantilla ${p.name}).`, mod: { a: p.a }, gratis: true, origen: 'plantilla' });
+    cr.manual = {}; cr.pvAct = null;
+    cr.notas = (cr.notas ? cr.notas + '\n\n' : '') + `Plantilla ${p.name} (NA ${p.naTxt}): ${p.txt}`;
+    this.cambio(true);
+    this.toast(`Plantilla ${p.name} aplicada: revisa sus Rasgos`, 'ok');
+  },
+
+  /* ── Criatura al azar (Manual de Monstruos, Cap. 9) ───────────── */
+  criaturaAlAzar(naFijo) {
+    const T = this.DB.tablas;
+    const cr = this.nuevaCr();
+    cr.na = naFijo != null ? naFijo : this._azar([1, 1, 2, 2, 3, 3, 4, 4, 5, 6, 7, 8]);
+    cr.tipo = this._azar(this.AZAR_TIPO.filter(k => this.DB.tipos[k]));
+    cr.rol = this._azar(this.AZAR_ROL.filter(k => !k || this.DB.roles[k]));
+    const t6 = this._d(6);
+    cr.tam = t6 === 1 ? 'pequeno' : t6 <= 3 ? 'mediano' : t6 === 4 ? 'grande' : t6 === 5 ? 'enorme' : (this._d(6) <= 3 ? 'diminuto' : 'colosal');
+    const tipo = this.DB.tipos[cr.tipo];
+    if (tipo.tamMin && this.ORDEN_TAM.indexOf(cr.tam) < this.ORDEN_TAM.indexOf(tipo.tamMin)) cr.tam = tipo.tamMin;
+    this._ponerRasgosDeTipo(cr);
+    cr.salv = (tipo.salvDef || ['FUE', 'CON']).slice(0, 2);
+    // Lo que su tipo exige (Aliento, Aversión) va primero
+    (tipo.exige || []).forEach(id => this._ponerEn(cr, id));
+    // Rasgos: familia con d20, pieza con el dado de la familia, hasta gastar el Peso
+    const fams = Object.keys(this.DB.rasgos);
+    for (let intento = 0; intento < 60; intento++) {
+      const S = this.calcCr(cr);
+      if (S.pesoGastado >= S.pesoMax) break;
+      const d = this._d(20);
+      const fam = d >= 16 ? 'debilidades' : fams[d - 1];
+      const lista = this.DB.rasgos[fam] || [];
+      if (!lista.length) continue;
+      const e = this._azar(lista);
+      if (cr.rasgos.some(r => r.id === e.id)) continue;
+      if (fam === 'debilidades') { if (S.nDebs >= 2) continue; }
+      else {
+        if (e.peso > S.pesoMax - S.pesoGastado) continue;
+        if (e.peso === 3 && cr.na < 5 && S.infos.some(x => x.i.peso === 3 && !S.esGratis(x))) continue;
+      }
+      this._ponerEn(cr, e.id);
+    }
+    const forma = this._azar(T.forma.filas), visible = this._azar(T.rasgoVisible.filas.filter(x => x !== 'Tira dos veces'));
+    const mueve = this._azar(T.mueve.filas), ataca = this._azar(T.ataca.filas);
+    cr.idea = `Forma ${forma.toLowerCase()}; ${visible.toLowerCase()}. Se mueve ${mueve} y ataca con ${ataca.replace(/^no ataca: /, 'nada: ')}.`;
+    cr.ataqueNombre = /no ataca/.test(ataca) ? 'Presa' : ataca.replace(/^(un|una|la|el) /, '').replace(/^./, c => c.toUpperCase());
+    cr.quiere = this._azar(T.quiere.filas);
+    cr.pelea = this._azar(T.pelea.filas);
+    cr.habitat = this._azar(T.habitat.filas);
+    cr.senal = this._azar(T.senal.filas);
+    cr.botin = this._azar(T.botinCae.filas).replace(/NA × (\d+)/g, (_, n) => String(cr.na * parseInt(n, 10)));
+    cr.nombre = this._nombreAzar();
+    return cr;
+  },
+  _ponerEn(cr, id) {
+    if (!this._libIdx()[id] || cr.rasgos.some(r => r.id === id)) return;
+    cr.rasgos.push({ uid: this._uid(), id });
+  },
+});

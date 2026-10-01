@@ -1,0 +1,133 @@
+/* ══════════════════════════════════════════════════════════════════
+   S&S Director — Service Worker
+   ══════════════════════════════════════════════════════════════════
+   Estrategia:
+   · App shell  → precache + cache-first (funciona 100% offline).
+   · Google Fonts → stale-while-revalidate en caché aparte.
+   · Versionado: subir CACHE_VERSION invalida el caché anterior; el
+     cliente recibe el aviso "Nueva versión disponible" (boot.js) y al
+     tocarlo se envía {type:'SKIP_WAITING'} que este worker atiende.
+   ══════════════════════════════════════════════════════════════════ */
+'use strict';
+
+/* REGLA DE DESPLIEGUE: sube SIEMPRE esta versión al publicar cualquier
+   cambio. El navegador solo detecta actualizaciones si sw.js cambia en
+   bytes — con la misma versión, la app queda congelada para siempre. */
+const CACHE_VERSION = 'ss-director-v3';
+const FONT_CACHE    = 'ss-director-fonts-v1';
+
+const APP_SHELL = [
+  './',
+  './index.html',
+  './manifest.json',
+  './css/main.css',
+  './css/fuentes.css',
+  './fonts/cinzel-decorative-400.woff2',
+  './fonts/cinzel-decorative-700.woff2',
+  './fonts/cinzel-var.woff2',
+  './fonts/eb-garamond-var-italic.woff2',
+  './fonts/eb-garamond-var.woff2',
+  './fonts/im-fell-english-400-italic.woff2',
+  './fonts/im-fell-english-400.woff2',
+  './fonts/im-fell-english-sc-400.woff2',
+  './fonts/jetbrains-mono-var.woff2',
+  './fonts/spectral-300-italic.woff2',
+  './fonts/spectral-300.woff2',
+  './fonts/spectral-400-italic.woff2',
+  './fonts/spectral-400.woff2',
+  './fonts/spectral-600.woff2',
+  './css/temas.css',
+  './css/director.css',
+  './js/reglas.js',
+  './js/constants.js',
+  './js/storage.js',
+  './js/ui-dialogs.js',
+  './js/base.js',
+  './js/app.js',
+  './js/amenaza.js',
+  './js/biblioteca.js',
+  './js/mesa.js',
+  './js/asistente.js',
+  './js/editor.js',
+  './js/plegables.js',
+  './js/respaldo.js',
+  './js/historial.js',
+  './js/autocheck.js',
+  './js/boot.js',
+  './icono-192.png',
+  './icono-512.png',
+];
+
+/* ── Install: precachear el app shell ─────────────────────────── */
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_VERSION)
+      // addAll falla en bloque si un recurso no existe (p. ej. el icono
+      // aún no subido); cachear uno a uno tolera ausencias sin romper.
+      // cache:'reload' fuerza red real: sin él, el precache puede pinnear
+      // copias RANCIAS de la caché HTTP del navegador y el SW nuevo se
+      // instala con archivos viejos (la app "se actualiza" pero sigue vieja).
+      .then((cache) => Promise.allSettled(
+        APP_SHELL.map((url) => cache.add(new Request(url, { cache: 'reload' })))
+      ))
+  );
+});
+
+/* ── Activate: limpiar cachés de versiones anteriores ─────────── */
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) => Promise.all(
+      keys
+        // Solo las cachés de ESTA app: si se publica en el mismo origen que
+        // S&S Companion, borrar «todo lo que no sea mío» le vaciaría la suya.
+        .filter((k) => k.startsWith('ss-director-') && k !== CACHE_VERSION && k !== FONT_CACHE)
+        .map((k) => caches.delete(k))
+    )).then(() => self.clients.claim())
+  );
+});
+
+/* ── Mensajes desde la página (actualización inmediata) ───────── */
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting();
+});
+
+/* ── Fetch ─────────────────────────────────────────────────────── */
+self.addEventListener('fetch', (event) => {
+  const { request } = event;
+  if (request.method !== 'GET') return;
+
+  const url = new URL(request.url);
+
+  // Google Fonts: stale-while-revalidate (rápido + se actualiza solo).
+  if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
+    event.respondWith(
+      caches.open(FONT_CACHE).then(async (cache) => {
+        const cached = await cache.match(request);
+        const network = fetch(request)
+          .then((res) => { if (res.ok) cache.put(request, res.clone()); return res; })
+          .catch(() => cached);
+        return cached || network;
+      })
+    );
+    return;
+  }
+
+  // Mismo origen: cache-first con respaldo de red y actualización del caché.
+  if (url.origin === self.location.origin) {
+    event.respondWith(
+      caches.match(request).then((cached) =>
+        cached ||
+        fetch(request).then((res) => {
+          if (res.ok) {
+            const copy = res.clone();
+            caches.open(CACHE_VERSION).then((c) => c.put(request, copy));
+          }
+          return res;
+        }).catch(() =>
+          // Navegación sin red ni caché → devolver el shell.
+          request.mode === 'navigate' ? caches.match('./index.html') : undefined
+        )
+      )
+    );
+  }
+});

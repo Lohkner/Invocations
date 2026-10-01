@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="es" style="background:#06080a;color-scheme:dark">
+<head>
+<meta charset="UTF-8">
+<!-- CRITICAL: this inline style fires before any stylesheet and kills the iOS white flash -->
+<style>html,body{background:#06080a!important}*{box-sizing:border-box}</style>
+<!-- maximum-scale=1 evita el auto-zoom de iOS al enfocar inputs pequeños sin
+     bloquear el pellizco (iOS lo permite siempre); user-scalable=no se retira
+     por accesibilidad (WCAG 1.4.4). interactive-widget hace que el teclado en
+     pantalla de Android encoja el layout en vez de tapar los controles. -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="theme-color" content="#06080a">
+<meta name="background-color" content="#06080a">
+<title>S&amp;S Director</title>
+<meta name="description" content="Herramienta del Director de Juego de Stars &amp; Sorcery: crea amenazas, calibra encuentros y genera botín, zonas y facciones.">
+<link rel="icon" type="image/png" href="Create_Undead.webp">
+<link rel="apple-touch-icon" href="Create_Undead.webp">
+<link rel="manifest" href="manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="S&amp;S Director">
+<meta name="application-name" content="S&amp;S Director">
+<meta name="msapplication-TileColor" content="#06080a">
+<meta name="color-scheme" content="dark">
+<!-- Letras instaladas en la propia app (css/fuentes.css + /fonts): se ven igual
+     con o sin conexión. Se precargan las dos que pintan la primera pantalla. -->
+<link rel="preload" href="fonts/cinzel-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/spectral-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/fuentes.css">
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/temas.css">
+<link rel="stylesheet" href="css/director.css">
+</head>
+<body>
+<!-- Sprite de iconos unificados (trazo 1.5px, hereda color). Uso: <svg class="ico"><use href="#i-nombre"/></svg> -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><linearGradient id="g-sk-oro" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6e1a8"/><stop offset=".45" stop-color="#d9b877"/><stop offset=".8" stop-color="#9a7638"/><stop offset="1" stop-color="#e9cd8c"/></linearGradient><linearGradient id="g-sk-bronce" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fce9ae"/><stop offset=".3" stop-color="#e6c170"/><stop offset=".65" stop-color="#b38a3c"/><stop offset="1" stop-color="#7a5820"/></linearGradient><filter id="f-sk-niebla" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".32" numOctaves="3" seed="7"/><feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 2.2 -1.05"/><feComposite in2="SourceGraphic" operator="in"/></filter><radialGradient id="g-sk-orbe-adr" cx="46%" cy="58%" r="58%"><stop offset="0" stop-color="#fff1c6"/><stop offset=".22" stop-color="#ffb24e"/><stop offset=".55" stop-color="#d4610f"/><stop offset=".85" stop-color="#5e2204"/><stop offset="1" stop-color="#1c0801"/></radialGradient><radialGradient id="g-sk-orbe-ing" cx="46%" cy="58%" r="58%"><stop offset="0" stop-color="#e2f6ff"/><stop offset=".22" stop-color="#6fc6ff"/><stop offset=".55" stop-color="#1f74c6"/><stop offset=".85" stop-color="#0a2a5a"/><stop offset="1" stop-color="#030a1c"/></radialGradient><radialGradient id="g-sk-vol" cx="30%" cy="25%" r="85%"><stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset=".4" stop-color="#fff" stop-opacity="0"/><stop offset=".75" stop-color="#000" stop-opacity=".15"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></radialGradient><linearGradient id="g-sk-rebote-adr"><stop offset="0" stop-color="#ffcf7a" stop-opacity="0"/><stop offset=".5" stop-color="#ffcf7a"/><stop offset="1" stop-color="#ffcf7a" stop-opacity="0"/></linearGradient><linearGradient id="g-sk-rebote-ing"><stop offset="0" stop-color="#9edcff" stop-opacity="0"/><stop offset=".5" stop-color="#9edcff"/><stop offset="1" stop-color="#9edcff" stop-opacity="0"/></linearGradient></defs></svg>
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5.5L19.5 6"/></symbol>
+  <symbol id="i-quill" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4c-4.5-.5-9 1.8-11.2 5.8L5.5 16 8 18.5l6.2-3.3C18.2 13 20.5 8.5 20 4z"/><path d="M3.5 20.5L10 14"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M6 13l6 6 6-6"/></symbol>
+  <symbol id="i-rot-l" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+  <symbol id="i-rot-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></symbol>
+  <symbol id="i-adv-up" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 5l8 14H4z"/></symbol>
+  <symbol id="i-adv-down" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 19L4 5h16z"/></symbol>
+  <symbol id="i-adv-eq" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 9.5h12M6 14.5h12"/></symbol>
+  <!-- Ataque y daño (tarjetas de Ataques) -->
+  <symbol id="i-sword" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4v4.5L10.5 18l-4.5-4.5L15.5 4z"/><path d="M4.5 12l7.5 7.5"/><path d="M7 17l-3 3"/></symbol>
+  <symbol id="i-d20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M12 2.5l8.5 4.8v9.4L12 21.5l-8.5-4.8V7.3z"/><path d="M12 7.5l4.5 7.5h-9z"/><path d="M12 2.5v5M3.5 7.3L7.5 15M20.5 7.3L16.5 15M7.5 15l4.5 6.5 4.5-6.5"/></symbol>
+  <!-- Grado 5 de habilidad (Maestría Absoluta) -->
+  <symbol id="i-joya" viewBox="0 0 24 24"><polygon points="12,1 20.5,12 12,23 3.5,12" fill="currentColor"/><polygon points="12,1 3.5,12 8.4,12 12,6.2" fill="#fff" opacity=".45"/><polygon points="12,1 20.5,12 15.6,12 12,6.2" fill="#fff" opacity=".15"/><polygon points="20.5,12 12,23 12,17.8 15.6,12" fill="#000" opacity=".4"/><polygon points="3.5,12 12,23 12,17.8 8.4,12" fill="#000" opacity=".2"/><polygon points="12,6.2 15.6,12 12,17.8 8.4,12" fill="#fff" opacity=".12" stroke="#fff" stroke-opacity=".35" stroke-width=".5"/><polygon points="12,1 20.5,12 12,23 3.5,12" fill="none" stroke="#000" stroke-opacity=".45" stroke-width=".8"/><path d="M7.2 9.6 9.8 5.8" stroke="#fff" stroke-width="1.1" stroke-linecap="round" opacity=".85"/></symbol>
+  <symbol id="i-arma-shuriken" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 2.5 14 10l7.5 2-7.5 2-2 7.5-2-7.5-7.5-2L10 10z"/><circle cx="12" cy="12" r="1.6"/></symbol>
+  <symbol id="i-arma-ballesta" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 10.5C7 6.8 17 6.8 20.5 10.5"/><path d="M3.5 10.5 12 14l8.5-3.5"/><path d="M12 5v16"/><path d="M10.2 7 12 4.2 13.8 7"/><path d="M12 17.5l-2.2 1.6"/></symbol>
+  <symbol id="i-arma-maza" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l8.2-8.2"/><circle cx="15.5" cy="8.5" r="4"/><path d="M15.5 2.5v2M21.5 8.5h-2M19.8 4.2l-1.4 1.4M11.2 4.2l1.4 1.4M19.8 12.8l-1.4-1.4"/></symbol>
+  <symbol id="i-arma-lanza" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20 15 9"/><path d="M15 9c0-2.5 2.5-4.5 5.5-5.5-1 3-3 5.5-5.5 5.5z"/><path d="M12.3 9.7l2 2"/></symbol>
+  <symbol id="i-arma-fuego" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5h17v3H11l-1.5 7.5H6l1.5-7.5h-4z"/><path d="M10.5 11.5c0 2 .9 2.6 2.4 2.6"/><path d="M17.5 8.5V7"/></symbol>
+  <symbol id="i-arma-energia" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M13 2.5 5.5 13.5H11l-1 8 7.5-11H12z"/></symbol>
+  <symbol id="i-sk-slot" viewBox="0 0 24 24"><polygon points="12,1.5 19.4,4.6 22.5,12 19.4,19.4 12,22.5 4.6,19.4 1.5,12 4.6,4.6" fill="url(#g-sk-oro)" stroke="#2a1e0a" stroke-width=".8"/><polygon points="12,3.4 18.1,6.1 20.6,12 18.1,17.9 12,20.6 5.9,17.9 3.4,12 5.9,6.1" fill="#0a0710" stroke="#000" stroke-opacity=".6" stroke-width=".6"/><path d="M6.3 17.6 12 20.1l5.7-2.5" fill="none" stroke="#fff" stroke-opacity=".09" stroke-width=".7"/></symbol>
+  <symbol id="i-sk-gema" viewBox="0 0 24 24"><polygon points="12,1.5 19.4,4.6 22.5,12 19.4,19.4 12,22.5 4.6,19.4 1.5,12 4.6,4.6" fill="url(#g-sk-oro)" stroke="#2a1e0a" stroke-width=".8"/><g transform="translate(12 12) scale(.8) translate(-12 -12)"><polygon points="12,1.5 19.4,4.6 22.5,12 19.4,19.4 12,22.5 4.6,19.4 1.5,12 4.6,4.6" fill="currentColor"/><polygon points="12,1.5 4.6,4.6 8.2,8.2 12,6.6" fill="#fff" opacity=".45"/><polygon points="4.6,4.6 1.5,12 6.6,12 8.2,8.2" fill="#fff" opacity=".3"/><polygon points="12,1.5 19.4,4.6 15.8,8.2 12,6.6" fill="#fff" opacity=".2"/><polygon points="19.4,4.6 22.5,12 17.4,12 15.8,8.2" fill="#fff" opacity=".06"/><polygon points="22.5,12 19.4,19.4 15.8,15.8 17.4,12" fill="#000" opacity=".25"/><polygon points="19.4,19.4 12,22.5 12,17.4 15.8,15.8" fill="#000" opacity=".4"/><polygon points="12,22.5 4.6,19.4 8.2,15.8 12,17.4" fill="#000" opacity=".3"/><polygon points="4.6,19.4 1.5,12 6.6,12 8.2,15.8" fill="#000" opacity=".12"/><polygon points="12,6.6 15.8,8.2 17.4,12 15.8,15.8 12,17.4 8.2,15.8 6.6,12 8.2,8.2" fill="#fff" fill-opacity=".14" stroke="#fff" stroke-opacity=".35" stroke-width=".5"/><polygon points="12,1.5 19.4,4.6 22.5,12 19.4,19.4 12,22.5 4.6,19.4 1.5,12 4.6,4.6" fill="none" stroke="#000" stroke-opacity=".45" stroke-width=".8"/><path d="M8.4 8.9 10.6 7.9" stroke="#fff" stroke-width="1.1" stroke-linecap="round" opacity=".9"/></g></symbol>
+  <symbol id="i-sk-mitico-adr" viewBox="0 0 48 26"><g fill="none" stroke="url(#g-sk-bronce)" stroke-width="1.15" stroke-linecap="round"><path transform="translate(24 13) scale(1 1) translate(-15.8 -13)" d="M5.4 11.2C3.4 10.4 1.6 8.8 2.1 6.9C2.5 5.4 4.3 5 5.2 6C6 6.9 5.3 8.1 4.3 7.8"/><path transform="translate(24 13) scale(1 -1) translate(-15.8 -13)" d="M5.4 11.2C3.4 10.4 1.6 8.8 2.1 6.9C2.5 5.4 4.3 5 5.2 6C6 6.9 5.3 8.1 4.3 7.8"/><path transform="translate(24 13) scale(-1 1) translate(-15.8 -13)" d="M5.4 11.2C3.4 10.4 1.6 8.8 2.1 6.9C2.5 5.4 4.3 5 5.2 6C6 6.9 5.3 8.1 4.3 7.8"/><path transform="translate(24 13) scale(-1 -1) translate(-15.8 -13)" d="M5.4 11.2C3.4 10.4 1.6 8.8 2.1 6.9C2.5 5.4 4.3 5 5.2 6C6 6.9 5.3 8.1 4.3 7.8"/></g><g fill="url(#g-sk-bronce)" stroke="#1a1005" stroke-width=".3"><circle cx="24" cy="1.2" r="1.1"/><circle cx="24" cy="24.8" r="1.1"/><path d="M8.8 13 11.8 11.6 11.8 14.4Z M39.2 13 36.2 11.6 36.2 14.4Z"/></g><circle cx="24" cy="13" r="11" fill="url(#g-sk-bronce)" stroke="#1a1005" stroke-width=".7"/><circle cx="24" cy="13" r="10" fill="none" stroke="#7a5820" stroke-width=".5"/><path d="M14.6 10.2C15.8 5.9 19.6 3.1 24 2.9" fill="none" stroke="#fff6d8" stroke-opacity=".75" stroke-width=".55" stroke-linecap="round"/><circle cx="24" cy="13" r="9.9" fill="#07040a"/><circle cx="24" cy="13" r="9.2" fill="url(#g-sk-orbe-adr)"/><circle cx="24" cy="13" r="9.2" fill="#fff" filter="url(#f-sk-niebla)" opacity=".5" style="mix-blend-mode:overlay"/><circle cx="24" cy="13" r="9.2" fill="url(#g-sk-vol)"/><path d="M18.94 19.62A8.46 8.46 0 0 0 30.62 17.6" fill="none" stroke="url(#g-sk-rebote-adr)" stroke-width=".9" stroke-linecap="round" opacity=".8"/><ellipse cx="20.5" cy="8.77" rx="2.39" ry="1.29" transform="rotate(-35 20.5 8.77)" fill="#fff" opacity=".78"/><circle cx="23.08" cy="7.3" r=".5" fill="#fff" opacity=".8"/><circle cx="24" cy="13" r="9.2" fill="none" stroke="#000" stroke-opacity=".6" stroke-width=".6"/></symbol>
+  <symbol id="i-sk-mitico-ing" viewBox="0 0 48 26"><g fill="none" stroke="url(#g-sk-bronce)" stroke-width="1.15" stroke-linecap="round"><path transform="translate(24 13) scale(1 1) translate(-15.8 -13)" d="M5.4 11.2C3.4 10.4 1.6 8.8 2.1 6.9C2.5 5.4 4.3 5 5.2 6C6 6.9 5.3 8.1 4.3 7.8"/><path transform="translate(24 13) scale(1 -1) translate(-15.8 -13)" d="M5.4 11.2C3.4 10.4 1.6 8.8 2.1 6.9C2.5 5.4 4.3 5 5.2 6C6 6.9 5.3 8.1 4.3 7.8"/><path transform="translate(24 13) scale(-1 1) translate(-15.8 -13)" d="M5.4 11.2C3.4 10.4 1.6 8.8 2.1 6.9C2.5 5.4 4.3 5 5.2 6C6 6.9 5.3 8.1 4.3 7.8"/><path transform="translate(24 13) scale(-1 -1) translate(-15.8 -13)" d="M5.4 11.2C3.4 10.4 1.6 8.8 2.1 6.9C2.5 5.4 4.3 5 5.2 6C6 6.9 5.3 8.1 4.3 7.8"/></g><g fill="url(#g-sk-bronce)" stroke="#1a1005" stroke-width=".3"><circle cx="24" cy="1.2" r="1.1"/><circle cx="24" cy="24.8" r="1.1"/><path d="M8.8 13 11.8 11.6 11.8 14.4Z M39.2 13 36.2 11.6 36.2 14.4Z"/></g><circle cx="24" cy="13" r="11" fill="url(#g-sk-bronce)" stroke="#1a1005" stroke-width=".7"/><circle cx="24" cy="13" r="10" fill="none" stroke="#7a5820" stroke-width=".5"/><path d="M14.6 10.2C15.8 5.9 19.6 3.1 24 2.9" fill="none" stroke="#fff6d8" stroke-opacity=".75" stroke-width=".55" stroke-linecap="round"/><circle cx="24" cy="13" r="9.9" fill="#07040a"/><circle cx="24" cy="13" r="9.2" fill="url(#g-sk-orbe-ing)"/><circle cx="24" cy="13" r="9.2" fill="#fff" filter="url(#f-sk-niebla)" opacity=".5" style="mix-blend-mode:overlay"/><circle cx="24" cy="13" r="9.2" fill="url(#g-sk-vol)"/><path d="M18.94 19.62A8.46 8.46 0 0 0 30.62 17.6" fill="none" stroke="url(#g-sk-rebote-ing)" stroke-width=".9" stroke-linecap="round" opacity=".8"/><ellipse cx="20.5" cy="8.77" rx="2.39" ry="1.29" transform="rotate(-35 20.5 8.77)" fill="#fff" opacity=".78"/><circle cx="23.08" cy="7.3" r=".5" fill="#fff" opacity=".8"/><circle cx="24" cy="13" r="9.2" fill="none" stroke="#000" stroke-opacity=".6" stroke-width=".6"/></symbol>
+  <!-- Objetos del inventario (resumen de Equipo & Tesoro) -->
+  <symbol id="i-eq-escudo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z"/></symbol>
+  <symbol id="i-eq-armadura" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M8 4h8l3.5 3-2.5 3.5V20H7v-9.5L4.5 7z"/><path d="M12 4v5M7 14h10"/></symbol>
+  <symbol id="i-eq-mochila" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M6.5 9a5.5 5.5 0 0 1 11 0v11h-11z"/><path d="M9 14h6v3.5H9zM10 4.5V3h4v1.5"/></symbol>
+  <symbol id="i-eq-comida" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="12" cy="6.5" rx="6" ry="2.5"/><path d="M6 6.5v10c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5v-10"/><path d="M6 11.5c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5"/></symbol>
+  <symbol id="i-eq-luz" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 3c2.6 3 4 5.2 4 7.5a4 4 0 0 1-8 0C8 8.2 9.4 6 12 3z"/><path d="M10.5 14.5L11 21h2l.5-6.5"/></symbol>
+  <symbol id="i-eq-agua" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="14.5" r="6"/><path d="M10.5 8.5V4.5h3v4"/></symbol>
+  <symbol id="i-eq-cuerda" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><circle cx="11" cy="11" r="3.5"/><path d="M18 11c0 4 1.2 6.5 3 9"/></symbol>
+  <symbol id="i-eq-kit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="3.5" y="8" width="17" height="11" rx="1.5"/><path d="M9 8V5.5h6V8M3.5 12.5h17M11 12.5v2h2v-2"/></symbol>
+  <symbol id="i-eq-ropa" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M8.5 4L3.5 7l2 4.2L8 10v10h8V10l2.5 1.2 2-4.2-5-3c-.8 1.4-2 2-3.5 2s-2.7-.6-3.5-2z"/></symbol>
+  <symbol id="i-eq-foco" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M7 4h10l4 5-9 11L3 9z"/><path d="M3 9h18M12 20L8.5 9 12 4l3.5 5z"/></symbol>
+  <symbol id="i-eq-brujula" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M15.5 8.5L13 13l-4.5 2.5L11 11z"/></symbol>
+  <symbol id="i-eq-bolsa" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M8 7.5h8l3 5v4.5a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4v-4.5z"/><path d="M9 3.5l3 4 3-4"/></symbol>
+  <!-- S&S Director: tipos de pieza (Manual de Monstruos, Cap. 3) -->
+  <symbol id="i-escudo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 3l7 3v5c0 5-3.5 8.500-7 10-3.500-1.500-7-5-7-10V6z"/></symbol>
+  <symbol id="i-mas" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></symbol>
+</svg>
+<div id="ss-loader" aria-hidden="true">
+
+  <!-- Floating particles -->
+  <div class="loader-particles" aria-hidden="true">
+    <div class="lp"></div><div class="lp"></div><div class="lp"></div>
+    <div class="lp"></div><div class="lp"></div><div class="lp"></div>
+    <div class="lp"></div><div class="lp"></div>
+  </div>
+
+  <!-- Rune ring -->
+  <div class="loader-ring-wrap">
+    <div class="loader-ring"></div>
+    <div class="loader-ring-outer"></div>
+    <div class="loader-ring-inner"></div>
+    <div class="loader-arc"></div>
+    <div class="loader-arc-trail"></div>
+    <div class="loader-glyph">✦</div>
+  </div>
+
+  <!-- Text -->
+  <div class="loader-text">
+    <div class="loader-title">Stars &amp; Sorcery</div>
+    <div class="loader-deco"></div>
+    <div class="loader-sub">Director</div>
+    <div class="loader-status">Cargando…</div>
+  </div>
+
+</div>
+<div id="toast-ct" role="status" aria-live="polite" aria-atomic="false"></div>
+<div id="toast-ct-err" role="alert" aria-live="assertive" aria-atomic="true"></div>
+<div id="dice-overlay">
+  <div class="dice-backdrop" id="dice-backdrop" data-action="closeDiceOverlay"></div>
+  <div class="dice-card" id="dice-card">
+    <div class="dice-label" id="dice-label">Tirada</div>
+    <div class="dice-faces-row" id="dice-faces-row">
+      <!-- Populated dynamically by showDiceRoll() -->
+    </div>
+    <div class="dice-deco-line"></div>
+    <div class="dice-detail" id="dice-detail"></div>
+    <div class="dice-total-row" id="dice-total-row">
+      <span class="dice-total" id="dice-total">—</span>
+    </div>
+    <span class="dice-badge" id="dice-badge" style="display:none"></span>
+    <!-- Historial (js/historial.js): plegado bajo cada tirada, abierto al
+         entrar desde el menú de acciones. -->
+    <details class="dice-hist" id="dice_hist" hidden>
+      <summary class="dice-hist-sum">Últimas tiradas <span class="dice-hist-n" id="dice_hist_n">0</span></summary>
+      <ol class="dice-hist-list" id="dice_hist_list"></ol>
+      <p class="dice-hist-vacia" id="dice_hist_vacia" hidden>Aún no hay tiradas.</p>
+    </details>
+    <button class="dice-close-btn" id="dice-close-btn" data-action="closeDiceOverlay" aria-label="Cerrar resultado de dados"><svg class="ico" aria-hidden="true"><use href="#i-x"/></svg>Cerrar</button>
+    <div style="font-family:var(--fm);font-size:var(--fs-2xs);color:var(--border);letter-spacing:.08em;margin-top:2px">↓ desliza para cerrar</div>
+  </div>
+</div>
+<input type="file" id="img_input" accept="image/*" style="display:none" onchange="app.startCrop(this)">
+<input type="file" id="bg_home_input" accept="image/*" style="display:none" onchange="app.loadBgImage('home',this)">
+<input type="file" id="bg_app_input"  accept="image/*" style="display:none" onchange="app.loadBgImage('app',this)">
+<input type="file" id="json_char_input" accept=".json" style="display:none" onchange="app.loadJSON(this)">
+<input type="file" id="respaldo_input" accept=".json,application/json" style="display:none" onchange="app.restaurarRespaldo(this)">
+<input type="file" id="json_rules_input" accept=".json" style="display:none" onchange="app.loadRulesFile(this)">
+
+<div id="home-screen" class="screen" role="main">
+  <div class="home-hdr">
+    <h1 class="home-title">Stars &amp; Sorcery</h1>
+    <p class="home-sub">Director</p>
+    <div class="home-deco"></div>
+  </div>
+
+  <div class="home-body">
+    <div class="home-actions-primary">
+      <button class="home-btn-new" data-action="newChar" aria-label="Crear una amenaza nueva">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nueva Amenaza
+      </button>
+      <button class="home-btn-import" data-action="abrirBestiario" aria-label="Abrir el bestiario">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4.5A2.5 2.5 0 0 1 4.5 2H20v20H4.5A2.5 2.5 0 0 1 2 19.5v-15z"/><path d="M7 8h7M7 12h5"/></svg>
+        Bestiario
+      </button>
+    </div>
+
+    <button class="home-settings-btn home-mesa-btn" data-action="abrirMesa" aria-label="Abrir la Mesa del Director: encuentros, botín, zonas y facciones">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l8.5 4.8v9.4L12 21.5l-8.5-4.8V7.3z"/><path d="M12 7.5l4.5 7.5h-9z"/></svg>
+      Mesa del Director
+    </button>
+    <button class="home-settings-btn" onclick="app.openSettings()" aria-label="Abrir ajustes y datos">
+      <svg class="ico ico-solo" style="width:14px;height:14px" aria-hidden="true"><use href="#i-gear"/></svg>
+      Ajustes &amp; Datos
+    </button>
+
+    <div class="home-roster-wrap">
+      <div class="home-roster-hdr">
+        <span class="home-roster-title">Amenazas</span>
+        <span class="home-roster-hint">desliza · → ordenar · ← eliminar</span>
+      </div>
+      <div class="home-roster-body">
+        <div id="home-roster"></div>
+      </div>
+    </div>
+
+    <div class="home-footer">
+      <button class="home-footer-btn" onclick="app.toast('Selecciona un archivo .json de amenaza','info');setTimeout(()=>document.getElementById('json_char_input').click(),80)" aria-label="Importar una amenaza desde un JSON">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Importar
+      </button>
+      <div class="home-footer-sep"></div>
+      <button class="home-footer-btn" data-action="openDatabaseEditor" aria-label="Editor de reglas">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+        Editor de Reglas
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="app-screen" class="screen hidden" data-modo="ficha">
+  <div class="app-shell" role="main">
+    <header class="app-hdr">
+      <button class="app-hdr-back" data-action="goHome" title="Volver" aria-label="Volver al inicio"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <div style="flex:1;text-align:center;min-width:0">
+        <span class="app-hdr-ttl" id="app_hdr_ttl">Stars &amp; Sorcery</span>
+        <div class="last-saved" id="last_saved_lbl"></div>
+      </div>
+      <button class="app-hdr-save solo-ficha" data-action="saveChar" aria-label="Guardar la amenaza" title="Guardar">Guardar</button>
+      <div class="sdial" id="sdial">
+        <button class="sdial-btn" data-action="toggleDial" title="Acciones" aria-label="Abrir menú de acciones" aria-expanded="false"><svg class="ico ico-solo" style="width:16px;height:16px" aria-hidden="true"><use href="#i-gear"/></svg></button>
+        <div class="sdial-menu" id="sdial_menu">
+          <button class="sdial-item solo-ficha" onclick="app.abrirPlantillas();app.toggleDial()" title="Aplicar una plantilla" aria-label="Aplicar una plantilla a esta amenaza"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.6 5.6L20.5 9.5l-4.3 4.1 1.1 6-5.3-2.9-5.3 2.9 1.1-6L3.5 9.5l5.9-.9z"/></svg></button>
+          <button class="sdial-item solo-ficha" onclick="app.duplicarAmenaza();app.toggleDial()" title="Duplicar la amenaza" aria-label="Duplicar la amenaza"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M5 16H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v1"/></svg></button>
+          <button class="sdial-item sdial-danger solo-ficha" onclick="app.deleteCurrentChar();app.toggleDial()" title="Eliminar la amenaza" aria-label="Eliminar la amenaza guardada"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
+          <button class="sdial-item solo-ficha" id="sdial_modo_edicion" onclick="app.modoEdicion();app.toggleDial()" title="Modo edición: todas las tarjetas" aria-label="Modo edición: abrir todas las tarjetas en edición"><svg class="ico ico-solo" style="width:16px;height:16px" aria-hidden="true"><use href="#i-quill"/></svg></button>
+          <button class="sdial-item" onclick="app.verHistorialTiradas();app.toggleDial()" title="Últimas tiradas" aria-label="Ver las últimas tiradas"><svg class="ico ico-solo" style="width:16px;height:16px" aria-hidden="true"><use href="#i-d20"/></svg></button>
+          <button class="sdial-item" onclick="app.openSettings();app.toggleDial()" title="Ajustes y datos" aria-label="Abrir ajustes y datos"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+        </div>
+      </div>
+    </header>
+
+    <div class="pages-wrapper" id="pages_wrapper">
+      <div class="pages-track" id="pages_track">
+
+        <!-- ══════════ FICHA DE AMENAZA ══════════ -->
+        <div class="page" id="page_0" data-modo="ficha">
+
+          <!-- Retrato, nombre e idea (paso 1 del Manual de Monstruos) -->
+          <div class="panel panel-accent" style="padding:0" id="card_personal">
+            <div id="personal_edit_view" style="display:none">
+              <div style="padding:14px 16px 0;display:flex;justify-content:center">
+                <div class="port-card-edit" onclick="document.getElementById('img_input').click()" role="button" tabindex="0" aria-label="Cambiar el retrato de la criatura" onkeydown="if(event.key==='Enter'||event.key===' ')document.getElementById('img_input').click()">
+                  <img id="char_img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 24 24' fill='%23382f47'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/%3E%3C/svg%3E" alt="Retrato">
+                  <div class="port-hint"><span>Cambiar Retrato</span></div>
+                </div>
+              </div>
+              <div style="padding:10px 12px">
+                <div style="margin-bottom:6px"><span class="fl">Nombre</span><input type="text" id="char_name" placeholder="ej. Tejedora del Techo" style="font-family:var(--fd);font-size:var(--fs-2xl);font-weight:600" autocomplete="off" spellcheck="false"></div>
+                <div style="margin-bottom:4px"><span class="fl">La idea <span class="is-field-note">— qué es y qué problema plantea</span></span><textarea id="char_concept" placeholder="Una araña que caza desde el techo y se lleva a quien se queda atrás." style="min-height:64px;font-size:var(--fs-xl)"></textarea></div>
+                <button type="button" class="btn btn-g dir-azar" data-action="nombreAlAzar"><svg class="ico" aria-hidden="true"><use href="#i-d20"/></svg>Nombre al azar</button>
+                <button class="bcnf" onclick="app.confirmSection('personal')"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>Confirmar</button>
+              </div>
+            </div>
+            <div id="personal_summary_view" style="padding:14px 16px 10px">
+              <div style="display:flex;flex-direction:column;align-items:center">
+                <div class="port-card">
+                  <img id="char_img_summary" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 24 24' fill='%23382f47'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/%3E%3C/svg%3E" alt="Retrato">
+                </div>
+                <div class="port-identity">
+                  <div class="port-name" id="sum_name_ov">—</div>
+                  <div class="port-divider"></div>
+                  <div class="port-lvl" id="sum_lvl_ov">NA 1</div>
+                </div>
+              </div>
+              <div style="padding:6px 4px 10px;text-align:center">
+                <div id="sum_bio_ov" class="u-pre-wrap port-bio"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Amenaza: NA, tipo, tamaño, Rol y estructura (pasos 2 a 4) -->
+          <div class="panel" id="card_identity">
+            <div class="ph identity-edit-header"><span class="pt">Amenaza</span></div>
+            <div id="identity_edit_view" style="display:none"></div>
+            <div id="identity_summary_view">
+              <div class="id-fila" id="id_fila"></div>
+            </div>
+          </div>
+
+          <!-- Estado: los PV en mesa -->
+          <details class="panel est4 fold" id="fold_estado" data-fold="estado" open style="padding:13px 14px">
+            <summary class="ph" style="margin-bottom:11px"><span class="pt">Estado</span></summary>
+            <div class="e4-pv">
+              <div class="e4-row e4-row-pv">
+                <span class="e4-name"><svg class="e4-joya" aria-hidden="true"><use href="#i-joya"/></svg>Puntos de Vida</span>
+                <span class="e4-ctl">
+                  <button class="res-btn e4-btn" data-cur="cur_pv" data-max="max_pv" data-delta="-1" aria-label="Reducir puntos de vida">&minus;</button>
+                  <span class="e4-num"><input type="text" inputmode="numeric" id="cur_pv" value="0" class="fin res-fin e4-fin" aria-label="Puntos de vida actuales"><span class="e4-sep">/</span><span class="e4-max" id="max_pv">0</span></span>
+                  <button class="res-btn e4-btn" data-cur="cur_pv" data-max="max_pv" data-delta="1" aria-label="Aumentar puntos de vida">+</button>
+                </span>
+              </div>
+              <div class="res-track e4-track" aria-hidden="true"><div class="res-fill res-fill-pv" id="res_fill_pv"></div></div>
+            </div>
+            <p class="dir-nota" id="estado_nota"></p>
+            <details class="rest-panel" id="rest_panel">
+              <summary>Restablecer</summary>
+              <div class="rest-list" id="rest_list"></div>
+            </details>
+          </details>
+        </div><!-- /page 0 -->
+
+        <div class="page" id="page_1" data-modo="ficha">
+          <!-- Estadísticas: lo que sale de la tabla por NA, ajustado por Rol,
+               Tamaño y Rasgos; en edición, el valor de la curva frente al tuyo. -->
+          <details class="panel fold def-card" id="fold_stats" data-fold="stats" open>
+            <summary class="ph"><span class="pt">Estadísticas</span></summary>
+            <div id="stats_summary_view"></div>
+            <div id="stats_edit_view" style="display:none"></div>
+          </details>
+
+          <details class="panel fold" id="fold_ataques" data-fold="ataques" open>
+            <summary class="ph" style="margin-bottom:4px"><span class="pt">Ataque</span></summary>
+            <div id="attack_summary_view"></div>
+            <div id="attack_edit_view" style="display:none"></div>
+          </details>
+
+          <details class="panel fold" id="fold_salv" data-fold="salv" open>
+            <summary class="ph"><span class="pt">Salvaciones y Moral</span></summary>
+            <div id="saves_summary_view"></div>
+            <div id="saves_edit_view" style="display:none"></div>
+          </details>
+        </div><!-- /page 1 -->
+
+        <div class="page" id="page_2" data-modo="ficha">
+          <details class="panel fold" id="fold_rasgos" data-fold="rasgos" open>
+            <summary class="ph">
+              <span class="pt">Rasgos y Aptitudes</span>
+              <div class="pill-badge" title="Peso gastado / presupuesto">
+                <span id="peso_gastado" style="color:var(--gold);font-weight:700">0</span><span id="peso_max" style="color:var(--rim)">/0</span>
+              </div>
+            </summary>
+            <div class="dir-load">
+              <span class="dir-load-lbl">Peso</span>
+              <span class="dir-load-val" id="peso_txt">0/0</span>
+            </div>
+            <div class="lbar"><div id="peso_bar" class="lfill"></div></div>
+            <p id="peso_warn" class="dir-warn"></p>
+            <div style="text-align:center;margin:10px 0 8px"><button class="btn btn-g" data-action="abrirBiblioteca">Abrir la Biblioteca</button></div>
+            <div id="rasgos_list" style="display:flex;flex-direction:column;gap:4px"></div>
+          </details>
+        </div><!-- /page 2 -->
+
+        <div class="page" id="page_3" data-modo="ficha">
+          <!-- Señal y contexto táctico (pasos 7 y 8) -->
+          <details class="panel fold" id="fold_senal" data-fold="senal" open>
+            <summary class="ph"><span class="pt">Señal y contexto</span></summary>
+            <div id="senal_summary_view"></div>
+            <div id="senal_edit_view" style="display:none"></div>
+          </details>
+
+          <details class="panel fold" id="fold_jefe" data-fold="jefe" open hidden>
+            <summary class="ph"><span class="pt">Jefe: fases y guarida</span></summary>
+            <div id="jefe_summary_view"></div>
+            <div id="jefe_edit_view" style="display:none"></div>
+          </details>
+
+          <details class="panel fold" id="fold_revision" data-fold="revision" open>
+            <summary class="ph"><span class="pt">Revisión final</span></summary>
+            <div id="revision_list"></div>
+          </details>
+
+          <details class="panel fold" id="fold_notas" data-fold="notas" open>
+            <summary class="ph"><span class="pt">Notas</span></summary>
+            <textarea id="char_notes" aria-label="Notas de la amenaza" style="min-height:96px;font-size:var(--fs-xl)" placeholder="Lo que quieras recordar en mesa…"></textarea>
+          </details>
+        </div><!-- /page 3 -->
+
+        <!-- ══════════ MESA DEL DIRECTOR ══════════ -->
+        <div class="page" id="page_m0" data-modo="mesa">
+          <details class="panel fold" id="fold_grupo" data-fold="grupo" open>
+            <summary class="ph"><span class="pt">El grupo</span></summary>
+            <div id="grupo_body"></div>
+          </details>
+          <details class="panel fold" id="fold_encuentro" data-fold="encuentro" open>
+            <summary class="ph"><span class="pt">Encuentro</span></summary>
+            <div id="encuentro_body"></div>
+          </details>
+          <details class="panel fold" id="fold_combate" data-fold="combate" open>
+            <summary class="ph"><span class="pt">Combate</span></summary>
+            <div id="combate_body"></div>
+          </details>
+        </div>
+
+        <div class="page" id="page_m1" data-modo="mesa">
+          <details class="panel fold" id="fold_botin" data-fold="botin" open>
+            <summary class="ph"><span class="pt">Botín de la sesión</span></summary>
+            <div id="botin_body"></div>
+          </details>
+          <details class="panel fold" id="fold_objeto" data-fold="objeto" open>
+            <summary class="ph"><span class="pt">Objeto mágico</span></summary>
+            <div id="objeto_body"></div>
+          </details>
+          <details class="panel fold" id="fold_tesoro" data-fold="tesoro" open>
+            <summary class="ph">
+              <span class="pt">Tesoro guardado</span>
+              <div class="pill-badge"><span id="tesoro_count" style="color:var(--gold);font-weight:700">0</span></div>
+            </summary>
+            <div id="tesoro_body"></div>
+          </details>
+          <details class="panel fold" id="fold_botin_ref" data-fold="botin_ref">
+            <summary class="ph"><span class="pt">Consulta</span></summary>
+            <div id="botin_ref_body"></div>
+          </details>
+        </div>
+
+        <div class="page" id="page_m2" data-modo="mesa">
+          <details class="panel fold" id="fold_tiradas" data-fold="tiradas" open>
+            <summary class="ph"><span class="pt">Tiradas de viaje</span></summary>
+            <div id="tiradas_body"></div>
+          </details>
+          <details class="panel fold" id="fold_zonas" data-fold="zonas" open>
+            <summary class="ph">
+              <span class="pt">Zonas</span>
+              <div class="pill-badge"><span id="zonas_count" style="color:var(--gold);font-weight:700">0</span></div>
+            </summary>
+            <div id="zonas_body"></div>
+          </details>
+          <details class="panel fold" id="fold_peligros" data-fold="peligros">
+            <summary class="ph"><span class="pt">Peligros y trampas</span></summary>
+            <div id="peligros_body"></div>
+          </details>
+        </div>
+
+        <div class="page" id="page_m3" data-modo="mesa">
+          <details class="panel fold" id="fold_facciones" data-fold="facciones" open>
+            <summary class="ph">
+              <span class="pt">Facciones</span>
+              <div class="pill-badge"><span id="facciones_count" style="color:var(--gold);font-weight:700">0</span></div>
+            </summary>
+            <div id="facciones_body"></div>
+          </details>
+          <details class="panel fold" id="fold_conflicto" data-fold="conflicto" open>
+            <summary class="ph"><span class="pt">Conflicto entre Facciones</span></summary>
+            <div id="conflicto_body"></div>
+          </details>
+          <details class="panel fold" id="fold_turno" data-fold="turno">
+            <summary class="ph"><span class="pt">Turno de Facción</span></summary>
+            <div id="turno_body"></div>
+          </details>
+        </div>
+
+      </div><!-- /pages-track -->
+    </div><!-- /pages-wrapper -->
+
+    <div id="adv_fab" class="adv-fab" data-state="0">
+      <div class="adv-fab-opts" role="group" aria-label="Ventaja o Desventaja en las tiradas">
+        <button type="button" class="adv-opt adv-adv" data-adv="1" aria-pressed="false" onclick="app.setAdvantage(1)" title="Ventaja" aria-label="Ventaja"><svg class="ico ico-solo" aria-hidden="true"><use href="#i-adv-up"/></svg></button>
+        <button type="button" class="adv-opt adv-norm active" data-adv="0" aria-pressed="true" onclick="app.setAdvantage(0)" title="Normal" aria-label="Normal"><svg class="ico ico-solo" aria-hidden="true"><use href="#i-adv-eq"/></svg></button>
+        <button type="button" class="adv-opt adv-dis" data-adv="-1" aria-pressed="false" onclick="app.setAdvantage(-1)" title="Desventaja" aria-label="Desventaja"><svg class="ico ico-solo" aria-hidden="true"><use href="#i-adv-down"/></svg></button>
+      </div>
+      <button type="button" class="adv-fab-main" id="adv_fab_main" onclick="app.toggleAdvFab()" aria-haspopup="true" aria-expanded="false" aria-label="Tirada: Normal. Tocar para cambiar Ventaja/Desventaja" title="Ventaja / Desventaja"><svg class="ico ico-solo" aria-hidden="true"><use href="#i-adv-eq"/></svg></button>
+    </div>
+
+    <nav class="bnav bnav4" data-modo="ficha"><span class="nav-thread" aria-hidden="true"></span>
+      <button class="nbtn active" onclick="app.goToPage(0)" aria-label="Ir a Perfil"><span class="nico"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c-4.4 0-8 3.2-8 7.5 0 2.6 1.3 4.6 3 5.9V19a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-2.6c1.700-1.3 3-3.300 3-5.900C20 6.200 16.400 3 12 3z"/><circle cx="9" cy="11" r="1.6"/><circle cx="15" cy="11" r="1.6"/><path d="M10.500 20v-2.500M13.500 20v-2.500"/></svg></span><span class="nlbl">Perfil</span></button>
+      <button class="nbtn" onclick="app.goToPage(1)" aria-label="Ir a Combate"><span class="nico"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4v4.5L10.5 18l-4.5-4.5L15.5 4z"/><path d="M4.5 12l7.5 7.5"/><path d="M7 17l-3 3"/></svg></span><span class="nlbl">Combate</span></button>
+      <button class="nbtn" onclick="app.goToPage(2)" aria-label="Ir a Rasgos"><span class="nico"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4.5A2.5 2.5 0 0 1 4.5 2H20v20H4.5A2.5 2.5 0 0 1 2 19.5v-15z"/><path d="M20 2v20"/><path d="M7 8h7"/><path d="M7 12h5"/><path d="M7 16h7"/></svg></span><span class="nlbl">Rasgos</span></button>
+      <button class="nbtn" onclick="app.goToPage(3)" aria-label="Ir a Notas"><span class="nico"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg></span><span class="nlbl">Notas</span></button>
+    </nav>
+    <nav class="bnav bnav4" data-modo="mesa"><span class="nav-thread" aria-hidden="true"></span>
+      <button class="nbtn active" onclick="app.goToPage(0)" aria-label="Ir a Encuentro"><span class="nico"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.500 4H20v5.500L9.500 20 4 14.500z"/><path d="M4 4l6 6M3 9l3-3M9 3L6 6"/></svg></span><span class="nlbl">Encuentro</span></button>
+      <button class="nbtn" onclick="app.goToPage(1)" aria-label="Ir a Botín"><span class="nico"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="10" width="22" height="11" rx="1.5"/><path d="M1 10 Q1 3 12 3 Q23 3 23 10"/><line x1="1" y1="10" x2="23" y2="10"/><rect x="9" y="8.5" width="6" height="4" rx="1" stroke-width="1.5"/></svg></span><span class="nlbl">Botín</span></button>
+      <button class="nbtn" onclick="app.goToPage(2)" aria-label="Ir a Zonas"><span class="nico"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.500 8.500L13 13l-4.500 2.500L11 11z"/></svg></span><span class="nlbl">Zonas</span></button>
+      <button class="nbtn" onclick="app.goToPage(3)" aria-label="Ir a Facciones"><span class="nico"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4"/><path d="M5 4h12l-2.500 4L17 12H5"/></svg></span><span class="nlbl">Facciones</span></button>
+    </nav>
+  </div>
+</div><!-- /app-screen -->
+
+<dialog id="settings_modal" class="modal" aria-labelledby="settings_modal_title">
+  <div class="mhd">
+    <div class="mhd-left">
+      <div class="mhd-icon"><svg class="ico ico-solo" aria-hidden="true"><use href="#i-gear"/></svg></div>
+      <div>
+        <span class="mttl" id="settings_modal_title">Ajustes</span>
+        <span class="mttl-sub">Apariencia, retrato y datos</span>
+      </div>
+    </div>
+    <button class="bcls" data-action="closeSettings" aria-label="Cerrar ajustes"><svg class="ico ico-solo" aria-hidden="true"><use href="#i-x"/></svg></button>
+  </div>
+  <div class="mbd set-body">
+
+    <details class="set-sec" data-sec="apariencia" open>
+      <summary class="set-sum">Apariencia</summary>
+      <div class="set-sec-bd">
+        <div class="set-field">
+          <span class="set-lbl">Tema</span>
+          <div class="set-opts set-opts-3">
+            <button class="fs-btn theme-btn" data-theme="cripta" onclick="app.setTheme('cripta')"><span class="set-sw" style="--sw:#c2bb9c;--sw2:#0f1317"></span>Cripta</button>
+            <button class="fs-btn theme-btn" data-theme="forja" onclick="app.setTheme('forja')"><span class="set-sw" style="--sw:#e07b2a;--sw2:#130e0b"></span>Forja</button>
+            <button class="fs-btn theme-btn" data-theme="muerte" onclick="app.setTheme('muerte')"><span class="set-sw" style="--sw:#9ccc5a;--sw2:#0d120e"></span>Muerte viviente</button>
+          </div>
+        </div>
+        <div class="set-field">
+          <span class="set-lbl">Tamaño de letra</span>
+          <div class="set-opts set-opts-4">
+            <button class="fs-btn" id="fs_small"  onclick="app.setFontSize('small')"  aria-label="Letra pequeña"    style="font-size:12px">A</button>
+            <button class="fs-btn" id="fs_normal" onclick="app.setFontSize('normal')" aria-label="Letra normal"     style="font-size:15px">A</button>
+            <button class="fs-btn" id="fs_large"  onclick="app.setFontSize('large')"  aria-label="Letra grande"     style="font-size:18px">A</button>
+            <button class="fs-btn" id="fs_xlarge" onclick="app.setFontSize('xlarge')" aria-label="Letra muy grande" style="font-size:21px">A</button>
+          </div>
+          <span class="set-hint" id="fs_eco">Normal · 16px · toda la app</span>
+        </div>
+        <div class="set-field">
+          <span class="set-lbl">Estilo de letra</span>
+          <div class="set-opts set-opts-2">
+            <button class="fs-btn estilo-btn" data-estilo="clasico" onclick="app.setEstiloLetra('clasico')" aria-label="Estilo clásico: IM Fell English y EB Garamond">
+              <span class="estilo-t" style="font-family:'IM Fell English',Georgia,serif">Clásico</span>
+              <span class="estilo-b" style="font-family:'EB Garamond',Georgia,serif">Fell · Garamond</span>
+            </button>
+            <button class="fs-btn estilo-btn" data-estilo="moderno" onclick="app.setEstiloLetra('moderno')" aria-label="Estilo moderno: Cinzel y Spectral">
+              <span class="estilo-t" style="font-family:'Cinzel',Georgia,serif">Moderno</span>
+              <span class="estilo-b" style="font-family:'Spectral',Georgia,serif">Cinzel · Spectral</span>
+            </button>
+          </div>
+          <span class="set-hint">Cambia títulos, texto, números y rótulos a la vez, con letras de la misma época.</span>
+        </div>
+        <div class="set-field">
+          <span class="set-lbl">Fondo de pantalla</span>
+          <div class="set-bgs">
+            <div>
+              <span class="set-sublbl">Inicio</span>
+              <div class="set-bg-btns">
+                <button class="fs-btn" onclick="document.getElementById('bg_home_input').click()"><svg class="ico" aria-hidden="true"><use href="#i-up"/></svg>Subir</button>
+                <button id="bg_home_clear" class="fs-btn set-bg-x" style="display:none" onclick="app.setBgImage('home','')" aria-label="Quitar fondo de inicio" title="Quitar fondo"><svg class="ico ico-solo" aria-hidden="true"><use href="#i-x"/></svg></button>
+              </div>
+              <div id="bg_home_prev" class="bg-prev" hidden></div>
+              <span id="bg_home_estado" class="set-hint bg-estado" aria-live="polite">Sin imagen</span>
+            </div>
+            <div>
+              <span class="set-sublbl">Ficha y Mesa</span>
+              <div class="set-bg-btns">
+                <button class="fs-btn" onclick="document.getElementById('bg_app_input').click()"><svg class="ico" aria-hidden="true"><use href="#i-up"/></svg>Subir</button>
+                <button id="bg_app_clear" class="fs-btn set-bg-x" style="display:none" onclick="app.setBgImage('app','')" aria-label="Quitar fondo de la ficha" title="Quitar fondo"><svg class="ico ico-solo" aria-hidden="true"><use href="#i-x"/></svg></button>
+              </div>
+              <div id="bg_app_prev" class="bg-prev" hidden></div>
+              <span id="bg_app_estado" class="set-hint bg-estado" aria-live="polite">Sin imagen</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <details class="set-sec" data-sec="retrato">
+      <summary class="set-sum">Retrato</summary>
+      <div class="set-sec-bd">
+        <div class="set-field">
+          <span class="set-lbl">Tamaño</span>
+          <div class="ps-row">
+            <button class="fs-btn ps-btn" data-size="xs" onclick="app.setPortraitSize('xs')" title="Muy pequeño">XS</button>
+            <button class="fs-btn ps-btn" data-size="s"  onclick="app.setPortraitSize('s')"  title="Pequeño">S</button>
+            <button class="fs-btn ps-btn active" data-size="m" onclick="app.setPortraitSize('m')" title="Mediano">M</button>
+            <button class="fs-btn ps-btn" data-size="l"  onclick="app.setPortraitSize('l')"  title="Grande">L</button>
+            <button class="fs-btn ps-btn" data-size="xl" onclick="app.setPortraitSize('xl')" title="Muy grande">XL</button>
+          </div>
+        </div>
+        <div class="set-field">
+          <span class="set-lbl">Forma</span>
+          <div class="set-opts set-opts-4">
+            <button class="fs-btn psh-btn active" data-shape="rect"    onclick="app.setPortraitShape('rect')"    title="Rectangular"><span class="set-shape" data-f="rect"></span>Recto</button>
+            <button class="fs-btn psh-btn"        data-shape="rounded" onclick="app.setPortraitShape('rounded')" title="Redondeado"><span class="set-shape" data-f="rounded"></span>Suave</button>
+            <button class="fs-btn psh-btn"        data-shape="arch"    onclick="app.setPortraitShape('arch')"    title="Arco superior"><span class="set-shape" data-f="arch"></span>Arco</button>
+            <button class="fs-btn psh-btn"        data-shape="circle"  onclick="app.setPortraitShape('circle')"  title="Círculo"><span class="set-shape" data-f="circle"></span>Círculo</button>
+          </div>
+        </div>
+        <div class="set-row">
+          <div class="set-row-txt">
+            <span class="set-lbl">Borde dorado</span>
+            <span class="set-hint">Marco ornamentado; apagado queda un borde sutil.</span>
+          </div>
+          <button id="port_border_btn" class="toggle-btn" data-action="togglePortraitBorder" aria-pressed="true" aria-label="Borde dorado del retrato"></button>
+        </div>
+        <span class="set-hint">Se aplica a todos los retratos y se guarda al momento.</span>
+      </div>
+    </details>
+
+    <details class="set-sec" data-sec="preferencias">
+      <summary class="set-sum">Preferencias</summary>
+      <div class="set-sec-bd">
+        <div class="set-row">
+          <div class="set-row-txt">
+            <span class="set-lbl">Asistente de creación</span>
+            <span class="set-hint">«Nueva amenaza» abre los ocho pasos guiados. Apagado, abre la ficha en blanco.</span>
+          </div>
+          <button id="wiz_toggle_btn" class="toggle-btn" data-action="toggleAsistente" aria-pressed="true" aria-label="Usar el asistente al crear una amenaza"></button>
+        </div>
+        <div class="set-row">
+          <div class="set-row-txt">
+            <span class="set-lbl" id="scroll_preserve_lbl">Recordar posición</span>
+            <span class="set-hint">Cada pestaña vuelve a donde la dejaste.</span>
+          </div>
+          <button id="scroll_preserve_btn" class="toggle-btn" data-action="toggleScrollPreserve" aria-pressed="false" aria-label="Recordar la posición de cada pestaña"></button>
+        </div>
+      </div>
+    </details>
+
+    <details class="set-sec" data-sec="datos">
+      <summary class="set-sum">Copias y datos</summary>
+      <div class="set-sec-bd">
+        <div class="set-field">
+          <span class="set-lbl">Todo: amenazas y Mesa</span>
+          <div class="set-opts set-opts-2">
+            <button class="fs-btn set-act" data-action="exportarRespaldo" aria-label="Crear copia de seguridad de todas las amenazas y de la Mesa"><svg class="ico" aria-hidden="true"><use href="#i-down"/></svg>Crear copia</button>
+            <button class="fs-btn set-act" onclick="document.getElementById('respaldo_input').click()" aria-label="Restaurar una copia de seguridad"><svg class="ico" aria-hidden="true"><use href="#i-up"/></svg>Restaurar</button>
+          </div>
+          <span class="set-hint bg-estado" id="respaldo_estado" aria-live="polite">Un solo archivo con todo. Hazla antes de cambiar de móvil.</span>
+          <span class="set-hint" id="espacio_estado"></span>
+        </div>
+        <div class="set-field">
+          <span class="set-lbl">Una amenaza (JSON)</span>
+          <div class="set-opts set-opts-2">
+            <button class="fs-btn set-act" id="set_export_char" data-action="exportJSON" aria-label="Exportar la amenaza abierta"><svg class="ico" aria-hidden="true"><use href="#i-down"/></svg>Exportar</button>
+            <button class="fs-btn set-act" data-action="triggerLoadJSON" aria-label="Importar una amenaza"><svg class="ico" aria-hidden="true"><use href="#i-up"/></svg>Importar</button>
+          </div>
+        </div>
+        <div class="set-field">
+          <span class="set-lbl">Reglas del juego</span>
+          <div class="set-opts set-opts-2">
+            <button class="fs-btn set-act" onclick="document.getElementById('json_rules_input').click()" aria-label="Importar reglas desde un JSON"><svg class="ico" aria-hidden="true"><use href="#i-up"/></svg>Importar</button>
+            <button class="fs-btn set-act" data-action="openDatabaseEditor" aria-label="Abrir el editor de reglas"><svg class="ico" aria-hidden="true"><use href="#i-gear"/></svg>Editor</button>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <details class="set-sec" data-sec="app">
+      <summary class="set-sum">Aplicación</summary>
+      <div class="set-sec-bd">
+        <div class="set-opts set-opts-2">
+          <button class="fs-btn set-act" data-action="checkForUpdate"><svg class="ico" aria-hidden="true"><use href="#i-rot-r"/></svg>Buscar</button>
+          <button class="fs-btn set-act" data-action="forceUpdate" aria-label="Forzar actualización"><svg class="ico" aria-hidden="true"><use href="#i-rot-r"/></svg>Forzar</button>
+        </div>
+        <div class="set-vers">
+          <span>App <b id="set_app_ver">—</b></span>
+          <span>Servidor <b id="set_srv_ver">—</b></span>
+          <span>Reglas <b id="set_rules_ver">—</b></span>
+        </div>
+        <span class="set-hint">«Forzar» vuelve a descargar la app si App y Servidor no coinciden. No toca tus amenazas, tu Mesa ni las reglas.</span>
+      </div>
+    </details>
+
+  </div>
+</dialog>
+
+<!-- ── Asistente de creación: los ocho pasos del Manual de Monstruos, Cap. 4 ── -->
+<div id="wiz_panel" class="fs-panel" role="region" aria-label="Crear una amenaza paso a paso">
+  <div class="fs-hdr">
+    <button class="fs-hdr-back" id="wiz_back" aria-label="Paso anterior"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <div class="fs-hdr-center">
+      <span class="fs-hdr-ttl" id="wiz_ttl">Crear amenaza</span>
+      <span class="fs-hdr-sub" id="wiz_sub"></span>
+    </div>
+    <div class="fs-hdr-actions">
+      <button class="btn btn-g wiz-dado" id="wiz_dado" aria-label="Generar una criatura al azar" title="Criatura al azar"><svg class="ico ico-solo" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.35" fill="currentColor" stroke="none"/><circle cx="15.5" cy="15.5" r="1.35" fill="currentColor" stroke="none"/><circle cx="15.5" cy="8.5" r="1.35" fill="currentColor" stroke="none"/><circle cx="8.5" cy="15.5" r="1.35" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.35" fill="currentColor" stroke="none"/></svg></button>
+      <button class="btn btn-g wiz-manual" id="wiz_manual">A mano</button>
+    </div>
+  </div>
+  <div class="wiz-bars" id="wiz_bars" aria-hidden="true"></div>
+  <div class="fs-body" id="wiz_body"></div>
+  <div class="wiz-foot">
+    <button class="btn btn-gold" id="wiz_next" style="width:100%;min-height:48px"></button>
+    <span class="wiz-why" id="wiz_why"></span>
+  </div>
+</div>
+
+<!-- ── Editor de reglas ── -->
+<div id="db_panel" class="fs-panel" role="region" aria-label="Editor de reglas">
+  <div class="fs-hdr" style="background:linear-gradient(180deg,rgba(10,8,24,.97) 0%,var(--raised) 100%)">
+    <button class="fs-hdr-back" data-action="closeDatabaseEditor" aria-label="Volver"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <div class="fs-hdr-center">
+      <span class="fs-hdr-ttl" style="color:var(--ice)">Editor de Reglas</span>
+      <span class="fs-hdr-sub">Base de datos del Director</span>
+    </div>
+    <div class="fs-hdr-actions">
+      <button class="btn btn-g" style="font-size:var(--fs-xs);padding:5px 10px;min-height:36px;color:var(--dim)" data-action="exportRulesDB" aria-label="Exportar reglas"><svg class="ico" aria-hidden="true"><use href="#i-down"/></svg>Exportar</button>
+    </div>
+  </div>
+  <div class="fs-body">
+    <div class="dbs" id="db_sidebar"></div>
+    <div class="dbct">
+      <div id="db_list_container">
+        <div class="db-empty">
+          <div class="db-empty-icon"><svg class="ico ico-solo" aria-hidden="true"><use href="#i-gear"/></svg></div>
+          <p>Selecciona una categoría</p>
+        </div>
+      </div>
+      <div id="db_form_container" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Biblioteca de Rasgos y Aptitudes (Manual de Monstruos, Cap. 3) ── -->
+<div id="lib_panel" class="fs-panel" role="region" aria-label="Biblioteca de Rasgos y Aptitudes">
+  <div class="fs-hdr">
+    <button class="fs-hdr-back" data-action="cerrarBiblioteca" aria-label="Volver"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <div class="fs-hdr-center">
+      <span class="fs-hdr-ttl">Biblioteca</span>
+      <span class="fs-hdr-sub" id="lib_sub">Rasgos y Aptitudes</span>
+    </div>
+    <div class="fs-hdr-actions">
+      <button class="btn btn-g" style="font-size:var(--fs-xs);padding:5px 10px;min-height:36px" data-action="rasgoPropio"><svg class="ico" aria-hidden="true"><use href="#i-quill"/></svg>Propio</button>
+    </div>
+  </div>
+  <div class="fs-body">
+    <div class="tm-toolbar">
+      <input class="tm-search" id="lib_search" type="search" placeholder="Buscar por nombre o efecto…" autocomplete="off" spellcheck="false" oninput="app._libFiltro()" aria-label="Buscar en la Biblioteca">
+      <div class="tm-filters">
+        <button type="button" class="tm-fchip" id="lib_f_caben" onclick="app._libChip('caben', this)" aria-pressed="false"><span class="tm-fchip-dot"></span>Caben en mi Peso</button>
+        <button type="button" class="tm-fchip" id="lib_f_mias" onclick="app._libChip('mias', this)" aria-pressed="false"><span class="tm-fchip-dot"></span>Las que tiene</button>
+      </div>
+    </div>
+    <div class="tm-cols" style="flex:1;min-height:0;display:flex;overflow:hidden">
+      <div class="tms" id="lib_cats" style="overflow-y:auto"></div>
+      <div class="tmct" id="lib_list">
+        <p class="tm-empty">Selecciona una familia.</p>
+      </div>
+    </div>
+  </div>
+  <div class="fs-footer">
+    <div class="fs-footer-info">
+      Peso: <span class="mft-count" id="lib_peso">0</span><span id="lib_peso_max" style="color:var(--border)">/0</span>
+    </div>
+    <button class="btn btn-gold" data-action="cerrarBiblioteca"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>Confirmar</button>
+  </div>
+</div>
+
+<!-- ── Selector genérico: bestiario, amenazas para un encuentro, plantillas ── -->
+<div id="sel_panel" class="fs-panel" role="region" aria-label="Selector">
+  <div class="fs-hdr">
+    <button class="fs-hdr-back" data-action="cerrarSelector" aria-label="Volver"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <div class="fs-hdr-center">
+      <span class="fs-hdr-ttl" id="sel_ttl">Elegir</span>
+      <span class="fs-hdr-sub" id="sel_sub"></span>
+    </div>
+    <div class="fs-hdr-actions"></div>
+  </div>
+  <div class="fs-body">
+    <div class="tm-toolbar">
+      <input class="tm-search" id="sel_search" type="search" placeholder="Buscar…" autocomplete="off" spellcheck="false" oninput="app._selFiltro()" aria-label="Buscar">
+    </div>
+    <div class="tmct" id="sel_list" style="flex:1;min-height:0;overflow-y:auto"></div>
+  </div>
+  <div class="fs-footer">
+    <div class="fs-footer-info" id="sel_info"></div>
+    <button class="btn btn-gold" data-action="cerrarSelector"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>Hecho</button>
+  </div>
+</div>
+
+<dialog id="crop_modal" class="modal" aria-labelledby="crop_modal_title">
+  <div class="crl">
+    <div class="mhd">
+      <span class="mttl" id="crop_modal_title">✦ Ajustar Retrato</span>
+      <button class="bcls" data-action="cancelCrop" aria-label="Cancelar recorte de retrato"><svg class="ico ico-solo" aria-hidden="true"><use href="#i-x"/></svg></button>
+    </div>
+    <div class="crws" id="crop_ws"
+      onmousedown="app.cropDragStart(event)"
+      ontouchstart="app.cropDragStart(event)">
+      <img class="crimg" id="crop_preview" src="" alt="" draggable="false">
+      <div class="cr-overlay" id="crop_overlay"></div>
+      <div class="crfr" id="crop_frame"></div>
+      <div class="cr-grid" id="cr_grid"><svg id="cr_grid_svg" overflow="visible"></svg></div>
+    </div>
+    <div class="crsd">
+      <div class="cr-ctrl-row">
+        <button class="cr-zoom-btn" onclick="app.cropZoomStep(-0.04)">−</button>
+        <input type="range" id="crop_zoom" min="0.05" max="8" step="0.005" value="1"
+          oninput="app.cropZoomSlider(this.value)">
+        <button class="cr-zoom-btn" onclick="app.cropZoomStep(0.04)">+</button>
+        <span class="cr-zoom-lbl" id="cr_zoom_lbl">100%</span>
+      </div>
+      <div class="cr-ctrl-row">
+        <div class="cr-actions">
+          <button class="cr-rot-btn" onclick="app.cropRotate(-90)"><svg class="ico" aria-hidden="true"><use href="#i-rot-l"/></svg>−90°</button>
+          <button class="cr-rot-btn" onclick="app.cropRotate(90)"><svg class="ico" aria-hidden="true"><use href="#i-rot-r"/></svg>+90°</button>
+          <button class="cr-fit-btn" data-action="cropFit">⊡ Fit</button>
+        </div>
+      </div>
+      <div class="cr-apply-row">
+        <button class="bsave" data-action="applyCrop"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>Aplicar Retrato</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<!-- ── Scripts ──────────────────────────────────────────────────
+     Orden de carga (defer respeta el orden de declaración):
+       reglas.js      Base de datos de reglas por defecto
+       constants.js   Constantes y temporizadores de la UI
+       storage.js     Persistencia (IndexedDB «ss-director»)
+       ui-dialogs.js  Diálogos modales (escudo anti ghost-click)
+       base.js        Piezas genéricas heredadas de S&S Companion
+       app.js         Núcleo: pantallas, roster, secciones, guardado
+       amenaza.js     La ficha: cálculo y tarjetas
+       biblioteca.js  Biblioteca de Rasgos y Aptitudes
+       mesa.js        Mesa del Director
+       asistente.js   Asistente de creación (ocho pasos)
+       editor.js      Editor de reglas
+       boot.js        Arranque + registro del Service Worker
+     ───────────────────────────────────────────────────────────── -->
+<script defer src="js/reglas.js"></script>
+<script defer src="js/constants.js"></script>
+<script defer src="js/storage.js"></script>
+<script defer src="js/ui-dialogs.js"></script>
+<script defer src="js/base.js"></script>
+<script defer src="js/app.js"></script>
+<script defer src="js/amenaza.js"></script>
+<script defer src="js/biblioteca.js"></script>
+<script defer src="js/mesa.js"></script>
+<script defer src="js/asistente.js"></script>
+<script defer src="js/editor.js"></script>
+<script defer src="js/plegables.js"></script>
+<script defer src="js/respaldo.js"></script>
+<script defer src="js/historial.js"></script>
+<script defer src="js/autocheck.js"></script>
+<script defer src="js/boot.js"></script>
+</body>
+</html>
