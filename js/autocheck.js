@@ -7,8 +7,8 @@
      · Los elementos que la ficha y la Mesa necesitan existen
      · El bestiario del Manual sale de la fórmula: PV y Guardia impresos
      · El bestiario del Manual cabe en su presupuesto de Peso
-     · Valor de Amenaza: se duplica con el NA; jefe ×2; cuatro esbirros
-     · Presupuesto de encuentro por nivel y tamaño del grupo
+     · NA del encuentro: los ejemplos de la Guía; jefe +1; cuatro esbirros
+     · Dificultad del encuentro por nivel y tamaño del grupo
      · Texto que se sale de su caja · texto por debajo de 12 px
      · Desbordamiento horizontal · tarjetas plegables · consola
 
@@ -109,23 +109,39 @@
     comprobar('El bestiario del Manual cabe en su Peso', !malPeso.length,
       malPeso.slice(0, 4).join(' | ') || `${n} criaturas dentro de su presupuesto`);
 
-    // ── 3 · Valor de Amenaza ──
+    // ── 3 · NA del encuentro (los ejemplos de la Guía, Cap. 2) ──
     const base = app.nuevaCr();
-    const va = (cambios) => app.calcCr(app.normalizarCr({ ...base, rasgos: [], ...cambios })).va;
-    const okVA = va({ na: 0 }) === 1 && va({ na: 1 }) === 2 && va({ na: 5 }) === 32 && va({ na: 3 }) * 2 === va({ na: 4 }) &&
-      va({ na: 3, estructura: 'jefe' }) === 16 && va({ na: 2, rol: 'esbirro' }) * 4 === va({ na: 2 }) &&
-      va({ na: 3, estructura: 'horda', miembros: 8 }) === 32;
-    comprobar('Valor de Amenaza: ×2 por NA, jefe ×2, cuatro esbirros = uno', okVA,
-      `NA0 ${va({ na: 0 })} · NA5 ${va({ na: 5 })} · jefe NA3 ${va({ na: 3, estructura: 'jefe' })} · esbirro NA2 ${va({ na: 2, rol: 'esbirro' })} · banda de 8 NA3 ${va({ na: 3, estructura: 'horda', miembros: 8 })}`);
+    const lin = (cambios, cuantas) => {
+      const S = app.calcCr(app.normalizarCr({ ...base, rasgos: [], ...cambios }));
+      return { na: S.naEnc, cuenta: S.cuenta * cuantas };
+    };
+    const enc = (...lineas) => app._naDeLineas(lineas).na;
+    const E = {
+      'ogro + 2 lobos': [enc(lin({ na: 4 }, 1), lin({ na: 2 }, 2)), 4],
+      'ogro + 4 lobos': [enc(lin({ na: 4 }, 1), lin({ na: 2 }, 4)), 5],
+      '2×NA3': [enc(lin({ na: 3 }, 2)), 4],
+      '4×NA3': [enc(lin({ na: 3 }, 4)), 5],
+      '8×NA1': [enc(lin({ na: 1 }, 8)), 4],
+      'jefe NA3': [enc(lin({ na: 3, estructura: 'jefe' }, 1)), 4],
+      '4 esbirros NA2': [enc(lin({ na: 2, rol: 'esbirro' }, 4)), 2],
+      'banda de 8 NA3': [enc(lin({ na: 3, estructura: 'horda', miembros: 8 }, 1)), 5],
+      'NA5 + NA2': [enc(lin({ na: 5 }, 1), lin({ na: 2 }, 6)), 5],
+    };
+    const malEnc = Object.entries(E).filter(([, [sale, debe]]) => sale !== debe);
+    comprobar('NA del encuentro: 1 · ½ · ¼, jefe +1, cuatro esbirros = uno', !malEnc.length,
+      malEnc.map(([k, [sale, debe]]) => `${k}: NA ${sale}, debía ser ${debe}`).join(' | ') ||
+      Object.entries(E).slice(0, 5).map(([k, [sale]]) => `${k} → NA ${sale}`).join(' · '));
 
-    // ── 4 · presupuesto de encuentro ──
+    // ── 4 · dificultad por nivel y tamaño del grupo ──
     const gPrev = { ...app.mesa.grupo };
-    app.mesa.grupo = { nivel: 3, pjs: 4 }; const p4 = app.presupuesto();
-    app.mesa.grupo = { nivel: 3, pjs: 6 }; const p6 = app.presupuesto();
-    app.mesa.grupo = { nivel: 9, pjs: 2 }; const p2 = app.presupuesto();
+    app.mesa.grupo = { nivel: 3, pjs: 4 }; const p4 = app.umbrales();
+    app.mesa.grupo = { nivel: 3, pjs: 6 }; const p6 = app.umbrales();
+    app.mesa.grupo = { nivel: 9, pjs: 2 }; const p2 = app.umbrales();
     app.mesa.grupo = gPrev;
-    comprobar('Presupuesto por nivel y tamaño del grupo', p4.e === 8 && p4.m === 32 && p6.p === 24 && p2.p === 512,
-      `Nv 3 ×4: ${p4.f}/${p4.e}/${p4.p}/${p4.m} · ×6 Peligroso ${p6.p} · Nv 9 ×2 Peligroso ${p2.p}`);
+    comprobar('Dificultad por nivel y tamaño del grupo',
+      p4.f === 2 && p4.e === 3 && p4.p === 4 && p4.m === 5 && p6.p === 5 && p2.p === 9 &&
+      app._dificultad(4, p4).k === 'p' && app._dificultad(5, p4).k === 'm' && app._dificultad(1, p4).k === 't',
+      `Nv 3 ×4: NA ${p4.f}/${p4.e}/${p4.p}/${p4.m}+ · ×6 Peligroso NA ${p6.p} · Nv 9 ×2 Peligroso NA ${p2.p}`);
 
     // ── 5 · recorrido visual: la ficha y la Mesa ──
     app.asistenteActivo = false;

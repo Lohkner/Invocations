@@ -58,6 +58,24 @@
 .dir-tres > .dir-campo > .fl{margin:0}
 .dir-fila-toggle{margin:10px 0 2px}
 
+/* PV en mesa. En Companion el número va en una columna fija de 74 px con un
+   campo de 3 cifras: a un personaje le sobra, pero una amenaza llega a 150,
+   750 o 1.460 PV y la última cifra quedaba recortada. Aquí la columna mide lo
+   que mide su contenido y el campo, tantas cifras como el máximo (--pv-ch lo
+   pone _anchoPV). La barra, que en Companion acaba a 162 px fijos del borde,
+   ocupa la columna del rótulo; y si el rótulo no cabe entero, se parte en dos
+   líneas antes que empujar el número. */
+.est4 .e4-pv{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:12px}
+.est4 .e4-row-pv{display:contents}
+.est4 .e4-row-pv .e4-name{grid-column:1;min-height:44px;white-space:normal;line-height:1.35}
+.est4 .e4-row-pv .e4-ctl{grid-column:2;grid-template-columns:27px auto 27px;align-self:center}
+.est4 .e4-pv .e4-track{grid-column:1;margin-right:6px}
+.est4 .e4-row-pv .e4-fin{
+  width:calc(var(--pv-ch,2) * 1ch + 4px) !important;max-width:none !important;
+  min-width:calc(2ch + 4px);
+}
+.est4 .e4-row-pv .e4-max{white-space:nowrap}
+
 /* − valor + */
 .dir-paso{display:inline-flex;align-items:center;gap:8px;min-width:0}
 .dir-paso-v{

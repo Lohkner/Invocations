@@ -1,16 +1,40 @@
-# S&S Director — v1.0
+# S&S Director — v1.1
 
 La app hermana de **S&S Companion** para quien dirige *Stars & Sorcery*: crea
 amenazas, calibra encuentros y genera botín, zonas y facciones. PWA estática:
 sin build, sin dependencias, funciona sin conexión.
 
-## Novedades v1.0 — Primera versión
+## Novedades v1.1 — Manuales del 1-10-2026
 
-`CACHE_VERSION` es `ss-director-v6` y `RULES_DATA_VERSION`,
-`v1-monstruos-guia-r1`.
+`CACHE_VERSION` es `ss-director-v7` y `RULES_DATA_VERSION`,
+`v1-monstruos-guia-r2`.
 
-Fuentes: *Manual de Monstruos v1* y *Guía del Director v1* (30-9-2026), con
-apoyo del *Manual Básico v1* para estados y tipos de daño.
+- **PV de tres y cuatro cifras**: en «Estado», el número que se toca para
+  escribir los PV quedaba recortado a partir de 100 (la columna medía 74 px
+  fijos, heredados de Companion). Ahora el campo mide tantas cifras como el
+  máximo —150, 750 o 1.460 caben enteros— y, si hace falta sitio, es el rótulo
+  «Puntos de Vida» el que se parte en dos líneas.
+- **Roles con nombre nuevo**: Bruto → **Arrollador**, Controlador →
+  **Represor**, Emboscador → **Acechador**. Las amenazas guardadas, los
+  archivos exportados y las copias de seguridad con los nombres antiguos se
+  abren igual: se convierten al cargarlas.
+- **Adiós al Valor de Amenaza**: los manuales ya no lo usan. La Mesa calcula el
+  **NA del encuentro** de la Guía (Cap. 2) —la criatura más fuerte cuenta 1;
+  una de un NA menos, ½; de dos menos, ¼; si suman 2–3, +1 NA; 4–7, +2; 8 o
+  más, +3— y lo compara con el NA que corresponde a cada dificultad para el
+  nivel del grupo. Cada línea del encuentro dice lo que cuenta. Con cinco o
+  seis personajes, +1 NA en cada dificultad; con dos o tres, −1.
+- **Ficha**: donde ponía «Valor de Amenaza» pone «Al calibrar», el NA con el
+  que entra en esa cuenta (el jefe sube uno; la horda usa su NA efectivo; cada
+  2 de exceso de Peso, otro; el esbirro, ¼).
+- **Textos de ayuda** al día con la redacción nueva del Manual (la señal, el
+  contexto táctico, los jefes).
+- El bestiario y las tablas se han vuelto a generar desde los .docx.
+
+## v1.0 — Primera versión
+
+Fuentes: *Manual de Monstruos v1* y *Guía del Director v1*, con apoyo del
+*Manual Básico v1* para estados y tipos de daño.
 
 - **Amenazas** (pantalla de Inicio): roster con retrato, igual que el de
   personajes de Companion. Desliza a la derecha para ordenar y a la izquierda
@@ -35,9 +59,9 @@ apoyo del *Manual Básico v1* para estados y tipos de daño.
 - **Bestiario**: 43 criaturas —30 del Manual de Monstruos y 13 de la Guía—
   que se traen al roster con un toque.
 - **Mesa del Director**, cuatro pestañas. Se guarda sola.
-  - **Encuentro**: presupuesto en Valor de Amenaza por nivel y tamaño del
-    grupo; dificultad en vivo; iniciativa, PV, estados y Moral en combate;
-    encuentros guardados.
+  - **Encuentro**: NA del encuentro y dificultad en vivo según el nivel y el
+    tamaño del grupo; iniciativa, PV, estados y Moral en combate; encuentros
+    guardados.
   - **Botín**: botín de la sesión por nivel; generación modular de objetos
     mágicos (rareza, tipo, propiedades con el techo de bono de su rareza,
     maldición opcional, las tres preguntas); tesoro guardado; consulta de
@@ -71,10 +95,19 @@ cambiar en el Editor de Reglas):
   impresos, marcados como ajuste a mano, y sus rasgos sin Peso.
 - **PV**: (base ± Rol × NA) × Tamaño, redondeado al entero más cercano; ×2 el
   jefe. Así salen las 30 criaturas del Manual.
-- **Grupo de un solo personaje**: la Guía no da multiplicador; se usa ¼ y se
-  recuerda el Filo del Protagonista.
-- **Dificultad entre dos bandas**: «Mortal» desde su presupuesto; por debajo,
-  la banda más cercana en proporción.
+- **NA del encuentro**: el +1 del jefe, el NA efectivo de la horda y el +1
+  por cada 2 de exceso de Peso se aplican a la criatura antes de buscar «la
+  más fuerte». Un jefe de NA 3 entra en la cuenta como NA 4.
+- **Menos de cuatro esbirros solos**: la Guía solo dice que cuatro cuentan
+  como una criatura. Si el encuentro no llega a sumar 1, el NA baja: dos
+  esbirros, un NA menos; uno, dos menos.
+- **Grupo de un solo personaje**: la Guía no da ajuste; se resta 2 NA a cada
+  dificultad y se recuerda el Filo del Protagonista.
+- **Enemigo solo y encuentro no dicen lo mismo**: la tabla de calibrado de la
+  Guía (NA estándar, serio y mortal) y la de encuentros (Fácil a Mortal) no
+  coinciden —para Nivel 1–2, NA 3 es «mortal» en una y «peligroso» en la
+  otra—. El asistente usa la primera para elegir el NA de una criatura, como
+  manda el Manual; la Mesa, la segunda.
 - **Anomalías Cósmicas**: aún no tienen ficha propia.
 
 ## Probar en local
@@ -89,7 +122,8 @@ pelear con la caché: da de baja el worker y borra las cachés, ejecuta
 al terminar.
 
 - **Autodiagnóstico**: `?check=1`. Comprueba, entre otras cosas, que las 30
-  criaturas del Manual salen de la fórmula y caben en su Peso. Fija antes el
+  criaturas del Manual salen de la fórmula y caben en su Peso, y que el NA
+  del encuentro da lo que dan los ejemplos de la Guía. Fija antes el
   ancho de la ventana (390×844): con el panel oculto da falsos «texto que se
   sale».
 - **Sube `CACHE_VERSION`** (`sw.js`) en cada cambio, y `RULES_DATA_VERSION`

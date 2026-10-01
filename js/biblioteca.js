@@ -86,7 +86,7 @@ Object.assign(app, {
     if (b) b.textContent = '/' + S.pesoMax;
     const sub = document.getElementById('lib_sub');
     if (sub) sub.textContent = S.exceso
-      ? `Excede en ${S.exceso}` + (S.exceso >= 2 ? ` · cuenta como NA ${S.naVA}` : '')
+      ? `Excede en ${S.exceso}` + (S.exceso >= 2 ? ` · cuenta como NA ${S.naEnc}` : '')
       : `NA ${S.na} · Peso ${S.pesoBase}${S.devuelto ? ' + ' + S.devuelto : ''}`;
   },
 

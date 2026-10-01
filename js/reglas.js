@@ -18,7 +18,6 @@ const DEFAULT_DB = {
    "sd": 0,
    "cd": 10,
    "peso": 0,
-   "va": 1,
    "etiqueta": "Civil"
   },
   "1": {
@@ -33,7 +32,6 @@ const DEFAULT_DB = {
    "sd": 0,
    "cd": 11,
    "peso": 2,
-   "va": 2,
    "etiqueta": "Novato"
   },
   "2": {
@@ -47,8 +45,7 @@ const DEFAULT_DB = {
    "sf": 3,
    "sd": 1,
    "cd": 12,
-   "peso": 2,
-   "va": 4
+   "peso": 2
   },
   "3": {
    "name": "NA 3",
@@ -62,7 +59,6 @@ const DEFAULT_DB = {
    "sd": 1,
    "cd": 13,
    "peso": 3,
-   "va": 8,
    "etiqueta": "Veterano"
   },
   "4": {
@@ -76,8 +72,7 @@ const DEFAULT_DB = {
    "sf": 4,
    "sd": 2,
    "cd": 14,
-   "peso": 3,
-   "va": 16
+   "peso": 3
   },
   "5": {
    "name": "NA 5",
@@ -90,8 +85,7 @@ const DEFAULT_DB = {
    "sf": 5,
    "sd": 2,
    "cd": 15,
-   "peso": 4,
-   "va": 32
+   "peso": 4
   },
   "6": {
    "name": "NA 6",
@@ -104,8 +98,7 @@ const DEFAULT_DB = {
    "sf": 5,
    "sd": 3,
    "cd": 16,
-   "peso": 4,
-   "va": 64
+   "peso": 4
   },
   "7": {
    "name": "NA 7",
@@ -118,8 +111,7 @@ const DEFAULT_DB = {
    "sf": 6,
    "sd": 3,
    "cd": 17,
-   "peso": 5,
-   "va": 128
+   "peso": 5
   },
   "8": {
    "name": "NA 8",
@@ -132,8 +124,7 @@ const DEFAULT_DB = {
    "sf": 6,
    "sd": 4,
    "cd": 18,
-   "peso": 5,
-   "va": 256
+   "peso": 5
   },
   "9": {
    "name": "NA 9",
@@ -146,8 +137,7 @@ const DEFAULT_DB = {
    "sf": 7,
    "sd": 4,
    "cd": 19,
-   "peso": 6,
-   "va": 512
+   "peso": 6
   },
   "10": {
    "name": "NA 10",
@@ -161,7 +151,6 @@ const DEFAULT_DB = {
    "sd": 5,
    "cd": 20,
    "peso": 6,
-   "va": 1024,
    "etiqueta": "Élite"
   },
   "11": {
@@ -175,8 +164,7 @@ const DEFAULT_DB = {
    "sf": 8,
    "sd": 5,
    "cd": 21,
-   "peso": 7,
-   "va": 2048
+   "peso": 7
   },
   "12": {
    "name": "NA 12",
@@ -190,7 +178,6 @@ const DEFAULT_DB = {
    "sd": 6,
    "cd": 22,
    "peso": 7,
-   "va": 4096,
    "etiqueta": "Legendario"
   },
   "13": {
@@ -204,8 +191,7 @@ const DEFAULT_DB = {
    "sf": 9,
    "sd": 6,
    "cd": 23,
-   "peso": 8,
-   "va": 8192
+   "peso": 8
   },
   "14": {
    "name": "NA 14",
@@ -218,8 +204,7 @@ const DEFAULT_DB = {
    "sf": 9,
    "sd": 7,
    "cd": 24,
-   "peso": 8,
-   "va": 16384
+   "peso": 8
   },
   "15": {
    "name": "NA 15",
@@ -232,13 +217,12 @@ const DEFAULT_DB = {
    "sf": 10,
    "sd": 7,
    "cd": 25,
-   "peso": 8,
-   "va": 32768
+   "peso": 8
   }
  },
  "roles": {
-  "bruto": {
-   "name": "Bruto",
+  "arrollador": {
+   "name": "Arrollador",
    "mod": "+10 PV/NA · +2 daño · −2 Guardia",
    "hab": "Ataque Masivo",
    "habTipo": "Aptitud",
@@ -259,8 +243,8 @@ const DEFAULT_DB = {
    "g": 2,
    "vel": 10
   },
-  "controlador": {
-   "name": "Controlador",
+  "represor": {
+   "name": "Represor",
    "mod": "−2 daño · efectos de área",
    "hab": "Control de Zona",
    "habTipo": "Aptitud",
@@ -308,8 +292,8 @@ const DEFAULT_DB = {
    "dano": 2,
    "g": -1
   },
-  "emboscador": {
-   "name": "Emboscador",
+  "acechador": {
+   "name": "Acechador",
    "mod": "−3 PV/NA · +1 Guardia",
    "hab": "Primer Golpe",
    "habTipo": "Modificador",
@@ -2553,7 +2537,7 @@ const DEFAULT_DB = {
    "na": 1,
    "tipo": "humanoide",
    "tam": "pequeno",
-   "rol": "emboscador",
+   "rol": "acechador",
    "estructura": "normal",
    "rasgos": [
     {
@@ -2724,7 +2708,7 @@ const DEFAULT_DB = {
    "na": 3,
    "tipo": "bestia",
    "tam": "grande",
-   "rol": "emboscador",
+   "rol": "acechador",
    "estructura": "normal",
    "rasgos": [
     {
@@ -2823,7 +2807,7 @@ const DEFAULT_DB = {
    "na": 3,
    "tipo": "no_muerto",
    "tam": "mediano",
-   "rol": "bruto",
+   "rol": "arrollador",
    "estructura": "normal",
    "rasgos": [
     {
@@ -2879,7 +2863,7 @@ const DEFAULT_DB = {
    "na": 3,
    "tipo": "espiritu",
    "tam": "diminuto",
-   "rol": "controlador",
+   "rol": "represor",
    "estructura": "normal",
    "rasgos": [
     {
@@ -2922,7 +2906,7 @@ const DEFAULT_DB = {
    "na": 3,
    "tipo": "monstruosidad",
    "tam": "mediano",
-   "rol": "controlador",
+   "rol": "represor",
    "estructura": "normal",
    "rasgos": [
     {
@@ -2965,7 +2949,7 @@ const DEFAULT_DB = {
    "na": 4,
    "tipo": "monstruosidad",
    "tam": "mediano",
-   "rol": "emboscador",
+   "rol": "acechador",
    "estructura": "normal",
    "rasgos": [
     {
@@ -3008,7 +2992,7 @@ const DEFAULT_DB = {
    "na": 4,
    "tipo": "gigante",
    "tam": "grande",
-   "rol": "bruto",
+   "rol": "arrollador",
    "estructura": "normal",
    "rasgos": [
     {
@@ -3054,7 +3038,7 @@ const DEFAULT_DB = {
    "na": 5,
    "tipo": "feerico",
    "tam": "mediano",
-   "rol": "controlador",
+   "rol": "represor",
    "estructura": "normal",
    "rasgos": [
     {
@@ -3140,7 +3124,7 @@ const DEFAULT_DB = {
    "na": 5,
    "tipo": "monstruosidad",
    "tam": "mediano",
-   "rol": "controlador",
+   "rol": "represor",
    "estructura": "normal",
    "rasgos": [
     {
@@ -3178,7 +3162,7 @@ const DEFAULT_DB = {
    "na": 6,
    "tipo": "gigante",
    "tam": "grande",
-   "rol": "bruto",
+   "rol": "arrollador",
    "estructura": "normal",
    "rasgos": [
     {
@@ -3274,7 +3258,7 @@ const DEFAULT_DB = {
    "na": 6,
    "tipo": "constructo",
    "tam": "grande",
-   "rol": "bruto",
+   "rol": "arrollador",
    "estructura": "normal",
    "rasgos": [
     {
@@ -3445,7 +3429,7 @@ const DEFAULT_DB = {
    "na": 7,
    "tipo": "elemental",
    "tam": "grande",
-   "rol": "controlador",
+   "rol": "represor",
    "estructura": "normal",
    "rasgos": [
     {
@@ -3490,7 +3474,7 @@ const DEFAULT_DB = {
    "na": 7,
    "tipo": "aberracion",
    "tam": "mediano",
-   "rol": "controlador",
+   "rol": "represor",
    "estructura": "normal",
    "rasgos": [
     {
@@ -3600,7 +3584,7 @@ const DEFAULT_DB = {
    "na": 8,
    "tipo": "monstruosidad",
    "tam": "enorme",
-   "rol": "bruto",
+   "rol": "arrollador",
    "estructura": "normal",
    "rasgos": [
     {
@@ -3698,7 +3682,7 @@ const DEFAULT_DB = {
    "na": 10,
    "tipo": "no_muerto",
    "tam": "mediano",
-   "rol": "controlador",
+   "rol": "represor",
    "estructura": "jefe",
    "rasgos": [
     {
@@ -3758,7 +3742,7 @@ const DEFAULT_DB = {
    "na": 10,
    "tipo": "dragon",
    "tam": "enorme",
-   "rol": "bruto",
+   "rol": "arrollador",
    "estructura": "jefe",
    "rasgos": [
     {
@@ -4043,7 +4027,7 @@ const DEFAULT_DB = {
    "na": 1,
    "tipo": "no_muerto",
    "tam": "mediano",
-   "rol": "bruto",
+   "rol": "arrollador",
    "estructura": "normal",
    "rasgos": [
     {
@@ -4080,7 +4064,7 @@ const DEFAULT_DB = {
    "na": 2,
    "tipo": "humanoide",
    "tam": "mediano",
-   "rol": "bruto",
+   "rol": "arrollador",
    "estructura": "normal",
    "rasgos": [
     {
@@ -4115,14 +4099,14 @@ const DEFAULT_DB = {
     "CON"
    ],
    "salvTxt": "FUE +5, CON +3",
-   "contexto": "Un orco solo es un encuentro menor. Un grupo de orcos con un Jefe de Tribu (NA 4, Rol Comandante) es una amenaza de diseño: los orcos comunes son Agresivos y Tenaces, el Jefe tiene Aura de Mando que hace que sus Ataques de Oportunidad sean especialmente dolorosos, y eliminar al Jefe cambia la Moral del grupo completo (Puntuación de Moral 12). Funcionan bien con Rol Bruto (más PV y daño, menos Guardia) o Rol Hostigador (+2 Guardia, flanquea constantemente)."
+   "contexto": "Un orco solo es un encuentro menor. Un grupo de orcos con un Jefe de Tribu (NA 4, Rol Comandante) es una amenaza de diseño: los orcos comunes son Agresivos y Tenaces, el Jefe tiene Aura de Mando que hace que sus Ataques de Oportunidad sean especialmente dolorosos, y eliminar al Jefe cambia la Moral del grupo completo (Puntuación de Moral 12). Funcionan bien con Rol Arrollador (más PV y daño, menos Guardia) o Rol Hostigador (+2 Guardia, flanquea constantemente)."
   },
   "oso_pardo": {
    "nombre": "Oso Pardo",
    "na": 3,
    "tipo": "bestia",
    "tam": "grande",
-   "rol": "bruto",
+   "rol": "arrollador",
    "estructura": "normal",
    "rasgos": [
     {
@@ -4172,7 +4156,7 @@ const DEFAULT_DB = {
    "na": 7,
    "tipo": "aberracion",
    "tam": "mediano",
-   "rol": "controlador",
+   "rol": "represor",
    "estructura": "normal",
    "rasgos": [
     {
@@ -4233,7 +4217,7 @@ const DEFAULT_DB = {
    "na": 8,
    "tipo": "gigante",
    "tam": "enorme",
-   "rol": "bruto",
+   "rol": "arrollador",
    "estructura": "jefe",
    "rasgos": [
     {
@@ -4465,7 +4449,7 @@ const DEFAULT_DB = {
     "CON"
    ],
    "salvTxt": "SAB +4, CON +1",
-   "contexto": "Con 6 PV, el Acólito cae de un golpe; su trabajo es que nadie llegue a dárselo. Colócalo detrás de dos Brutos y deja que cure cada ronda: el grupo aprende enseguida que el enemigo que no ataca es el que más importa."
+   "contexto": "Con 6 PV, el Acólito cae de un golpe; su trabajo es que nadie llegue a dárselo. Colócalo detrás de dos Arrolladores y deja que cure cada ronda: el grupo aprende enseguida que el enemigo que no ataca es el que más importa."
   },
   "batidor": {
    "nombre": "Batidor",
@@ -4617,15 +4601,15 @@ const DEFAULT_DB = {
    "name": "Composición de bandas (d12)",
    "filas": [
     "Un Comandante y dos grupos de esbirros.",
-    "Un Bruto y un Controlador que lo cubre.",
+    "Un Arrollador y un Represor que lo cubre.",
     "Tres Hostigadores y un Explorador que avisa.",
     "Un Guardián y dos Artilleros detrás de él.",
     "Una horda y un Soporte que la mantiene unida.",
-    "Dos Emboscadores y un señuelo que atrae al grupo.",
+    "Dos Acechadores y un señuelo que atrae al grupo.",
     "Un jefe solo en su guarida.",
     "Un jefe y cuatro esbirros que se sacrifican por él.",
-    "Dos Brutos rivales que se detestan (Moral −2 si uno cae).",
-    "Un Controlador invisible y una bestia que controla.",
+    "Dos Arrolladores rivales que se detestan (Moral −2 si uno cae).",
+    "Un Represor invisible y una bestia que somete.",
     "Un enjambre y la criatura que lo pastorea.",
     "Una Anomalía y sus fieles (Cap. 8)."
    ]
@@ -5067,65 +5051,65 @@ const DEFAULT_DB = {
    ]
   }
  },
- "presupuestos": {
+ "encuentros": {
   "1-2": {
    "name": "Nivel 1–2",
-   "f": 2,
-   "e": 4,
-   "p": 8,
-   "m": 16,
+   "f": 1,
+   "e": 2,
+   "p": 3,
+   "m": 4,
    "estandar": "1",
    "serio": "2",
    "mortal": "3+"
   },
   "3-4": {
    "name": "Nivel 3–4",
-   "f": 4,
-   "e": 8,
-   "p": 16,
-   "m": 32,
+   "f": 2,
+   "e": 3,
+   "p": 4,
+   "m": 5,
    "estandar": "2–3",
    "serio": "4",
    "mortal": "5+"
   },
   "5-6": {
    "name": "Nivel 5–6",
-   "f": 16,
-   "e": 32,
-   "p": 64,
-   "m": 128,
+   "f": 4,
+   "e": 5,
+   "p": 6,
+   "m": 7,
    "estandar": "4–5",
    "serio": "6",
    "mortal": "7+"
   },
   "7-8": {
    "name": "Nivel 7–8",
-   "f": 64,
-   "e": 128,
-   "p": 256,
-   "m": 512,
+   "f": 6,
+   "e": 7,
+   "p": 8,
+   "m": 9,
    "estandar": "6–7",
    "serio": "8",
    "mortal": "9+"
   },
   "9-10": {
    "name": "Nivel 9–10",
-   "f": 256,
-   "e": 512,
-   "p": 1024,
-   "m": 2048,
+   "f": 8,
+   "e": 9,
+   "p": 10,
+   "m": 11,
    "estandar": "8–9",
    "serio": "10",
    "mortal": "11+"
   }
  },
- "grupoTam": {
-  "1": 0.25,
-  "2": 0.5,
-  "3": 0.75,
-  "4": 1,
-  "5": 1.25,
-  "6": 1.5
+ "grupoAjuste": {
+  "1": -2,
+  "2": -1,
+  "3": -1,
+  "4": 0,
+  "5": 1,
+  "6": 1
  },
  "riqueza": {
   "1": {

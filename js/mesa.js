@@ -1,7 +1,7 @@
 /* ══════════════════════════════════════════════════════════════
    MESA DEL DIRECTOR
    Cuatro pestañas con las herramientas de la Guía del Director:
-     · Encuentro — presupuesto en Valor de Amenaza (Cap. 2), iniciativa
+     · Encuentro — NA del encuentro y dificultad (Cap. 2), iniciativa
        y seguimiento de PV, estados y Moral.
      · Botín     — riqueza por nivel (Cap. 12) y generación modular de
        objetos mágicos (Cap. 13).
@@ -118,16 +118,17 @@ Object.assign(app, {
   },
 
   /* ══════════ ENCUENTRO ══════════ */
-  _filaPresupuesto(nivel) {
+  _filaEncuentro(nivel) {
     const k = nivel <= 2 ? '1-2' : nivel <= 4 ? '3-4' : nivel <= 6 ? '5-6' : nivel <= 8 ? '7-8' : '9-10';
-    return this.DB.presupuestos[k];
+    return this.DB.encuentros[k];
   },
-  /** Presupuesto en VA para el grupo: la fila de su nivel por su tamaño. */
-  presupuesto() {
+  /** NA del encuentro que corresponde a cada dificultad para este grupo: la
+      fila de su nivel, que es para cuatro personajes, ±1 según cuántos sean. */
+  umbrales() {
     const g = this.mesa.grupo;
-    const f = this._filaPresupuesto(g.nivel);
-    const m = Number(this.DB.grupoTam[g.pjs]) || 1;
-    return { f: f.f * m, e: f.e * m, p: f.p * m, m: f.m * m, fila: f, mult: m };
+    const f = this._filaEncuentro(g.nivel);
+    const d = Number(this.DB.grupoAjuste[g.pjs]) || 0;
+    return { f: f.f + d, e: f.e + d, p: f.p + d, m: f.m + d, fila: f, ajuste: d };
   },
 
   _pintarGrupo() {
@@ -139,41 +140,59 @@ Object.assign(app, {
       this._campo('Nivel', this._paso(g.nivel, 1, 10, n => { g.nivel = n; this.mesaCambio(); }, 'el nivel del grupo')),
       this._campo('Personajes', this._paso(g.pjs, 1, 6, n => { g.pjs = n; this.mesaCambio(); }, 'el número de personajes')));
     host.appendChild(fila);
-    const P = this.presupuesto();
-    host.appendChild(this.h('p', 'dir-nota', `Un enemigo solo: NA ${P.fila.estandar} es un rival digno, NA ${P.fila.serio} exige recursos y NA ${P.fila.mortal} puede matar a alguien.`));
+    if (g.pjs === 3 || g.pjs >= 5) host.appendChild(this.h('p', 'dir-nota',
+      `La tabla es para cuatro personajes: con ${g.pjs}, ${g.pjs > 4 ? '+1' : '−1'} NA en cada dificultad.`));
     if (g.pjs <= 2) host.appendChild(this.h('p', 'dir-aviso', g.pjs === 1
-      ? 'Un solo personaje: la Guía no da presupuesto (aquí, la cuarta parte). Aplica el Filo del Protagonista —todo el daño enemigo a la mitad— y el Barrido de secuaces.'
-      : 'Dúo: presupuesto a la mitad. Aplica el Filo del Protagonista —el daño enemigo se reduce un tercio— y el Barrido de secuaces.'));
+      ? 'Un solo personaje: la Guía no da ajuste (aquí, −2 NA en cada dificultad). Aplica el Filo del Protagonista —todo el daño enemigo a la mitad— y el Barrido de secuaces.'
+      : 'Dúo: −1 NA en cada dificultad. Aplica el Filo del Protagonista —el daño enemigo se reduce un tercio— y el Barrido de secuaces.'));
   },
 
-  /** VA de una línea del encuentro: n criaturas iguales. Cuatro esbirros
-      cuentan como una criatura de su NA; el jefe, el doble. */
-  _vaLinea(cr, n) { return this.calcCr(cr).va * n; },
-  _vaEncuentro() {
+  /** NA del encuentro (Guía, Cap. 2). Parte del NA más alto: cada criatura de
+      ese NA cuenta 1; una de un NA menos, ½; una de dos menos, ¼; las que
+      están más abajo no cuentan. Total 2–3: +1 · 4–7: +2 · 8 o más: +3.
+      `lineas` = [{ na, cuenta }]: el jefe, la horda y el exceso de Peso ya
+      vienen en el NA de cada criatura (calcCr → naEnc), y el esbirro cuenta ¼.
+      Si solo hay esbirros y no llegan a cuatro, el total baja de 1 y el NA
+      baja con él (dos = un NA menos; uno = dos menos). */
+  _naDeLineas(lineas) {
+    if (!lineas.length) return { na: null, max: null, suma: 0, sube: 0 };
+    const max = Math.max(...lineas.map(l => l.na));
+    const suma = lineas.reduce((a, l) => a + l.cuenta * this._pesoEnc(max - l.na), 0);
+    const sube = suma >= 8 ? 3 : suma >= 4 ? 2 : suma >= 2 ? 1 : suma >= 1 ? 0 : suma >= .5 ? -1 : -2;
+    return { na: Math.max(0, max + sube), max, suma, sube };
+  },
+  _pesoEnc(porDebajo) { return [1, .5, .25][porDebajo] || 0; },
+  _naEncuentro() {
     const roster = STORAGE.loadRoster();
-    let va = 0, n = 0;
+    const lineas = [];
+    let n = 0;
     this.mesa.enc.items.forEach(it => {
       const d = roster[it.ref]; if (!d) return;
-      va += this._vaLinea(this.normalizarCr(d), it.n); n += it.n;
+      const S = this.calcCr(this.normalizarCr(d));
+      lineas.push({ na: S.naEnc, cuenta: S.cuenta * it.n }); n += it.n;
     });
-    return { va, n };
+    return { ...this._naDeLineas(lineas), n };
   },
-  /** Dificultad: Mortal desde su presupuesto; por debajo, la banda más
-      cercana (las bandas se duplican, así que «cercana» es en proporción). */
-  _dificultad(va, P) {
-    if (va <= 0) return { k: '', n: 'Sin amenazas' };
-    if (va >= P.m) return { k: 'm', n: 'Mortal' };
-    const r2 = Math.SQRT2;
-    if (va < P.f / r2) return { k: 't', n: 'Trivial' };
-    if (va < P.f * r2) return { k: 'f', n: 'Fácil' };
-    if (va < P.e * r2) return { k: 'e', n: 'Estándar' };
-    return { k: 'p', n: va > P.p * r2 ? 'Muy peligroso' : 'Peligroso' };
+  /** 1½, ¼, 2… */
+  _fmtSuma(x) {
+    const ent = Math.floor(x), g = { 0: '', .25: '¼', .5: '½', .75: '¾' }[x - ent];
+    if (g == null) return x.toLocaleString('es', { maximumFractionDigits: 2 });
+    return (ent || !g ? String(ent) : '') + g;
+  },
+  _dificultad(na, U) {
+    if (na == null) return { k: '', n: 'Sin amenazas' };
+    if (na >= U.m) return { k: 'm', n: 'Mortal' };
+    if (na >= U.p) return { k: 'p', n: 'Peligroso' };
+    if (na >= U.e) return { k: 'e', n: 'Estándar' };
+    if (na >= U.f) return { k: 'f', n: 'Fácil' };
+    return { k: 't', n: 'Trivial' };
   },
 
   _pintarEncuentro() {
     const host = document.getElementById('encuentro_body'); if (!host) return;
     const enc = this.mesa.enc;
     const roster = STORAGE.loadRoster();
+    const E = this._naEncuentro();
     host.textContent = '';
     host.appendChild(this._campo('Nombre del encuentro', this._texto(enc.nombre, v => { enc.nombre = v; }, 'Nombre del encuentro', 'ej. Emboscada en el vado')));
 
@@ -186,7 +205,7 @@ Object.assign(app, {
         const cr = this.normalizarCr(d);
         const S = this.calcCr(cr);
         info.append(this.h('span', 'dir-fila-n', it.ref),
-          this.h('span', 'dir-fila-s', `${this._etiquetaNA(cr)} · ${this.DB.roles[cr.rol]?.name || 'Sin Rol'} · VA ${this._fmtVA(S.va * it.n)}`));
+          this.h('span', 'dir-fila-s', `${this._etiquetaNA(cr)} · ${this.DB.roles[cr.rol]?.name || 'Sin Rol'} · ${this._txtCuenta(S, it.n, E.max)}`));
       } else info.append(this.h('span', 'dir-fila-n', it.ref), this.h('span', 'dir-fila-s', 'Ya no está en tus amenazas'));
       const ctl = this.h('div', 'dir-fila-ctl');
       ctl.appendChild(this._paso(it.n, 1, 40, n => { it.n = n; this.mesaCambio(); }, `cuántos de ${it.ref}`, '×' + it.n));
@@ -200,23 +219,24 @@ Object.assign(app, {
     host.appendChild(lista);
 
     // Dificultad
-    const P = this.presupuesto();
-    const { va } = this._vaEncuentro();
-    const dif = this._dificultad(va, P);
+    const U = this.umbrales();
+    const dif = this._dificultad(E.na, U);
     const caja = this.h('div', 'dir-dif');
     const cab = this.h('div', 'dir-dif-cab');
-    cab.append(this.h('span', 'dir-dif-n', dif.n), this.h('span', 'dir-dif-va', 'VA ' + this._fmtVA(va)));
+    cab.append(this.h('span', 'dir-dif-n', dif.n), this.h('span', 'dir-dif-va', E.na == null ? '' : 'NA ' + E.na));
     caja.appendChild(cab);
     const bandas = this.h('div', 'dir-bandas');
-    [['f', 'Fácil', P.f], ['e', 'Estándar', P.e], ['p', 'Peligroso', P.p], ['m', 'Mortal', P.m]].forEach(([k, n, v]) => {
+    [['f', 'Fácil', U.f], ['e', 'Estándar', U.e], ['p', 'Peligroso', U.p], ['m', 'Mortal', U.m]].forEach(([k, n, v]) => {
       const b = this.h('div', 'dir-banda' + (dif.k === k ? ' on' : ''));
       b.dataset.k = k;
-      b.append(this.h('span', 'dir-banda-n', n), this.h('span', 'dir-banda-v', this._fmtVA(v) + (k === 'm' ? '+' : '')));
+      b.append(this.h('span', 'dir-banda-n', n), this.h('span', 'dir-banda-v', v < 0 ? '—' : 'NA ' + v + (k === 'm' ? '+' : '')));
       bandas.appendChild(b);
     });
     caja.appendChild(bandas);
     host.appendChild(caja);
-    host.appendChild(this.h('p', 'dir-nota', 'Valor de Amenaza: se duplica con cada NA. Un jefe cuenta el doble; cuatro esbirros, como una criatura; cada 2 de exceso de Peso, +1 NA.'));
+    if (E.na != null) host.appendChild(this.h('p', 'dir-nota dir-centro',
+      `La más fuerte es NA ${E.max} y el encuentro suma ${this._fmtSuma(E.suma)}` + (E.sube ? `: ${this._signo(E.sube)} NA.` : '.')));
+    host.appendChild(this.h('p', 'dir-nota', 'NA del encuentro: cada criatura del NA más alto cuenta 1; una de un NA menos, ½; de dos menos, ¼. Si suman 2–3, +1 NA; 4–7, +2; 8 o más, +3. Un jefe sube 1; cuatro esbirros cuentan como una criatura; cada 2 de exceso de Peso, +1.'));
 
     const acc = this.h('div', 'dir-acc dir-acc-centro');
     acc.append(
@@ -227,6 +247,16 @@ Object.assign(app, {
     host.appendChild(acc);
   },
 
+  /** Lo que una línea del encuentro aporta al total: «cuenta 1½», «no cuenta». */
+  _txtCuenta(S, n, max) {
+    const v = S.cuenta * n * this._pesoEnc(max - S.naEnc);
+    const como = S.naEnc !== S.na ? `como NA ${S.naEnc}, ` : '';
+    return v ? `${como}cuenta ${this._fmtSuma(v)}` : `${como}no cuenta`;
+  },
+  _notaCalibrar(cr) {
+    const S = this.calcCr(cr);
+    return S.esbirro ? ' · cuatro cuentan como una' : (S.naEnc !== cr.na ? ` · al calibrar, NA ${S.naEnc}` : '');
+  },
   _elegirParaEncuentro() {
     const enc = this.mesa.enc;
     this.abrirSelector({
@@ -239,7 +269,7 @@ Object.assign(app, {
         return Object.keys(roster).map(k => {
           const cr = this.normalizarCr(roster[k]);
           const it = enc.items.find(x => x.ref === k);
-          return { k, nombre: k, etiqueta: it ? '×' + it.n : this._etiquetaNA(cr), texto: this._lineaCr(cr) + ' · VA ' + this._fmtVA(this.calcCr(cr).va), sel: !!it };
+          return { k, nombre: k, etiqueta: it ? '×' + it.n : this._etiquetaNA(cr), texto: this._lineaCr(cr) + this._notaCalibrar(cr), sel: !!it };
         });
       },
       alElegir: k => {
@@ -248,7 +278,7 @@ Object.assign(app, {
         this.guardarMesa();
         return true;
       },
-      info: () => { const { va, n } = this._vaEncuentro(); return `${n} en el encuentro · VA ${this._fmtVA(va)} · ${this._dificultad(va, this.presupuesto()).n}`; },
+      info: () => { const E = this._naEncuentro(); return E.na == null ? 'Encuentro vacío' : `${E.n} en el encuentro · NA ${E.na} · ${this._dificultad(E.na, this.umbrales()).n}`; },
       alCerrar: () => this.pintarMesa(),
     });
   },
@@ -729,7 +759,7 @@ Object.assign(app, {
     acc.appendChild(this._boton(this._ico('i-d20') + 'Trampa al azar', () => this.trampaAlAzar()));
     host.appendChild(acc);
     if (this.mesa.trampaUlt) host.appendChild(this.h('p', 'dir-resultado u-pre-wrap', this.mesa.trampaUlt));
-    host.appendChild(this.h('p', 'dir-nota', 'Detectarla: Percepción o Investigación contra la CD. Desactivarla: Herramientas de Ladrón o Tecnología. Un fallo por 5 o más la dispara. Sin señal no hay decisión, solo castigo.'));
+    host.appendChild(this.h('p', 'dir-nota', 'Detectarla: Percepción o Investigación contra la CD. Desactivarla: Herramientas de Ladrón o Tecnología. Un fallo por 5 o más la dispara. Toda amenaza tiene señal: descríbela antes de que el grupo llegue a la condición.'));
     host.appendChild(this.h('span', 'fl dir-ref-t', 'Biblioteca de peligros'));
     const lista = this.h('div', 'dir-lista');
     Object.entries(this.DB.peligros).sort((a, b) => a[1].na - b[1].na).forEach(([k, p]) => {

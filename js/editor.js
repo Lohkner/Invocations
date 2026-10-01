@@ -14,7 +14,7 @@ Object.assign(app, {
   DB_CATS: [
     ['Amenazas', [['na', 'Tabla por NA'], ['roles', 'Roles'], ['tamanos', 'Tamaños'], ['tipos', 'Tipos de criatura'],
                   ['rasgos', 'Biblioteca'], ['familias', 'Familias'], ['plantillas', 'Plantillas'], ['estados', 'Estados']]],
-    ['Mesa', [['presupuestos', 'Presupuestos'], ['riqueza', 'Riqueza por nivel'], ['rarezas', 'Rarezas'], ['propiedades', 'Propiedades'],
+    ['Mesa', [['encuentros', 'NA del encuentro'], ['riqueza', 'Riqueza por nivel'], ['rarezas', 'Rarezas'], ['propiedades', 'Propiedades'],
               ['maldiciones', 'Maldiciones'], ['focos', 'Focos'], ['modulos', 'Módulos'], ['costes', 'Costes'],
               ['etiquetas', 'Etiquetas de Zona'], ['peligros', 'Peligros'], ['faccionesEj', 'Facciones'], ['accionesFaccion', 'Acciones de Facción']]],
     ['Azar', [['tablas', 'Tablas']]],
@@ -22,7 +22,7 @@ Object.assign(app, {
   DB_ROTULOS: {
     name: 'Nombre', txt: 'Texto', id: 'Identificador', tipo: 'Tipo', peso: 'Peso', coste: 'Coste', frec: 'Frecuencia', pide: 'Dato que pide',
     multi: 'Se puede tomar varias veces', mod: 'Modificadores a la ficha', pv: 'PV', g: 'Guardia', a: 'Armadura', atk: 'Ataque', dano: 'Daño',
-    pa: 'PA', sf: 'Salvación fuerte', sd: 'Salvación débil', cd: 'CD', va: 'Valor de Amenaza', etiqueta: 'Etiqueta', hab: 'Habilidad',
+    pa: 'PA', sf: 'Salvación fuerte', sd: 'Salvación débil', cd: 'CD', etiqueta: 'Etiqueta', hab: 'Habilidad',
     habTipo: 'Tipo de la habilidad', habCoste: 'Coste de la habilidad', habTxt: 'Texto de la habilidad', pvNa: 'PV por NA', vel: 'Velocidad',
     ini: 'Iniciativa', esbirro: 'Es esbirro', ej: 'Ejemplos', pvTxt: 'PV (texto)', alcance: 'Alcance', espacio: 'Espacio', salv: 'Salvaciones fuertes',
     deb: 'Debilidad coherente', gratis: 'Rasgos gratuitos', elige: 'Rasgos a elegir', exige: 'Rasgos obligatorios', salvDef: 'Salvaciones por defecto',

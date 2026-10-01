@@ -20,7 +20,7 @@
 
   /* ── Paso 1 · La idea ─────────────────────────────────────────── */
   function pasoIdea(b) {
-    b.appendChild(el('p', 'wiz-hint', 'Una frase: qué es y qué problema plantea. Todo lo demás sirve a esa frase.'));
+    b.appendChild(el('p', 'wiz-hint', 'Una frase: qué es y qué problema plantea.'));
     const idea = document.createElement('textarea');
     idea.value = cr().idea; idea.style.minHeight = '84px';
     idea.placeholder = 'Una araña que caza desde el techo y se lleva a quien se queda atrás.';
@@ -55,10 +55,10 @@
 
   /* ── Paso 2 · El NA ───────────────────────────────────────────── */
   function pasoNA(b) {
-    b.appendChild(el('p', 'wiz-hint', 'Según el peso que debe tener en la escena, no según lo que «sería realista».'));
+    b.appendChild(el('p', 'wiz-hint', 'Según el peso que debe tener en la escena. Parte de la tabla de calibrado de la Guía: estándar, serio o mortal para el nivel del grupo.'));
     const g = app.mesa.grupo;
     b.appendChild(app._campo('Nivel del grupo', app._paso(g.nivel, 1, 10, n => { g.nivel = n; app.guardarMesa(); pintar(); }, 'el nivel del grupo', 'Nivel ' + g.nivel)));
-    const f = app._filaPresupuesto(g.nivel);
+    const f = app._filaEncuentro(g.nivel);
     const opciones = [
       ['Estándar', f.estandar, 'Un rival digno.'],
       ['Serio', f.serio, 'Exige recursos.'],
@@ -74,7 +74,7 @@
     const B = app.DB.na[cr().na];
     sub.appendChild(app._campo('Nivel de Amenaza', app._paso(cr().na, 0, 15, n => { cr().na = n; cr().pvAct = null; pintar(); }, 'el Nivel de Amenaza',
       'NA ' + cr().na + (B.etiqueta ? ' · ' + B.etiqueta : ''))));
-    sub.appendChild(app._info(`PV ${B.pv} · Guardia ${B.g} / Armadura ${B.a}\nAtaque ${app._signo(B.atk)} · Daño ${B.dano} · PA ${B.pa}\nCD ${B.cd} · Peso ${B.peso} · Valor de Amenaza ${app._fmtVA(B.va)}`));
+    sub.appendChild(app._info(`PV ${B.pv} · Guardia ${B.g} / Armadura ${B.a}\nAtaque ${app._signo(B.atk)} · Daño ${B.dano} · PA ${B.pa}\nCD ${B.cd} · Peso ${B.peso}`));
     b.appendChild(sub);
   }
 
@@ -115,7 +115,7 @@
     b.appendChild(el('p', 'wiz-hint', 'Uno o ninguno: cómo se comporta cuando ya está en escena. Se entiende mejor en el grupo que la acompaña que en su propia ficha.'));
     b.appendChild(app._campo('Estructura', app._seg([['normal', 'Normal'], ['jefe', 'Jefe'], ['horda', 'Horda']], cr().estructura,
       k => { cr().estructura = k; cr().pvAct = null; pintar(); }, 'Estructura')));
-    if (cr().estructura === 'jefe') b.appendChild(app._info('PV ×2 y +2 de Peso. Al menos una mecánica que no sea «más daño», acciones telegrafiadas y nunca invulnerable sin información previa.'));
+    if (cr().estructura === 'jefe') b.appendChild(app._info('PV ×2 y +2 de Peso. Usa al menos una: Acción de Jefe, Turno Doble o un séquito. Al calibrar el encuentro sube un NA.'));
     if (cr().estructura === 'horda') {
       const inp = document.createElement('input');
       inp.type = 'number'; inp.min = 2; inp.max = 999; inp.value = cr().miembros; inp.inputMode = 'numeric';
@@ -144,7 +144,7 @@
     const g1 = el('div', 'dir-stats');
     g1.append(app._stat('PV', String(S.pv)), app._stat('Ataque', app._signo(S.ataque)), app._stat('Daño', S.dano), app._stat('PA', String(S.pa)));
     const g2 = el('div', 'dir-stats dir-stats-3');
-    g2.append(app._stat('Velocidad', S.vel + ' pies'), app._stat('Moral', S.noMoral ? 'no tira' : String(S.moral)), app._stat('Valor de Amenaza', app._fmtVA(S.va)));
+    g2.append(app._stat('Velocidad', S.vel + ' pies'), app._stat('Moral', S.noMoral ? 'no tira' : String(S.moral)), app._stat('Al calibrar', app._txtCalibrar(S)));
     const marco = el('div', 'wiz-panelito');
     marco.append(grid, g1, g2);
     b.appendChild(marco);
@@ -191,7 +191,7 @@
     fill.style.width = (S.pesoMax ? Math.min(100, S.pesoGastado / S.pesoMax * 100) : (S.pesoGastado ? 100 : 0)) + '%';
     barra.appendChild(fill);
     b.append(carga, barra);
-    if (S.exceso) b.appendChild(el('p', 'dir-aviso', `Excede en ${S.exceso}` + (S.exceso >= 2 ? `: al calibrar cuenta como NA ${S.naVA}.` : ': con 2 de exceso contará como +1 NA.')));
+    if (S.exceso) b.appendChild(el('p', 'dir-aviso', `Excede en ${S.exceso}` + (S.exceso >= 2 ? `: al calibrar cuenta como NA ${S.naEnc}.` : ': con 2 de exceso contará como +1 NA.')));
     (S.tipo.exige || []).forEach(id => {
       if (!cr().rasgos.some(r => r.id === id)) b.appendChild(el('p', 'dir-aviso', `${S.tipo.name}: debe tener ${app._libIdx()[id]?.e.name || id}.`));
     });
@@ -226,7 +226,7 @@
 
   /* ── Paso 7 · La señal ────────────────────────────────────────── */
   function pasoSenal(b) {
-    b.appendChild(el('p', 'wiz-hint', '¿Qué percibe el grupo antes de verla? Huellas, olor, un silencio, restos. Sin señal, el grupo no toma decisiones: solo recibe castigos.'));
+    b.appendChild(el('p', 'wiz-hint', 'Qué percibe el grupo antes de verla: huellas, olor, un silencio, restos.'));
     const ta = document.createElement('textarea');
     ta.value = cr().senal; ta.style.minHeight = '84px';
     ta.placeholder = 'Hilos pegajosos a la altura de la cabeza; ratas envueltas; ningún eco en la galería.';
@@ -252,7 +252,7 @@
 
   /* ── Paso 8 · Contexto táctico ────────────────────────────────── */
   function pasoContexto(b) {
-    b.appendChild(el('p', 'wiz-hint', '¿Qué problema le plantea al grupo? No qué puede hacer, sino qué decisiones incómodas obliga a tomar. Si no sale, vuelve al paso 6: le sobra un Rasgo o le falta la idea que la sostiene.'));
+    b.appendChild(el('p', 'wiz-hint', '¿Qué problema le plantea al grupo? No qué puede hacer, sino qué decisiones obliga a tomar. Una o dos frases.'));
     const ta = document.createElement('textarea');
     ta.value = cr().contexto; ta.style.minHeight = '96px';
     ta.placeholder = 'No pelea: elige al último de la fila, lo inmoviliza y se lo lleva. El grupo decide entre perseguirla hacia su terreno o dejar atrás a un compañero.';
@@ -264,7 +264,7 @@
     sub.appendChild(el('span', 'fl', 'Así queda'));
     sub.appendChild(app._info(`${cr().nombre || 'Sin nombre'} — ${app._etiquetaNA(cr())} · ${app._lineaCr(cr())}\n` +
       `PV ${S.pv} · Guardia ${S.guardia} · Armadura ${S.armadura} · Ataque ${app._signo(S.ataque)} · Daño ${S.dano}\n` +
-      `Peso ${S.pesoGastado}/${S.pesoMax} · Valor de Amenaza ${app._fmtVA(S.va)}`));
+      `Peso ${S.pesoGastado}/${S.pesoMax} · al calibrar, ${app._txtCalibrar(S)}`));
     b.appendChild(sub);
   }
 
@@ -277,7 +277,7 @@
         if (!c.idea.trim()) return 'Escribe la idea en una frase';
         return c.nombre.trim() ? '' : 'Ponle un nombre';
       case 4: return c.salv.length === 2 ? '' : 'Elige dos Salvaciones fuertes';
-      case 6: return c.senal.trim() ? '' : 'La señal no es opcional';
+      case 6: return c.senal.trim() ? '' : 'Toda amenaza tiene señal';
       case 7: return c.contexto.trim() ? '' : 'Escribe el contexto táctico';
     }
     return '';

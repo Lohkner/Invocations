@@ -30,7 +30,7 @@
     ataques: () => S() ? `${app._signo(S().ataque)} · ${S().dano}` : '—',
     salv: () => S() ? (S().noMoral ? 'Sin Moral' : 'Moral ' + S().moral) : '—',
     grupo: () => app.mesa ? `${app.mesa.grupo.pjs} PJ · Nv ${app.mesa.grupo.nivel}` : '—',
-    encuentro: () => { if (!app.mesa) return '—'; const { va } = app._vaEncuentro(); return app._dificultad(va, app.presupuesto()).n; },
+    encuentro: () => { if (!app.mesa) return '—'; const { na } = app._naEncuentro(); return app._dificultad(na, app.umbrales()).n + (na == null ? '' : ' · NA ' + na); },
     combate: () => app.mesa?.combate ? 'Ronda ' + app.mesa.combate.ronda : '',
   };
 

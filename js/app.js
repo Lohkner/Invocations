@@ -260,7 +260,7 @@ Object.assign(app, {
       /^data:image\/(png|jpe?g|webp|gif|avif);base64,[A-Za-z0-9+/=]+$/.test(src);
   },
 
-  /** Línea corta de una amenaza: «Bestia grande · Emboscador». */
+  /** Línea corta de una amenaza: «Bestia grande · Acechador». */
   _lineaCr(cr) {
     const tipo = this.DB.tipos[cr.tipo]?.name || '';
     const tam = this.DB.tamanos[cr.tam]?.name || '';

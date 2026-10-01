@@ -14,7 +14,9 @@ Object.assign(app, {
   /* «La criatura en ocho tiradas» (Manual de Monstruos, Cap. 9) */
   AZAR_TIPO: ['bestia', 'bestia', 'bestia', 'humanoide', 'gigante', 'monstruosidad', 'monstruosidad', 'dragon', 'no_muerto', 'no_muerto',
     'espiritu', 'constructo', 'maquina', 'elemental', 'extraplanar', 'feerico', 'aberracion', 'planta_u_hongo', 'cieno', 'mutante'],
-  AZAR_ROL: ['bruto', 'hostigador', 'controlador', 'comandante', 'soporte', 'explorador', 'artillero', 'emboscador', 'guardian', ''],
+  AZAR_ROL: ['arrollador', 'hostigador', 'represor', 'comandante', 'soporte', 'explorador', 'artillero', 'acechador', 'guardian', ''],
+  /* Roles que cambiaron de nombre en el Manual: las amenazas guardadas antes siguen abriendo */
+  ROL_ANTES: { bruto: 'arrollador', controlador: 'represor', emboscador: 'acechador' },
   ORDEN_TAM: ['diminuto', 'pequeno', 'mediano', 'grande', 'enorme', 'colosal'],
   UD: ['Ud12', 'Ud10', 'Ud8', 'Ud6', 'Ud4'],
 
@@ -52,7 +54,8 @@ Object.assign(app, {
     cr.na = Number.isFinite(na) ? Math.max(0, Math.min(15, na)) : 1;
     cr.tipo = this.DB.tipos[d.tipo] ? d.tipo : 'bestia';
     cr.tam = this.DB.tamanos[d.tam] ? d.tam : 'mediano';
-    cr.rol = this.DB.roles[d.rol] ? d.rol : '';
+    const rol = this.DB.roles[d.rol] ? d.rol : this.ROL_ANTES[d.rol];
+    cr.rol = this.DB.roles[rol] ? rol : '';
     cr.estructura = ['normal', 'jefe', 'horda'].includes(d.estructura) ? d.estructura : 'normal';
     const m = parseInt(d.miembros, 10);
     cr.miembros = Number.isFinite(m) ? Math.max(2, Math.min(999, m)) : 6;
@@ -212,11 +215,15 @@ Object.assign(app, {
     S.exceso = Math.max(0, S.pesoGastado - S.pesoMax);
     S.nDebs = debs.length;
 
-    // Valor de Amenaza (Guía, Cap. 2): se duplica con cada NA; cada 2 de exceso de Peso, +1 NA
-    S.naVA = naEf + Math.floor(S.exceso / 2);
-    S.va = Math.pow(2, S.naVA) * (jefe ? 2 : 1) / (esbirro ? 4 : 1);
+    // Al calibrar el encuentro (Guía, Cap. 2): la horda usa su NA efectivo, el
+    // jefe sube un NA y cada 2 de exceso de Peso, otro. Cuatro esbirros cuentan
+    // como una criatura de su NA.
+    S.naEnc = naEf + Math.floor(S.exceso / 2) + (jefe ? 1 : 0);
+    S.cuenta = esbirro ? .25 : 1;
     return S;
   },
+  /** «NA 5», o «¼ de NA 2» si es un esbirro: lo que pesa al calibrar. */
+  _txtCalibrar(S) { return (S.esbirro ? '¼ de ' : '') + 'NA ' + S.naEnc; },
 
   /** Avisos de «fuera de la curva» (Guía, Cap. 16). */
   _avisosCurva(S) {
@@ -277,6 +284,7 @@ Object.assign(app, {
     on('cur_pv', 'input', e => {
       const n = parseInt(e.target.value, 10);
       this.cr.pvAct = Number.isFinite(n) ? Math.max(0, n) : 0;
+      this._anchoPV();
       this._markUnsaved(); this._updateResBars(); this._notaEstado(this._S);
     });
     // Los ± de PV escriben en el campo; aquí se recoge en la amenaza.
@@ -342,10 +350,10 @@ Object.assign(app, {
     if (S.jefe) partes.push('Jefe: PV ×2 · Peso +2');
     if (S.horda) partes.push(`${S.H.marea ? 'Marea: registro Planetario' : `${S.H.n} de ${cr.miembros}`} · NA efectivo ${S.naEf}`);
     if (S.esbirro) partes.push('Esbirro: cuatro cuentan como una criatura');
-    partes.push('Valor de Amenaza ' + this._fmtVA(S.va));
+    if (S.naEnc !== cr.na) partes.push('Al calibrar el encuentro cuenta como NA ' + S.naEnc);
     extra.textContent = partes.join(' · ');
+    extra.hidden = !partes.length;
   },
-  _fmtVA(v) { return v < 1 ? String(v).replace('.', ',') : Math.round(v).toLocaleString('es'); },
 
   /** Campo con rótulo. */
   _campo(rotulo, control, nota) {
@@ -451,7 +459,7 @@ Object.assign(app, {
     // Estructura
     v.appendChild(this._campo('Estructura', this._seg([['normal', 'Normal'], ['jefe', 'Jefe'], ['horda', 'Horda']], cr.estructura,
       k => { cr.estructura = k; cr.pvAct = null; repintar(); }, 'Estructura')));
-    if (cr.estructura === 'jefe') v.appendChild(this._info('PV ×2 y +2 de Peso. Debe compensar la economía de acciones con Acción de Jefe, Turno Doble o un séquito, y telegrafiar sus Aptitudes de Peso 3 una ronda antes.'));
+    if (cr.estructura === 'jefe') v.appendChild(this._info('PV ×2 y +2 de Peso. Usa al menos una: Acción de Jefe, Turno Doble o un séquito. Sus Aptitudes de Peso 3 se anuncian una ronda antes. Al calibrar el encuentro sube un NA.'));
     if (cr.estructura === 'horda') {
       const inp = document.createElement('input');
       inp.type = 'number'; inp.min = 2; inp.max = 999; inp.value = cr.miembros; inp.inputMode = 'numeric';
@@ -474,6 +482,7 @@ Object.assign(app, {
     max.textContent = S.pv;
     if (cr.pvAct != null && cr.pvAct > S.pv) cr.pvAct = S.pv;
     if (document.activeElement !== cur) cur.value = cr.pvAct == null ? S.pv : cr.pvAct;
+    this._anchoPV();
     this._updateResBars();
     this._notaEstado(S);
     const host = document.getElementById('rest_list');
@@ -488,6 +497,13 @@ Object.assign(app, {
         op('Como nueva', 'PV y Aptitudes', 'PV al máximo y todos los Dados de Uso recargados.', () => this.restablecer(true)),
         op('Recargar Aptitudes', 'tras un descanso', 'Los Dados de Uso vuelven a su valor y las de 1/combate quedan disponibles.', () => this.restablecer(false)));
     }
+  },
+  /** El campo de PV mide tantas cifras como el máximo (o lo que se esté
+      escribiendo): 9, 150 o 1460 caben enteros y el número no baila al bajar. */
+  _anchoPV() {
+    const cur = document.getElementById('cur_pv'), max = document.getElementById('max_pv');
+    if (!cur || !max) return;
+    cur.style.setProperty('--pv-ch', Math.max(2, cur.value.trim().length, max.textContent.trim().length));
   },
   _notaEstado(S) {
     const el = document.getElementById('estado_nota'); if (!el || !S) return;
@@ -534,7 +550,7 @@ Object.assign(app, {
     g1.append(this._stat('PV', String(S.pv)), this._stat('Ataque', this._signo(S.ataque)), this._stat('Daño', S.dano), this._stat('PA', String(S.pa)));
     const g2 = this.h('div', 'dir-stats dir-stats-3');
     g2.append(this._stat('Velocidad', S.vel + ' pies'), this._stat('Alcance', (S.tam.alcance || '5 pies').replace(/\s*\(.*\)/, '')),
-      this._stat('Valor de Amenaza', this._fmtVA(S.va)));
+      this._stat('Al calibrar', this._txtCalibrar(S)));
     v.append(g1, g2);
 
     // Defensas: salen de los Rasgos, que son la única fuente
@@ -754,7 +770,7 @@ Object.assign(app, {
     if (warn) {
       const t = [];
       if (S.esbirro && S.pesoGastado) t.push('Un esbirro no tiene Rasgos propios, solo los de su tipo');
-      else if (S.exceso) t.push(`Excede en ${S.exceso}` + (S.exceso >= 2 ? `: al calibrar cuenta como NA ${S.naVA}` : ': con 2 de exceso contará como +1 NA'));
+      else if (S.exceso) t.push(`Excede en ${S.exceso}` + (S.exceso >= 2 ? `: al calibrar cuenta como NA ${S.naEnc}` : ': con 2 de exceso contará como +1 NA'));
       else if (S.devuelto) t.push(`Presupuesto ${S.pesoBase} + ${S.devuelto} por Debilidad${S.devuelto > 1 ? 'es' : ''}`);
       warn.textContent = t.join(' · ');
       warn.style.display = t.length ? 'block' : 'none';
@@ -876,7 +892,7 @@ Object.assign(app, {
 
   /* ── Notas: señal y contexto ──────────────────────────────────── */
   CAMPOS_SENAL: [
-    ['senal', 'La señal', 'senal', 'Lo que el grupo percibe antes de verla. Sin señal no hay decisión, solo castigo.'],
+    ['senal', 'La señal', 'senal', 'Lo que el grupo percibe antes de verla: huellas, olor, un silencio, restos.'],
     ['contexto', 'Contexto táctico', '', '¿Qué problema le plantea al grupo? Una o dos frases.'],
     ['quiere', 'Qué quiere', 'quiere', ''],
     ['pelea', 'Cómo pelea', 'pelea', ''],
@@ -999,7 +1015,7 @@ Object.assign(app, {
     });
     // Comprobaciones de las reglas
     const av = [];
-    if (S.exceso) av.push(`Peso ${S.pesoGastado} de ${S.pesoMax}: ${S.exceso >= 2 ? `cuenta como NA ${S.naVA} al calibrar el encuentro` : 'un punto por encima del presupuesto'}.`);
+    if (S.exceso) av.push(`Peso ${S.pesoGastado} de ${S.pesoMax}: ${S.exceso >= 2 ? `cuenta como NA ${S.naEnc} al calibrar el encuentro` : 'un punto por encima del presupuesto'}.`);
     if (S.esbirro && S.pesoGastado) av.push('Un esbirro no tiene Rasgos propios, solo los de su tipo.');
     const p3 = S.infos.filter(x => !S.esGratis(x) && x.i.peso === 3).length;
     if (cr.na < 5 && p3 > 1) av.push('Por debajo de NA 5, una sola pieza de Peso 3 como máximo.');

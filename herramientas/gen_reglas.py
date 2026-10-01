@@ -92,13 +92,13 @@ i = find(M, '#Heading2 Estadísticas por Nivel de Amenaza')
 rows, _ = rows_from(M, i)
 NA = {}
 for r in rows[1:]:
-    na, pv, ga, atk, dano, pa, salv, cd, peso, va = r
+    na, pv, ga, atk, dano, pa, salv, cd, peso = r[:9]
     g, a = [x.strip() for x in ga.split('/')]
     sf, sd = [x.strip() for x in salv.split('/')]
     NA[na] = {
         'name': 'NA ' + na, 'pv': 4 if na == '0' else num(pv), 'g': int(g), 'a': int(a),
         'atk': num(atk), 'dano': dano, 'pa': int(pa), 'sf': num(sf), 'sd': num(sd),
-        'cd': int(cd), 'peso': int(peso), 'va': num(va),
+        'cd': int(cd), 'peso': int(peso),
     }
 ETIQ_NA = {'0': 'Civil', '1': 'Novato', '3': 'Veterano', '10': 'Élite', '12': 'Legendario'}
 for k, v in ETIQ_NA.items():
@@ -108,24 +108,24 @@ for k, v in ETIQ_NA.items():
 i = find(M, '#Heading2 Roles', exact=True)
 rows, _ = rows_from(M, i)
 ROL_MOD = {
-    'bruto': dict(pvNa=10, dano=2, g=-2), 'hostigador': dict(pvNa=-5, g=2, vel=10),
-    'controlador': dict(dano=-2), 'comandante': {}, 'soporte': dict(pvNa=-8, dano=-1),
+    'arrollador': dict(pvNa=10, dano=2, g=-2), 'hostigador': dict(pvNa=-5, g=2, vel=10),
+    'represor': dict(dano=-2), 'comandante': {}, 'soporte': dict(pvNa=-8, dano=-1),
     'explorador': dict(pvNa=-3, vel=15, ini=4), 'artillero': dict(pvNa=-5, dano=2, g=-1),
-    'emboscador': dict(pvNa=-3, g=1), 'guardian': dict(pvNa=5, a=1, vel=-10),
+    'acechador': dict(pvNa=-3, g=1), 'guardian': dict(pvNa=5, a=1, vel=-10),
     'esbirro': dict(esbirro=True),
 }
 ROL_HAB = {  # nombre de la habilidad, tipo y coste (el texto sale de la tabla)
-    'bruto': ('Ataque Masivo', 'Aptitud', '2 PA'), 'hostigador': ('Flanqueo', 'Rasgo', ''),
-    'controlador': ('Control de Zona', 'Aptitud', '3 PA'), 'comandante': ('Aura de Mando', 'Aura', ''),
+    'arrollador': ('Ataque Masivo', 'Aptitud', '2 PA'), 'hostigador': ('Flanqueo', 'Rasgo', ''),
+    'represor': ('Control de Zona', 'Aptitud', '3 PA'), 'comandante': ('Aura de Mando', 'Aura', ''),
     'soporte': ('Restaurar', 'Aptitud', '2 PA'), 'explorador': ('Primero en Llegar', 'Rasgo', ''),
-    'artillero': ('Posición', 'Rasgo', ''), 'emboscador': ('Primer Golpe', 'Modificador', ''),
+    'artillero': ('Posición', 'Rasgo', ''), 'acechador': ('Primer Golpe', 'Modificador', ''),
     'guardian': ('Custodia', 'Reacción', ''), 'esbirro': ('Esbirro', 'Rasgo', ''),
 }
 ROLES = {}
 for nombre, mod, hab in rows[1:]:
     k = slug(nombre)
     hn, ht, hc = ROL_HAB[k]
-    txt = re.sub(r'^[^:]{3,22}(?:\s*\([^)]*\))?:\s*', '', hab) if k not in ('controlador', 'soporte', 'explorador', 'esbirro') else hab
+    txt = re.sub(r'^[^:]{3,22}(?:\s*\([^)]*\))?:\s*', '', hab) if k not in ('represor', 'soporte', 'explorador', 'esbirro') else hab
     txt = re.sub(r'^\d PA:\s*', '', txt)
     txt = txt[0].upper() + txt[1:]
     e = {'name': nombre, 'mod': mod, 'hab': hn, 'habTipo': ht, 'habCoste': hc, 'habTxt': txt}
@@ -414,9 +414,10 @@ while j < i1:
         m = re.match(r'#Heading3 (.+) \(NA (\d+)\)', M[j])
         nombre, na = m.group(1), int(m.group(2))
         st = [p.strip() for p in M[j + 1].split(' · ')]
-        palabras = st[0].split(' ')
-        tam = TAM_K[palabras[-1].lower()]
-        tipo = TIPO_K[' '.join(palabras[:-1])]
+        # «Humanoide · Mediano · Esbirro · PV 2…»: tipo y tamaño van por separado
+        tipo = TIPO_K[st[0]]
+        tam = TAM_K[st[1].lower()]
+        st = st[1:]
         c = {'nombre': nombre, 'na': na, 'tipo': tipo, 'tam': tam, 'rol': '', 'estructura': 'normal',
              'rasgos': [], 'fuente': 'Manual de Monstruos', 'manual': {}}
         imp = {}
@@ -599,20 +600,24 @@ for e in errores:
     print('  AVISO', e)
 
 # ───────────────────────── Encuentros ─────────────────────────
-PRESUP = {
-    '1-2': {'name': 'Nivel 1–2', 'f': 2, 'e': 4, 'p': 8, 'm': 16, 'estandar': '1', 'serio': '2', 'mortal': '3+'},
-    '3-4': {'name': 'Nivel 3–4', 'f': 4, 'e': 8, 'p': 16, 'm': 32, 'estandar': '2–3', 'serio': '4', 'mortal': '5+'},
-    '5-6': {'name': 'Nivel 5–6', 'f': 16, 'e': 32, 'p': 64, 'm': 128, 'estandar': '4–5', 'serio': '6', 'mortal': '7+'},
-    '7-8': {'name': 'Nivel 7–8', 'f': 64, 'e': 128, 'p': 256, 'm': 512, 'estandar': '6–7', 'serio': '8', 'mortal': '9+'},
-    '9-10': {'name': 'Nivel 9–10', 'f': 256, 'e': 512, 'p': 1024, 'm': 2048, 'estandar': '8–9', 'serio': '10', 'mortal': '11+'},
-}
-# comprobación con la tabla de la Guía
-i = find(G, 'ROW: | Nivel del grupo | Fácil | Estándar | Peligroso | Mortal')
+# NA del encuentro que corresponde a cada dificultad (Guía, Cap. 2): «la primera
+# opción de cada casilla». Al lado, la tabla de calibrado de un enemigo solo.
+i = find(G, 'ROW: | Nivel grupo | Fácil | Estándar | Peligroso | Mortal')
 rows, _ = rows_from(G, i)
-for r, k in zip(rows[1:], PRESUP):
-    p = PRESUP[k]
-    assert [num(r[1]), num(r[2]), num(r[3]), num(r[4].rstrip('+'))] == [p['f'], p['e'], p['p'], p['m']], r
-GRUPO_TAM = {'1': 0.25, '2': 0.5, '3': 0.75, '4': 1, '5': 1.25, '6': 1.5}
+i = find(G, 'ROW: | Nivel del grupo | NA estándar | NA serio | NA mortal')
+cal, _ = rows_from(G, i)
+ENC = {}
+for r, c in zip(rows[1:], cal[1:]):
+    assert r[0] == c[0], (r, c)
+    f, e, p, m = [int(re.match(r'1×NA(\d+)', x).group(1)) for x in r[1:5]]
+    assert r[4].endswith('+') and f < e < p < m, r
+    ENC[r[0].replace('–', '-')] = {'name': 'Nivel ' + r[0], 'f': f, 'e': e, 'p': p, 'm': m,
+                                   'estandar': c[1], 'serio': c[2], 'mortal': c[3]}
+assert list(ENC) == ['1-2', '3-4', '5-6', '7-8', '9-10'], list(ENC)
+# «Con cinco o seis, súmale 1 a cada columna; con dos o tres, réstale 1.» La Guía
+# no dice nada de un personaje solo: se le resta 2.
+assert find(G, 'Con cinco o seis, súmale 1 a cada columna; con dos o tres, réstale 1')
+GRUPO_AJUSTE = {'1': -2, '2': -1, '3': -1, '4': 0, '5': 1, '6': 1}
 
 # ───────────────────────── Botín ─────────────────────────
 i = find(G, 'ROW: | Nivel del grupo | Riqueza acumulada')
@@ -721,7 +726,7 @@ TABLAS['danos'] = {'name': 'Tipos de daño', 'filas': DANOS}
 DB = {
     'na': NA, 'roles': ROLES, 'tamanos': TAM, 'tipos': TIPOS, 'familias': FAM, 'rasgos': RASGOS,
     'plantillas': PLANT, 'peligros': PELIGROS, 'bestiario': BEST, 'tablas': TABLAS,
-    'presupuestos': PRESUP, 'grupoTam': GRUPO_TAM,
+    'encuentros': ENC, 'grupoAjuste': GRUPO_AJUSTE,
     'riqueza': RIQUEZA, 'costes': COSTES, 'rarezas': RAREZAS, 'propiedades': PROPS,
     'maldiciones': MALD, 'focos': FOCOS, 'modulos': MODULOS,
     'etiquetas': ETIQ, 'faccionesEj': FACC, 'accionesFaccion': ACC, 'estados': ESTADOS,
