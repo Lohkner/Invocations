@@ -316,3 +316,49 @@ select.dir-estado-sel{flex:1;min-width:0;min-height:38px;font-size:var(--fs-sm)}
   #lib_panel .tmct,#sel_panel .tmct{padding:8px}
 }
 #sel_list .wiz-opt{margin-bottom:6px}
+
+/* ── Pantalla de carga: la mano que late ────────────────────────
+   Propia de Director: el icono de la app respirando sobre un frío
+   resplandor verde y una línea que corre. Sin el anillo de runas ni las
+   partículas de Companion. El verde es el de la mano, no el del tema. */
+#ss-loader{
+  background-image:
+    radial-gradient(ellipse 62% 40% at 50% 40%,rgba(74,222,128,.10) 0%,transparent 62%),
+    radial-gradient(ellipse 90% 50% at 50% 100%,rgba(var(--border-rgb),.35) 0%,transparent 70%);
+}
+.carga-mano{
+  width:132px;height:132px;margin-bottom:20px;flex-shrink:0;
+  animation:lReveal .6s cubic-bezier(.16,.72,.34,1) .05s both;
+}
+.carga-mano img{
+  display:block;width:100%;height:100%;object-fit:contain;
+  filter:drop-shadow(0 0 16px rgba(74,222,128,.35));
+  animation:cargaLate 2.4s ease-in-out infinite;
+}
+@keyframes cargaLate{
+  0%,100%{opacity:.6;transform:scale(.94)}
+  50%    {opacity:1;transform:scale(1.04)}
+}
+#ss-loader .loader-title{
+  font-size:25px;      /* fijo: no crece con «Muy grande» y no se parte en dos líneas */
+  color:var(--goldb);
+  text-shadow:0 0 40px rgba(74,222,128,.22),0 2px 6px rgba(0,0,0,.95);
+}
+#ss-loader .loader-sub{color:var(--muted);margin-top:2px}
+#ss-loader .loader-status{color:var(--muted)}
+.carga-linea{
+  position:relative;width:128px;height:2px;margin:12px 0 4px;border-radius:1px;overflow:hidden;
+  background:var(--rim);
+  animation:lReveal .5s cubic-bezier(.16,.72,.34,1) .45s both;
+}
+.carga-linea::after{
+  content:'';position:absolute;top:0;bottom:0;left:0;width:42%;border-radius:1px;
+  background:linear-gradient(90deg,transparent,#4ade80 45%,#bbf7d0 60%,transparent);
+  animation:cargaCorre 1.5s cubic-bezier(.45,0,.55,1) infinite;
+}
+@keyframes cargaCorre{from{transform:translateX(-110%)}to{transform:translateX(250%)}}
+@media(prefers-reduced-motion:reduce){
+  .carga-mano,.carga-mano img,.carga-linea,.carga-linea::after{animation:none}
+  .carga-mano img{opacity:1}
+  .carga-linea::after{width:100%}
+}

@@ -25,6 +25,7 @@
 <meta name="color-scheme" content="dark">
 <!-- Letras instaladas en la propia app (css/fuentes.css + /fonts): se ven igual
      con o sin conexión. Se precargan las dos que pintan la primera pantalla. -->
+<link rel="preload" href="Bone_Chill_Icon.webp" as="image" type="image/webp">
 <link rel="preload" href="fonts/cinzel-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/spectral-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/fuentes.css">
@@ -82,29 +83,14 @@
 </svg>
 <div id="ss-loader" aria-hidden="true">
 
-  <!-- Floating particles -->
-  <div class="loader-particles" aria-hidden="true">
-    <div class="lp"></div><div class="lp"></div><div class="lp"></div>
-    <div class="lp"></div><div class="lp"></div><div class="lp"></div>
-    <div class="lp"></div><div class="lp"></div>
-  </div>
+  <!-- La mano que late: el icono de la app, sin anillo ni partículas -->
+  <div class="carga-mano"><img src="Bone_Chill_Icon.webp" alt="" width="144" height="144" decoding="sync"></div>
 
-  <!-- Rune ring -->
-  <div class="loader-ring-wrap">
-    <div class="loader-ring"></div>
-    <div class="loader-ring-outer"></div>
-    <div class="loader-ring-inner"></div>
-    <div class="loader-arc"></div>
-    <div class="loader-arc-trail"></div>
-    <div class="loader-glyph">✦</div>
-  </div>
-
-  <!-- Text -->
   <div class="loader-text">
     <div class="loader-title">Stars &amp; Sorcery</div>
-    <div class="loader-deco"></div>
     <div class="loader-sub">Director</div>
-    <div class="loader-status">Cargando…</div>
+    <div class="carga-linea"></div>
+    <div class="loader-status">Despertando…</div>
   </div>
 
 </div>

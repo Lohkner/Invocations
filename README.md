@@ -6,7 +6,7 @@ sin build, sin dependencias, funciona sin conexión.
 
 ## Novedades v1.0 — Primera versión
 
-`CACHE_VERSION` es `ss-director-v4` y `RULES_DATA_VERSION`,
+`CACHE_VERSION` es `ss-director-v6` y `RULES_DATA_VERSION`,
 `v1-monstruos-guia-r1`.
 
 Fuentes: *Manual de Monstruos v1* y *Guía del Director v1* (30-9-2026), con
@@ -52,6 +52,7 @@ apoyo del *Manual Básico v1* para estados y tipos de daño.
   dado e historial, Ventaja/Desventaja, exportar e importar JSON (en el móvil,
   la hoja de compartir), copia de seguridad de todo, editor de reglas,
   autodiagnóstico y actualización.
+- **Pantalla de carga propia**: la mano esquelética del icono, latiendo.
 - **Identidad de color propia**: tres temas —**Cripta** (predeterminado),
   **Forja** y **Muerte viviente**— en lugar de Art Déco, Vacío y Arcano.
 
