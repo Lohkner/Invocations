@@ -13,7 +13,7 @@
 /* REGLA DE DESPLIEGUE: sube SIEMPRE esta versión al publicar cualquier
    cambio. El navegador solo detecta actualizaciones si sw.js cambia en
    bytes — con la misma versión, la app queda congelada para siempre. */
-const CACHE_VERSION = 'ss-director-v3';
+const CACHE_VERSION = 'ss-director-v4';
 const FONT_CACHE    = 'ss-director-fonts-v1';
 
 const APP_SHELL = [
@@ -54,6 +54,7 @@ const APP_SHELL = [
   './js/historial.js',
   './js/autocheck.js',
   './js/boot.js',
+  './Bone_Chill_Icon.webp',
   './icono-192.png',
   './icono-512.png',
 ];

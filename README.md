@@ -6,7 +6,7 @@ sin build, sin dependencias, funciona sin conexión.
 
 ## Novedades v1.0 — Primera versión
 
-`CACHE_VERSION` es `ss-director-v3` y `RULES_DATA_VERSION`,
+`CACHE_VERSION` es `ss-director-v4` y `RULES_DATA_VERSION`,
 `v1-monstruos-guia-r1`.
 
 Fuentes: *Manual de Monstruos v1* y *Guía del Director v1* (30-9-2026), con
@@ -94,6 +94,10 @@ al terminar.
 - **Sube `CACHE_VERSION`** (`sw.js`) en cada cambio, y `RULES_DATA_VERSION`
   (`js/storage.js`) cuando cambie `js/reglas.js`.
 - Todos los archivos van en **CRLF**: `python herramientas/crlf.py`.
+- **Icono**: `Bone_Chill_Icon.webp` es el favicon. Los PNG de instalación
+  (`icono-192.png`, `icono-512.png`) salen de él con
+  `python herramientas/gen_iconos.py`; si lo cambias, vuelve a ejecutarlo y
+  sube `CACHE_VERSION`.
 
 ## Estructura
 

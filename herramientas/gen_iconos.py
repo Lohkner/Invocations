@@ -1,45 +1,33 @@
 # -*- coding: utf-8 -*-
-"""Dibuja los iconos de la app (icono-192.png e icono-512.png): un d20 de
-hueso viejo sobre pizarra, con la estrella de cuatro puntas del cargador.
-Colores del tema Cripta. Necesita Pillow.
-Uso: python herramientas/gen_iconos.py"""
-import math, os
+"""Saca los iconos de instalación a partir del icono de la app
+(Bone_Chill_Icon.webp, la mano esquelética, 144×144 con fondo transparente).
+
+El .webp se usa tal cual como favicon. Pero al instalar la app hacen falta
+PNG opacos de 192 y 512 px: iOS no admite WebP como icono de inicio y pinta en
+negro lo transparente, y Android recorta los iconos «maskable» en círculo, así
+que la figura va centrada con margen sobre el fondo del tema Cripta.
+
+Si cambias el icono, vuelve a ejecutar esto y sube CACHE_VERSION (sw.js).
+Necesita Pillow.   Uso: python herramientas/gen_iconos.py
+"""
+import os
 from PIL import Image, ImageDraw, ImageFilter
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-FONDO, HALO = (6, 8, 10), (34, 43, 52)
-METAL, METAL_OSCURO, ESTRELLA = (214, 208, 180), (125, 121, 101), (236, 235, 224)
+ORIGEN = os.path.join(RAIZ, 'Bone_Chill_Icon.webp')
+FONDO, HALO = (6, 8, 10), (20, 46, 38)
+OCUPA = 0.66        # parte del lienzo que ocupa la figura (zona segura de «maskable»)
 
-
-def icono(n):
-    S = n * 4                                   # se dibuja a 4× y se reduce: bordes limpios
-    im = Image.new('RGB', (S, S), FONDO)
-    halo = Image.new('L', (S, S), 0)
-    ImageDraw.Draw(halo).ellipse([S * .12, S * .12, S * .88, S * .88], fill=150)
-    halo = halo.filter(ImageFilter.GaussianBlur(S * .12))
-    im = Image.composite(Image.new('RGB', (S, S), HALO), im, halo)
-    d = ImageDraw.Draw(im)
-    cx = cy = S / 2
-    w = max(2, int(S * .018))
-    R1 = S * .36
-    hexa = [(cx + R1 * math.sin(math.radians(a)), cy - R1 * math.cos(math.radians(a))) for a in range(0, 360, 60)]
-    d.line(hexa + [hexa[0]], fill=METAL, width=w, joint='curve')
-    R2 = S * .21
-    tri = [(cx + R2 * math.sin(math.radians(a)), cy - R2 * math.cos(math.radians(a)) + S * .02) for a in (0, 120, 240)]
-    d.line(tri + [tri[0]], fill=METAL, width=w, joint='curve')
-    for p, q in [(hexa[0], tri[0]), (hexa[1], tri[0]), (hexa[5], tri[0]), (hexa[1], tri[1]), (hexa[2], tri[1]), (hexa[3], tri[1]),
-                 (hexa[3], tri[2]), (hexa[4], tri[2]), (hexa[5], tri[2])]:
-        d.line([p, q], fill=METAL_OSCURO, width=max(1, w // 2))
-    r, r0 = S * .085, S * .024
-    cyy = cy + S * .045
-    estrella = []
-    for k in range(8):
-        ang = math.radians(k * 45)
-        rr = r if k % 2 == 0 else r0
-        estrella.append((cx + rr * math.sin(ang), cyy - rr * math.cos(ang)))
-    d.polygon(estrella, fill=ESTRELLA)
-    return im.resize((n, n), Image.LANCZOS)
-
-
+mano = Image.open(ORIGEN).convert('RGBA')
 for n in (192, 512):
-    icono(n).save(os.path.join(RAIZ, f'icono-{n}.png'), optimize=True)
+    lienzo = Image.new('RGB', (n, n), FONDO)
+    # un resplandor frío y suave detrás, para que no flote sobre un negro plano
+    luz = Image.new('L', (n, n), 0)
+    ImageDraw.Draw(luz).ellipse([n * .2, n * .2, n * .8, n * .8], fill=170)
+    luz = luz.filter(ImageFilter.GaussianBlur(n * .13))
+    lienzo = Image.composite(Image.new('RGB', (n, n), HALO), lienzo, luz)
+    lado = round(n * OCUPA)
+    figura = mano.resize((lado, lado), Image.LANCZOS)
+    pos = ((n - lado) // 2, (n - lado) // 2)
+    lienzo.paste(figura, pos, figura)
+    lienzo.save(os.path.join(RAIZ, f'icono-{n}.png'), optimize=True)
     print('icono', n)
