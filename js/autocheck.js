@@ -5,9 +5,10 @@
    pregunta que importa tras actualizar: ¿esta versión está sana?
 
      · Los elementos que la ficha y la Mesa necesitan existen
-     · El bestiario del Manual sale de la fórmula: PV y Guardia impresos
-     · El bestiario del Manual cabe en su presupuesto de Peso
-     · NA del encuentro: los ejemplos de la Guía; jefe +1; cuatro esbirros
+     · El bestiario (Manual y Guía) sale de las fórmulas: atributos, PV,
+       Guardia, ataque, daño, CD, Iniciativa y Moral impresos
+     · El bestiario cabe en su presupuesto de Potencial
+     · NA del encuentro: los ejemplos de la Guía; jefe +2; cuatro esbirros
      · Dificultad del encuentro por nivel y tamaño del grupo
      · Texto que se sale de su caja · texto por debajo de 12 px
      · Desbordamiento horizontal · tarjetas plegables · consola
@@ -87,29 +88,32 @@
     comprobar('Los elementos que la app necesita existen', !faltan.length,
       faltan.length ? 'faltan: ' + faltan.join(', ') : IDS_CRITICOS.length + ' comprobados');
 
-    // ── 2 · el bestiario del Manual sale de la fórmula ──
+    // ── 2 · el bestiario sale de las fórmulas (Manual de Monstruos, Cap. 1) ──
     const B = DEFAULT_DB.bestiario;
     const DBprev = app.DB;
     app.DB = structuredClone(DEFAULT_DB); app._libCache = null;   // reglas de fábrica para la pasada
-    const malPV = [], malPeso = [];
+    const malos = [], malPeso = [];
     let n = 0;
     Object.values(B).forEach(c => {
-      if (!c.impreso || c.fuente !== 'Manual de Monstruos') return;
+      const imp = c.impreso; if (!imp) return;
       n++;
-      const cr = app.normalizarCr(c);
-      const S = app.calcCr(cr);
-      // La Guardia impresa no lleva los Rasgos; la calculada, sí.
+      const S = app.calcCr(app.normalizarCr(c));
+      // La Guardia impresa no lleva los Rasgos (Evasiva, Formación…); la calculada, sí.
       const gSinRasgos = S.calc.guardia - S.infos.reduce((a, x) => a + ((x.i.mod && x.i.mod.g) || 0), 0);
-      if (S.calc.pv !== c.impreso.pv || gSinRasgos !== c.impreso.g)
-        malPV.push(`${c.nombre}: PV ${S.calc.pv}/${c.impreso.pv} · G ${gSinRasgos}/${c.impreso.g}`);
-      if (S.exceso) malPeso.push(`${c.nombre}: ${S.pesoGastado}/${S.pesoMax}`);
+      const dif = [];
+      app.ATTRS.forEach(a => { if (S.mod[a] !== imp.attrs[a]) dif.push(`${a} ${S.mod[a]}/${imp.attrs[a]}`); });
+      [['PV', S.calc.pv, imp.pv], ['Guardia', gSinRasgos, imp.g], ['Ataque', S.calc.ataque, imp.atk], ['Daño', S.calc.dano, imp.dano],
+       ['CD', S.cd, imp.cd], ['Iniciativa', S.calc.ini, imp.ini]].forEach(([k, sale, debe]) => { if (sale !== debe) dif.push(`${k} ${sale}/${debe}`); });
+      if (imp.moral == null ? !S.noMoral : (S.noMoral || S.calc.moral !== imp.moral)) dif.push(`Moral ${S.noMoral ? '—' : S.calc.moral}/${imp.moral == null ? '—' : imp.moral}`);
+      if (dif.length) malos.push(`${c.nombre}: ${dif.join(', ')}`);
+      if (S.exceso && c.fuente === 'Manual de Monstruos') malPeso.push(`${c.nombre}: ${S.pesoGastado}/${S.pesoMax}`);
     });
-    comprobar('PV y Guardia = (base ± Rol) × Tamaño, ×2 el jefe', !malPV.length,
-      malPV.slice(0, 3).join(' | ') || `${n} criaturas del Manual coinciden con lo impreso`);
-    comprobar('El bestiario del Manual cabe en su Peso', !malPeso.length,
-      malPeso.slice(0, 4).join(' | ') || `${n} criaturas dentro de su presupuesto`);
+    comprobar('El bestiario sale de las fórmulas: atributos, PV, Guardia, ataque, daño, CD', !malos.length,
+      malos.slice(0, 3).join(' | ') || `${n} criaturas del Manual y la Guía coinciden con lo impreso`);
+    comprobar('El bestiario del Manual cabe en su Potencial', !malPeso.length,
+      malPeso.slice(0, 4).join(' | ') || 'todas dentro de su presupuesto');
 
-    // ── 3 · NA del encuentro (los ejemplos de la Guía, Cap. 2) ──
+    // ── 3 · NA del encuentro (la regla y los ejemplos de la Guía, Cap. 2) ──
     const base = app.nuevaCr();
     const lin = (cambios, cuantas) => {
       const S = app.calcCr(app.normalizarCr({ ...base, rasgos: [], ...cambios }));
@@ -117,18 +121,22 @@
     };
     const enc = (...lineas) => app._naDeLineas(lineas).na;
     const E = {
-      'ogro + 2 lobos': [enc(lin({ na: 4 }, 1), lin({ na: 2 }, 2)), 4],
-      'ogro + 4 lobos': [enc(lin({ na: 4 }, 1), lin({ na: 2 }, 4)), 5],
-      '2×NA3': [enc(lin({ na: 3 }, 2)), 4],
-      '4×NA3': [enc(lin({ na: 3 }, 4)), 5],
-      '8×NA1': [enc(lin({ na: 1 }, 8)), 4],
-      'jefe NA3': [enc(lin({ na: 3, estructura: 'jefe' }, 1)), 4],
+      'ogro + lobo': [enc(lin({ na: 4 }, 1), lin({ na: 2 }, 1)), 4],
+      'ogro + 2 lobos': [enc(lin({ na: 4 }, 1), lin({ na: 2 }, 2)), 6],
+      '2×NA0': [enc(lin({ na: 0 }, 2)), 2],
+      '4×NA1': [enc(lin({ na: 1 }, 4)), 5],
+      '4×NA3': [enc(lin({ na: 3 }, 4)), 7],
+      '2×NA9': [enc(lin({ na: 9 }, 2)), 11],
+      '8×NA1': [enc(lin({ na: 1 }, 8)), 7],
+      'jefe NA3': [enc(lin({ na: 3, estructura: 'jefe' }, 1)), 5],
+      'Enorme NA5': [enc(lin({ na: 5, tam: 'enorme' }, 1)), 6],
       '4 esbirros NA2': [enc(lin({ na: 2, rol: 'esbirro' }, 4)), 2],
-      'banda de 8 NA3': [enc(lin({ na: 3, estructura: 'horda', miembros: 8 }, 1)), 5],
-      'NA5 + NA2': [enc(lin({ na: 5 }, 1), lin({ na: 2 }, 6)), 5],
+      'grupo de 6 NA1': [enc(lin({ na: 1, estructura: 'horda', miembros: 6 }, 1)), 3],
+      'banda de 8 NA3': [enc(lin({ na: 3, estructura: 'horda', miembros: 8 }, 1)), 7],
+      'NA6 + 6×NA1': [enc(lin({ na: 6 }, 1), lin({ na: 1 }, 6)), 6],
     };
     const malEnc = Object.entries(E).filter(([, [sale, debe]]) => sale !== debe);
-    comprobar('NA del encuentro: 1 · ½ · ¼, jefe +1, cuatro esbirros = uno', !malEnc.length,
+    comprobar('NA del encuentro: 1 · ½ · ¼ cada 2 NA, jefe +2, cuatro esbirros = uno', !malEnc.length,
       malEnc.map(([k, [sale, debe]]) => `${k}: NA ${sale}, debía ser ${debe}`).join(' | ') ||
       Object.entries(E).slice(0, 5).map(([k, [sale]]) => `${k} → NA ${sale}`).join(' · '));
 

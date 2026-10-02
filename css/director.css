@@ -56,6 +56,9 @@
 .dir-tres{display:flex;flex-direction:column;gap:4px;margin-bottom:9px}
 .dir-tres > .dir-campo{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0;min-height:44px}
 .dir-tres > .dir-campo > .fl{margin:0}
+/* Atributos: «FUE +4» a la izquierda y Fuerte · Normal · Débil a la derecha */
+.dir-atr > .dir-campo > .fl{flex:0 0 auto;min-width:4.4em;white-space:nowrap;font-variant-numeric:tabular-nums}
+.dir-atr > .dir-campo > .seg{flex:1 1 auto;min-width:0;max-width:250px}
 .dir-fila-toggle{margin:10px 0 2px}
 
 /* PV en mesa. En Companion el número va en una columna fija de 74 px con un

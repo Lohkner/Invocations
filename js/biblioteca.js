@@ -3,7 +3,7 @@
    Panel a pantalla completa, calcado del Gestor de Talentos de S&S
    Companion: familias a un lado, piezas al otro, buscador y filtros.
 
-   El Peso no bloquea: el Manual permite excederlo (cada 2 puntos cuentan
+   El Potencial (`peso` en el código) no bloquea: el Manual permite excederlo (cada 2 puntos cuentan
    como +1 NA al calibrar). La pieza que no cabe se marca y avisa, pero se
    puede tomar.
 ══════════════════════════════════════════════════════════════ */
@@ -87,7 +87,7 @@ Object.assign(app, {
     const sub = document.getElementById('lib_sub');
     if (sub) sub.textContent = S.exceso
       ? `Excede en ${S.exceso}` + (S.exceso >= 2 ? ` · cuenta como NA ${S.naEnc}` : '')
-      : `NA ${S.na} · Peso ${S.pesoBase}${S.devuelto ? ' + ' + S.devuelto : ''}`;
+      : `NA ${S.na} · Potencial ${S.pesoBase}${S.devuelto ? ' + ' + S.devuelto : ''}`;
   },
 
   _libPintar() {
@@ -138,14 +138,14 @@ Object.assign(app, {
       info.appendChild(this.h('h4', null, e.name + (n > 1 ? ` ×${n}` : '')));
       if (q.length) { const tag = this.h('span', 'js-grade-block', this.DB.familias[fam]?.name || fam); tag.style.color = 'var(--gold)'; info.appendChild(tag); }
       const [sim, clave] = this._tipoPieza(e.tipo);
-      const tp = this.h('span', 'tc-tipo', [sim + ' ' + e.tipo, e.coste, e.frec, e.peso < 0 ? 'devuelve 1 de Peso' : 'Peso ' + e.peso].filter(Boolean).join(' · '));
+      const tp = this.h('span', 'tc-tipo', [sim + ' ' + e.tipo, e.coste, e.frec, e.peso < 0 ? 'devuelve 1 de Potencial' : 'Potencial ' + e.peso].filter(Boolean).join(' · '));
       tp.dataset.tipo = clave;
       info.appendChild(tp);
       info.appendChild(this.h('p', null, e.txt));
       const cifras = this._concretar(e.txt, S);
       if (cifras.length) info.appendChild(this.h('span', 'js-grade-block grade-on', cifras.join(' · ')));
-      if (soloTipo) info.appendChild(this.h('span', 'tc-req tc-req-ok', '✓ Ya lo tiene por su tipo, sin gastar Peso'));
-      else if (noCabe) info.appendChild(this.h('span', 'tc-req', `No cabe: excede tu Peso en ${e.peso - Math.max(0, libre)}`));
+      if (soloTipo) info.appendChild(this.h('span', 'tc-req tc-req-ok', '✓ Ya lo tiene por su tipo, sin gastar Potencial'));
+      else if (noCabe) info.appendChild(this.h('span', 'tc-req', `No cabe: excede tu Potencial en ${e.peso - Math.max(0, libre)}`));
       if (e.multi && n > 0) {
         const mas = this.h('button', 'btn btn-g dir-otra'); mas.type = 'button';
         mas.innerHTML = this._ico('i-mas') + 'Añadir otra';
@@ -175,7 +175,7 @@ Object.assign(app, {
     this._libPintar();
   },
 
-  /* ── Rasgo propio (o un Talento del Compendio: 1 de Peso por Grado) ── */
+  /* ── Rasgo propio (o un Talento del Compendio: 1 de Potencial por Grado) ── */
   rasgoPropio() {
     this._libFormAbierto = !this._libFormAbierto;
     this._libPintar();
@@ -184,7 +184,7 @@ Object.assign(app, {
   _libFormulario() {
     const f = this.h('div', 'dir-form');
     f.appendChild(this.h('h3', 'dir-form-t', 'Rasgo propio'));
-    f.appendChild(this.h('p', 'wiz-hint', 'Para lo que no esté en la Biblioteca. Un Talento del Compendio de Sendas cuesta 1 de Peso por Grado.'));
+    f.appendChild(this.h('p', 'wiz-hint', 'Para lo que no esté en la Biblioteca. Un Talento del Compendio de Sendas cuesta 1 de Potencial por Grado.'));
     const nombre = document.createElement('input'); nombre.type = 'text'; nombre.placeholder = 'ej. Canto de Sirena'; nombre.autocomplete = 'off';
     const tipo = this._select(['Rasgo', 'Aptitud', 'Reacción', 'Modificador', 'Aura', 'Debilidad'].map(x => [x, x]), 'Rasgo', () => {}, 'Tipo de pieza');
     const peso = this._select([['0', '0 · sabor'], ['1', '1 · ventaja acotada'], ['2', '2 · cambia cómo enfrentarla'], ['3', '3 · define a la criatura'], ['-1', '−1 · Debilidad']], '1', () => {}, 'Peso');
@@ -192,7 +192,7 @@ Object.assign(app, {
     const frec = this._select([['', '—'], ['a voluntad', 'A voluntad'], ['1/ronda', '1/ronda'], ['Ud6', 'Ud6'], ['Ud4', 'Ud4'], ['1/combate', '1/combate']], '', () => {}, 'Frecuencia');
     const txt = document.createElement('textarea'); txt.placeholder = 'Qué hace, escrito en función del NA cuando puedas.'; txt.style.minHeight = '76px';
     const g = this.h('div', 'g2 dir-g2');
-    g.append(this._campo('Tipo', tipo), this._campo('Peso', peso), this._campo('Coste', coste), this._campo('Frecuencia', frec));
+    g.append(this._campo('Tipo', tipo), this._campo('Potencial', peso), this._campo('Coste', coste), this._campo('Frecuencia', frec));
     f.append(this._campo('Nombre', nombre), g, this._campo('Efecto', txt));
     const fila = this.h('div', 'edit-acc');
     const can = this.h('button', 'edit-cancel'); can.type = 'button';

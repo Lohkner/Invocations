@@ -1,8 +1,8 @@
 /* ══════════════════════════════════════════════════════════════
    ASISTENTE DE CREACIÓN DE AMENAZAS
-   Los ocho pasos del Manual de Monstruos, Cap. 4, uno por pantalla:
-   Idea · NA · Tipo y tamaño · Rol · Estadísticas · Rasgos · Señal ·
-   Contexto táctico. «Empieza por lo que el grupo va a sentir. Los
+   Los nueve pasos del Manual de Monstruos, Cap. 4, uno por pantalla:
+   Idea · NA · Tipo y tamaño · Rol · Atributos · Estadísticas · Rasgos ·
+   Señal · Contexto táctico. «Empieza por lo que el grupo va a sentir. Los
    números vienen después, y casi solos.»
 
    Trabaja directamente sobre app.cr —la ficha está oculta mientras
@@ -12,7 +12,7 @@
 ══════════════════════════════════════════════════════════════ */
 (function () {
   const $ = id => document.getElementById(id);
-  const PASOS = ['La idea', 'El NA', 'Tipo y tamaño', 'Rol', 'Estadísticas', 'Rasgos', 'La señal', 'Contexto'];
+  const PASOS = ['La idea', 'El NA', 'Tipo y tamaño', 'Rol', 'Atributos', 'Estadísticas', 'Rasgos', 'La señal', 'Contexto'];
   const ULTIMO = PASOS.length - 1;
   let paso = 0, pintado = -1, abierto = false;
   const el = (t, c, x) => app.h(t, c, x);
@@ -74,25 +74,26 @@
     const B = app.DB.na[cr().na];
     sub.appendChild(app._campo('Nivel de Amenaza', app._paso(cr().na, 0, 15, n => { cr().na = n; cr().pvAct = null; pintar(); }, 'el Nivel de Amenaza',
       'NA ' + cr().na + (B.etiqueta ? ' · ' + B.etiqueta : ''))));
-    sub.appendChild(app._info(`PV ${B.pv} · Guardia ${B.g} / Armadura ${B.a}\nAtaque ${app._signo(B.atk)} · Daño ${B.dano} · PA ${B.pa}\nCD ${B.cd} · Peso ${B.peso}`));
+    sub.appendChild(app._info(`Competencia ${app._signo(B.pb)} · Fuerte ${app._signo(B.fuerte)} · Normal ${app._signo(B.normal)} · Débil ${app._signo(B.debil)}\nDado de daño ${B.dano} · Armadura ${B.a} · PA ${B.pa} · Potencial ${B.peso}\nCon CON Normal, ${cr().na ? 50 + cr().na * (5 + B.normal) : '1–4'} PV`));
     b.appendChild(sub);
   }
 
   /* ── Paso 3 · Tipo y tamaño ───────────────────────────────────── */
   function pasoTipo(b) {
-    b.appendChild(el('p', 'wiz-hint', 'El tipo es su naturaleza: da Rasgos gratuitos y sugiere sus Salvaciones fuertes y una debilidad coherente.'));
+    b.appendChild(el('p', 'wiz-hint', 'El tipo es su naturaleza: da Rasgos gratuitos y sugiere sus atributos Débiles y una debilidad coherente. El tamaño cambia FUE, DES y CON.'));
     const tams = Object.entries(app.DB.tamanos).map(([k, x]) => [k, x.name]);
     b.appendChild(app._campo('Tamaño', app._select(tams, cr().tam, k => { cr().tam = k; cr().pvAct = null; pintar(); }, 'Tamaño')));
     const tm = app.DB.tamanos[cr().tam];
-    b.appendChild(app._info(`${tm.ej}\nPV ${tm.pvTxt} · Guardia ${tm.g ? app._signo(tm.g) : '—'} · Alcance ${tm.alcance}`));
+    b.appendChild(app._info(`${tm.ej}\n${tm.atrTxt} · Alcance ${tm.alcance}` + (tm.naEnc ? `\nAl calibrar el encuentro, ${app._signo(tm.naEnc)} NA.` : '')));
     const sub = el('div', 'wiz-sub');
     Object.entries(app.DB.tipos).forEach(([k, t]) => {
       const sel = cr().tipo === k;
-      sub.appendChild(app.tarjetaOpcion(t.name, t.salv, t.txt, 'Debilidad coherente: ' + t.deb, sel, () => {
+      sub.appendChild(app.tarjetaOpcion(t.name, 'Débil: ' + t.atrDeb, t.txt, 'Debilidad coherente: ' + t.deb, sel, () => {
         if (cr().tipo !== k) {
+          const antes = cr().tipo;
           cr().tipo = k;
           app._ponerRasgosDeTipo(cr());
-          cr().salv = (t.salvDef || cr().salv).slice(0, 2);
+          app._reponerAtributos(cr(), antes);
           if (t.tamMin && app.ORDEN_TAM.indexOf(cr().tam) < app.ORDEN_TAM.indexOf(t.tamMin)) cr().tam = t.tamMin;
         }
         pintar();
@@ -112,61 +113,61 @@
 
   /* ── Paso 4 · Rol ─────────────────────────────────────────────── */
   function pasoRol(b) {
-    b.appendChild(el('p', 'wiz-hint', 'Uno o ninguno: cómo se comporta cuando ya está en escena. Se entiende mejor en el grupo que la acompaña que en su propia ficha.'));
+    b.appendChild(el('p', 'wiz-hint', 'Uno o ninguno: cómo se comporta en escena. Decide sus dos atributos Fuertes; algunos marcan también uno Débil.'));
     b.appendChild(app._campo('Estructura', app._seg([['normal', 'Normal'], ['jefe', 'Jefe'], ['horda', 'Horda']], cr().estructura,
       k => { cr().estructura = k; cr().pvAct = null; pintar(); }, 'Estructura')));
-    if (cr().estructura === 'jefe') b.appendChild(app._info('PV ×2 y +2 de Peso. Usa al menos una: Acción de Jefe, Turno Doble o un séquito. Al calibrar el encuentro sube un NA.'));
+    if (cr().estructura === 'jefe') b.appendChild(app._info('PV ×2 y +2 de Potencial. Usa al menos una: Acción de Jefe, Turno Doble o un séquito. Al calibrar el encuentro sube 2 NA.'));
     if (cr().estructura === 'horda') {
       const inp = document.createElement('input');
       inp.type = 'number'; inp.min = 2; inp.max = 999; inp.value = cr().miembros; inp.inputMode = 'numeric';
       inp.setAttribute('aria-label', 'Miembros de la horda');
       inp.addEventListener('change', () => { cr().miembros = Math.max(2, Math.min(999, parseInt(inp.value, 10) || 2)); pintar(); });
-      b.appendChild(app._campo('Miembros', inp, 'las estadísticas son las de cada uno'));
+      b.appendChild(app._campo('Miembros', inp, 'de 4 a 30'));
       const H = app._horda(cr().miembros);
-      b.appendChild(app._info(H.marea ? 'Marea (31 o más): registro Planetario, Daño de Escala.'
-        : `${H.n}: NA efectivo ${cr().na + H.na}${H.dados ? ` · daño +${H.dados} dado${H.dados > 1 ? 's' : ''}` : ''}. Un solo turno; doble daño de área; a mitad de vida se divide.`));
+      b.appendChild(app._info(H.marea ? 'Marea (31 o más): registro Planetario (Guía, Cap. 9).'
+        : `${H.n}: una sola criatura de NA ${Math.min(15, cr().na + H.na)} (el de sus miembros + ${H.na}). Un solo turno; doble daño de área; a mitad de sus PV se divide en dos.`));
     }
     const sub = el('div', 'wiz-sub');
-    sub.appendChild(app.tarjetaOpcion('Sin Rol', 'estadísticas base', 'Usa los números de su NA tal cual.', '', !cr().rol, () => { cr().rol = ''; cr().pvAct = null; pintar(); }));
+    sub.appendChild(app.tarjetaOpcion('Sin Rol', 'Fuertes a elegir', 'Sus dos atributos Fuertes los decides tú en el paso siguiente.', '', !cr().rol, () => { cr().rol = ''; app._reponerAtributos(cr()); cr().pvAct = null; pintar(); }));
     Object.entries(app.DB.roles).forEach(([k, r]) => {
-      sub.appendChild(app.tarjetaOpcion(r.name, '', r.mod, `${r.hab}: ${r.habTxt}`, cr().rol === k, () => { cr().rol = k; cr().pvAct = null; pintar(); }));
+      sub.appendChild(app.tarjetaOpcion(r.name, '', r.mod, `${r.hab}: ${r.habTxt}`, cr().rol === k, () => { cr().rol = k; app._reponerAtributos(cr()); cr().pvAct = null; pintar(); }));
     });
     b.appendChild(sub);
   }
 
-  /* ── Paso 5 · Estadísticas ────────────────────────────────────── */
+  /* ── Paso 5 · Atributos ───────────────────────────────────────── */
+  function pasoAtributos(b) {
+    const S = app.calcCr(cr());
+    const B = S.B;
+    b.appendChild(el('p', 'wiz-hint', `El Rol da los dos Fuertes (${app._signo(B.fuerte)}) y el tipo sugiere los Débiles (${app._signo(B.debil)}); el resto son Normales (${app._signo(B.normal)}). El tamaño ya está aplicado.`));
+    app._editorAtributos(b, pintar);
+    const sub = el('div', 'wiz-sub');
+    sub.appendChild(app._info(`${S.rol.name ? S.rol.name + ' — ' + S.rol.mod : 'Sin Rol — Fuertes a elegir'}\n${S.tipo.name} — Débiles: ${S.tipo.atrDeb || '—'}\n${S.tam.name} — ${S.tam.atrTxt || 'sin cambios'}`));
+    b.appendChild(sub);
+  }
+
+  /* ── Paso 6 · Estadísticas ────────────────────────────────────── */
   function pasoStats(b) {
     const S = app.calcCr(cr());
-    b.appendChild(el('p', 'wiz-hint', 'Salen de la tabla por NA, ajustadas por Rol y Tamaño. Elige sus dos Salvaciones fuertes y ponle nombre a su ataque.'));
+    b.appendChild(el('p', 'wiz-hint', 'Salen de sus atributos con las fórmulas de un personaje. Aquí solo falta ponerle nombre a su ataque.'));
     const grid = el('div', 'def-grid');
     const celda = (rot, val, cls) => { const c = el('div', 'def-cell' + (cls ? ' ' + cls : '')); c.append(el('span', 'def-lbl', rot), el('span', 'def-val', String(val))); return c; };
     grid.append(celda('Guardia', S.guardia, 'def-cell--guardia'), celda('Armadura', S.armadura), celda('CD', S.cd));
     const g1 = el('div', 'dir-stats');
     g1.append(app._stat('PV', String(S.pv)), app._stat('Ataque', app._signo(S.ataque)), app._stat('Daño', S.dano), app._stat('PA', String(S.pa)));
     const g2 = el('div', 'dir-stats dir-stats-3');
-    g2.append(app._stat('Velocidad', S.vel + ' pies'), app._stat('Moral', S.noMoral ? 'no tira' : String(S.moral)), app._stat('Al calibrar', app._txtCalibrar(S)));
+    g2.append(app._stat('Velocidad', S.vel + ' pies'), app._stat('Iniciativa', app._signo(S.ini)), app._stat('Moral', S.noMoral ? 'no tira' : String(S.moral)));
     const marco = el('div', 'wiz-panelito');
     marco.append(grid, g1, g2);
     b.appendChild(marco);
-
-    const sub = el('div', 'wiz-sub');
-    sub.appendChild(el('span', 'fl', `Salvaciones fuertes (${app._signo(S.sf)}) — elige dos`));
-    const sg = el('div', 'saves-grid dir-sin-filete');
-    app.ATTRS.forEach(a => {
-      const on = cr().salv.includes(a);
-      const box = el('button', 'svsbox' + (on ? ' prof' : ''));
-      box.type = 'button'; box.setAttribute('aria-pressed', String(on));
-      box.append(el('span', 'svslbl', a), document.createTextNode(app._signo(on ? S.sf : S.sd)));
-      box.onclick = () => {
-        if (on) cr().salv = cr().salv.filter(x => x !== a);
-        else { cr().salv.push(a); if (cr().salv.length > 2) cr().salv.shift(); }
-        pintar();
-      };
-      sg.appendChild(box);
-    });
-    sub.appendChild(sg);
-    sub.appendChild(el('p', 'wiz-hint', `Su tipo sugiere: ${S.tipo.salv}.`));
-    b.appendChild(sub);
+    const pega = S.mod.FUE >= S.mod.DES ? 'FUE' : 'DES';
+    b.appendChild(app._info(
+      `Ataque = Competencia ${app._signo(S.pb)} + ${pega} ${app._signo(S.mod[pega])}\n` +
+      `Daño por turno = ${S.danoBase}${S.rol.danoDados ? ' + ' + S.rol.danoDados + 'd6 de su Rol' : ''} + ${pega}\n` +
+      `Guardia = 10 + Competencia + DES ${app._signo(S.mod.DES)}\n` +
+      (S.esbirro ? 'PV = NA × 2 (esbirro)\n' : `PV = 50 + NA × (5 + CON ${app._signo(S.mod.CON)})${S.jefe ? ', el doble por ser jefe' : ''}\n`) +
+      `Salvaciones fuertes: ${cr().fuertes.map(a => a + ' ' + app._signo(S.salv[a])).join(' · ')}\n` +
+      `Al calibrar el encuentro: ${app._txtCalibrar(S)}`));
 
     const sub2 = el('div', 'wiz-sub');
     const n = document.createElement('input');
@@ -181,12 +182,12 @@
     b.appendChild(sub2);
   }
 
-  /* ── Paso 6 · Rasgos y Aptitudes ──────────────────────────────── */
+  /* ── Paso 7 · Rasgos y Aptitudes ──────────────────────────────── */
   function pasoRasgos(b) {
     const S = app.calcCr(cr());
     b.appendChild(el('p', 'wiz-hint', 'Empieza por la pieza que sostiene la idea; después, lo que la hace jugable (movilidad, defensa); por último, una Debilidad si quieres que el grupo pueda descubrir algo.'));
     const carga = el('div', 'dir-load');
-    carga.append(el('span', 'dir-load-lbl', 'Peso'), el('span', 'dir-load-val', `${S.pesoGastado}/${S.pesoMax}`));
+    carga.append(el('span', 'dir-load-lbl', 'Potencial'), el('span', 'dir-load-val', `${S.pesoGastado}/${S.pesoMax}`));
     const barra = el('div', 'lbar'); const fill = el('div', 'lfill' + (S.exceso ? ' dir-exceso' : ''));
     fill.style.width = (S.pesoMax ? Math.min(100, S.pesoGastado / S.pesoMax * 100) : (S.pesoGastado ? 100 : 0)) + '%';
     barra.appendChild(fill);
@@ -204,7 +205,7 @@
     if (S.rol && S.rol.hab) sub.appendChild(app.tarjetaOpcion(S.rol.hab, 'de Rol', S.rol.habTxt, '', true, () => {}));
     S.infos.forEach(x => {
       const gratis = S.esGratis(x);
-      const tag = gratis ? 'de tipo ✓' : (x.i.peso < 0 ? 'devuelve 1 · quitar' : `Peso ${x.i.peso} · quitar`);
+      const tag = gratis ? 'de tipo ✓' : (x.i.peso < 0 ? 'devuelve 1 · quitar' : `Potencial ${x.i.peso} · quitar`);
       sub.appendChild(app.tarjetaOpcion(x.i.name + (x.r.nota ? ` (${x.r.nota})` : ''), tag, x.i.txt, app._lineaTipo(x.i), true, () => {
         if (x.r.gratis) { app.toast('Es un Rasgo de su tipo', 'info'); return; }
         cr().rasgos = cr().rasgos.filter(r => r !== x.r);
@@ -224,7 +225,7 @@
     }
   }
 
-  /* ── Paso 7 · La señal ────────────────────────────────────────── */
+  /* ── Paso 8 · La señal ────────────────────────────────────────── */
   function pasoSenal(b) {
     b.appendChild(el('p', 'wiz-hint', 'Qué percibe el grupo antes de verla: huellas, olor, un silencio, restos.'));
     const ta = document.createElement('textarea');
@@ -250,7 +251,7 @@
     b.appendChild(sub);
   }
 
-  /* ── Paso 8 · Contexto táctico ────────────────────────────────── */
+  /* ── Paso 9 · Contexto táctico ────────────────────────────────── */
   function pasoContexto(b) {
     b.appendChild(el('p', 'wiz-hint', '¿Qué problema le plantea al grupo? No qué puede hacer, sino qué decisiones obliga a tomar. Una o dos frases.'));
     const ta = document.createElement('textarea');
@@ -264,11 +265,11 @@
     sub.appendChild(el('span', 'fl', 'Así queda'));
     sub.appendChild(app._info(`${cr().nombre || 'Sin nombre'} — ${app._etiquetaNA(cr())} · ${app._lineaCr(cr())}\n` +
       `PV ${S.pv} · Guardia ${S.guardia} · Armadura ${S.armadura} · Ataque ${app._signo(S.ataque)} · Daño ${S.dano}\n` +
-      `Peso ${S.pesoGastado}/${S.pesoMax} · al calibrar, ${app._txtCalibrar(S)}`));
+      `Potencial ${S.pesoGastado}/${S.pesoMax} · al calibrar, ${app._txtCalibrar(S)}`));
     b.appendChild(sub);
   }
 
-  const PINTORES = [pasoIdea, pasoNA, pasoTipo, pasoRol, pasoStats, pasoRasgos, pasoSenal, pasoContexto];
+  const PINTORES = [pasoIdea, pasoNA, pasoTipo, pasoRol, pasoAtributos, pasoStats, pasoRasgos, pasoSenal, pasoContexto];
 
   function queFalta() {
     const c = cr();
@@ -276,9 +277,9 @@
       case 0:
         if (!c.idea.trim()) return 'Escribe la idea en una frase';
         return c.nombre.trim() ? '' : 'Ponle un nombre';
-      case 4: return c.salv.length === 2 ? '' : 'Elige dos Salvaciones fuertes';
-      case 6: return c.senal.trim() ? '' : 'Toda amenaza tiene señal';
-      case 7: return c.contexto.trim() ? '' : 'Escribe el contexto táctico';
+      case 4: return c.fuertes.length === 2 ? '' : 'Elige dos atributos Fuertes';
+      case 7: return c.senal.trim() ? '' : 'Toda amenaza tiene señal';
+      case 8: return c.contexto.trim() ? '' : 'Escribe el contexto táctico';
     }
     return '';
   }
@@ -365,7 +366,7 @@
     try { localStorage.setItem(CLAVE, this.asistenteActivo ? '1' : '0'); } catch (e) { /* la sesión sigue */ }
     sincronizar();
     this.toast(this.asistenteActivo
-      ? 'Asistente activado — «Nueva amenaza» te guiará por los ocho pasos'
+      ? 'Asistente activado — «Nueva amenaza» te guiará por los nueve pasos'
       : 'Asistente desactivado — «Nueva amenaza» abrirá la ficha en blanco', 'ok');
   };
   const _open = app.openSettings;

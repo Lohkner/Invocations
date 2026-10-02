@@ -148,20 +148,23 @@ Object.assign(app, {
   },
 
   /** NA del encuentro (Guía, Cap. 2). Parte del NA más alto: cada criatura de
-      ese NA cuenta 1; una de un NA menos, ½; una de dos menos, ¼; las que
-      están más abajo no cuentan. Total 2–3: +1 · 4–7: +2 · 8 o más: +3.
-      `lineas` = [{ na, cuenta }]: el jefe, la horda y el exceso de Peso ya
-      vienen en el NA de cada criatura (calcCr → naEnc), y el esbirro cuenta ¼.
-      Si solo hay esbirros y no llegan a cuatro, el total baja de 1 y el NA
-      baja con él (dos = un NA menos; uno = dos menos). */
+      ese NA cuenta 1; una de dos NA menos, ½; una de cuatro menos, ¼; las que
+      están más abajo no cuentan. Total 2–3: +2 · 4–7: +4 · 8 o más: +6.
+      `lineas` = [{ na, cuenta }]: el jefe (+2), el tamaño Enorme o Colosal
+      (+1), la horda y el exceso de Potencial ya vienen en el NA de cada
+      criatura (calcCr → naEnc), y el esbirro cuenta ¼.
+      Lo que la Guía no dice y aquí se resuelve por proporción: una criatura de
+      uno o tres NA menos cuenta ¾ o ⅜ (a medio camino), y si solo hay esbirros
+      y no llegan a cuatro, el total baja de 1 y el NA con él (dos esbirros,
+      2 NA menos; uno, 4 menos). */
   _naDeLineas(lineas) {
     if (!lineas.length) return { na: null, max: null, suma: 0, sube: 0 };
     const max = Math.max(...lineas.map(l => l.na));
     const suma = lineas.reduce((a, l) => a + l.cuenta * this._pesoEnc(max - l.na), 0);
-    const sube = suma >= 8 ? 3 : suma >= 4 ? 2 : suma >= 2 ? 1 : suma >= 1 ? 0 : suma >= .5 ? -1 : -2;
+    const sube = suma >= 8 ? 6 : suma >= 4 ? 4 : suma >= 2 ? 2 : suma >= 1 ? 0 : suma >= .5 ? -2 : -4;
     return { na: Math.max(0, max + sube), max, suma, sube };
   },
-  _pesoEnc(porDebajo) { return [1, .5, .25][porDebajo] || 0; },
+  _pesoEnc(porDebajo) { return [1, .75, .5, .375, .25][porDebajo] || 0; },
   _naEncuentro() {
     const roster = STORAGE.loadRoster();
     const lineas = [];
@@ -175,7 +178,7 @@ Object.assign(app, {
   },
   /** 1½, ¼, 2… */
   _fmtSuma(x) {
-    const ent = Math.floor(x), g = { 0: '', .25: '¼', .5: '½', .75: '¾' }[x - ent];
+    const ent = Math.floor(x), g = { 0: '', .125: '⅛', .25: '¼', .375: '⅜', .5: '½', .625: '⅝', .75: '¾', .875: '⅞' }[x - ent];
     if (g == null) return x.toLocaleString('es', { maximumFractionDigits: 2 });
     return (ent || !g ? String(ent) : '') + g;
   },
@@ -236,7 +239,7 @@ Object.assign(app, {
     host.appendChild(caja);
     if (E.na != null) host.appendChild(this.h('p', 'dir-nota dir-centro',
       `La más fuerte es NA ${E.max} y el encuentro suma ${this._fmtSuma(E.suma)}` + (E.sube ? `: ${this._signo(E.sube)} NA.` : '.')));
-    host.appendChild(this.h('p', 'dir-nota', 'NA del encuentro: cada criatura del NA más alto cuenta 1; una de un NA menos, ½; de dos menos, ¼. Si suman 2–3, +1 NA; 4–7, +2; 8 o más, +3. Un jefe sube 1; cuatro esbirros cuentan como una criatura; cada 2 de exceso de Peso, +1.'));
+    host.appendChild(this.h('p', 'dir-nota', 'NA del encuentro: cada criatura del NA más alto cuenta 1; una de dos NA menos, ½; de cuatro menos, ¼. Si suman 2–3, +2 NA; 4–7, +4; 8 o más, +6. Un jefe sube 2; una criatura Enorme o Colosal, 1; cuatro esbirros cuentan como una; cada 2 de exceso de Potencial, +1.'));
 
     const acc = this.h('div', 'dir-acc dir-acc-centro');
     acc.append(
@@ -255,7 +258,7 @@ Object.assign(app, {
   },
   _notaCalibrar(cr) {
     const S = this.calcCr(cr);
-    return S.esbirro ? ' · cuatro cuentan como una' : (S.naEnc !== cr.na ? ` · al calibrar, NA ${S.naEnc}` : '');
+    return S.esbirro ? ' · cuatro cuentan como una' : (S.naEnc !== S.na ? ` · al calibrar, NA ${S.naEnc}` : '');
   },
   _elegirParaEncuentro() {
     const enc = this.mesa.enc;
@@ -325,7 +328,7 @@ Object.assign(app, {
       const ini = lenta ? -99 : this._d(20) + S.ini;
       for (let k = 1; k <= it.n; k++) {
         filas.push({ id: this._uid(), t: 'cr', ref: it.ref, nombre: it.n > 1 ? `${it.ref} ${k}` : it.ref, ini, pv: S.pv, pvMax: S.pv,
-          g: S.guardia, a: S.armadura, atk: S.ataque, dano: S.dano, moral: S.noMoral ? null : S.moral, na: cr.na,
+          g: S.guardia, a: S.armadura, atk: S.ataque, dano: S.dano, moral: S.noMoral ? null : S.moral, na: S.na,
           lider: cr.rol === 'comandante' || cr.estructura === 'jefe', estados: [] });
       }
     });

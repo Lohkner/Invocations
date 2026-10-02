@@ -1,13 +1,55 @@
-# S&S Director — v1.1
+# S&S Director — v1.2
 
 La app hermana de **S&S Companion** para quien dirige *Stars & Sorcery*: crea
 amenazas, calibra encuentros y genera botín, zonas y facciones. PWA estática:
 sin build, sin dependencias, funciona sin conexión.
 
-## Novedades v1.1 — Manuales del 1-10-2026
+## Novedades v1.2 — Manuales del 2-10-2026: atributos y fórmulas
 
-`CACHE_VERSION` es `ss-director-v7` y `RULES_DATA_VERSION`,
-`v1-monstruos-guia-r2`.
+`CACHE_VERSION` es `ss-director-v8` y `RULES_DATA_VERSION`,
+`v1-monstruos-guia-r3`.
+
+El Manual de Monstruos y la Guía han cambiado cómo se construye una criatura:
+ya no se lee una fila de estadísticas, **se calcula como un personaje**.
+
+- **Atributos**: cada criatura tiene FUE, DES, CON, INT, SAB y CAR, cada uno
+  **Fuerte**, **Normal** o **Débil**. El Rol decide los dos Fuertes, el tipo
+  sugiere los Débiles y el tamaño toca FUE, DES y CON. Se ven y se editan en
+  Combate → «Atributos y Moral», y tienen paso propio en el asistente, que
+  pasa a **nueve pasos**.
+- **Fórmulas**: ataque = Competencia + el mayor de FUE o DES · daño por turno
+  = dado de daño del NA + ese modificador · Guardia = 10 + Competencia + DES ·
+  PV = 50 + NA × (5 + CON) · Salvaciones = modificador, más la Competencia en
+  los dos Fuertes · CD = 8 + Competencia + ½ NA + el Fuerte más alto ·
+  Iniciativa = DES. Todo sale solo en la ficha.
+- **Roles**: ya no suman ni restan PV o Guardia; deciden atributos. Quedan los
+  ajustes del Manual (Arrollador +1d6 al daño, Hostigador +10 pies, Explorador
+  +15 pies e Iniciativa +4, Guardián +1 de Armadura y −10 pies).
+- **Tamaño**: cambia atributos, no PV ni Guardia. Enorme y Colosal suman +1 al
+  NA del encuentro.
+- **«Peso» ahora es «Potencial»** en toda la app.
+- **Hordas**: una horda es una sola criatura de NA efectivo (grupo +2, banda
+  +4, turba +6); ya no suma los PV de sus miembros. A mitad de vida se divide
+  en dos de NA 2 puntos menor.
+- **NA del encuentro**: los pasos son ahora de 2 en 2 —una criatura de dos NA
+  menos cuenta ½ y de cuatro menos ¼; si suman 2–3, +2 NA; 4–7, +4; 8 o más,
+  +6—. Un jefe sube 2.
+- **Moral**: toda criatura con INT Débil deja de tirarla, sea del tipo que sea.
+- **Vulnerabilidad** ×1,5 (antes el doble) y **Frágil** deja la CON en Débil.
+- **Bestiario**: las 43 criaturas —también las 13 de la Guía, que antes iban
+  con números a mano— salen de las fórmulas. Solo queda fijado a mano lo que
+  viene del equipo o de la propia criatura (la Armadura del Mercenario, la
+  velocidad del Oso…).
+- **Tus amenazas guardadas** se abren con las reglas nuevas: sus dos
+  Salvaciones fuertes pasan a ser sus atributos Fuertes (o los de su Rol) y
+  sus cifras se recalculan. Lo que habías fijado a mano en Estadísticas se
+  conserva y la ficha lo marca frente a la fórmula; las criaturas traídas del
+  bestiario antiguo pierden sus números impresos, que ya no valen.
+- **Dones de Poder** (Guía, Cap. 9): la Biblioteca sirve tal cual para las
+  Capacidades de Don, pero la app no lleva los Puntos de Don ni desplaza la
+  fila de dificultad del grupo.
+
+## v1.1 — Manuales del 1-10-2026
 
 - **PV de tres y cuatro cifras**: en «Estado», el número que se toca para
   escribir los PV quedaba recortado a partir de 100 (la columna medía 74 px
@@ -19,14 +61,11 @@ sin build, sin dependencias, funciona sin conexión.
   archivos exportados y las copias de seguridad con los nombres antiguos se
   abren igual: se convierten al cargarlas.
 - **Adiós al Valor de Amenaza**: los manuales ya no lo usan. La Mesa calcula el
-  **NA del encuentro** de la Guía (Cap. 2) —la criatura más fuerte cuenta 1;
-  una de un NA menos, ½; de dos menos, ¼; si suman 2–3, +1 NA; 4–7, +2; 8 o
-  más, +3— y lo compara con el NA que corresponde a cada dificultad para el
-  nivel del grupo. Cada línea del encuentro dice lo que cuenta. Con cinco o
+  **NA del encuentro** de la Guía (Cap. 2) y lo compara con el NA que
+  corresponde a cada dificultad para el nivel del grupo. Cada línea del encuentro dice lo que cuenta. Con cinco o
   seis personajes, +1 NA en cada dificultad; con dos o tres, −1.
 - **Ficha**: donde ponía «Valor de Amenaza» pone «Al calibrar», el NA con el
-  que entra en esa cuenta (el jefe sube uno; la horda usa su NA efectivo; cada
-  2 de exceso de Peso, otro; el esbirro, ¼).
+  que entra en esa cuenta.
 - **Textos de ayuda** al día con la redacción nueva del Manual (la señal, el
   contexto táctico, los jefes).
 - El bestiario y las tablas se han vuelto a generar desde los .docx.
@@ -42,17 +81,16 @@ Fuentes: *Manual de Monstruos v1* y *Guía del Director v1*, con apoyo del
 - **Ficha de amenaza**, cuatro pestañas deslizables:
   - **Perfil**: retrato (elegir foto y recortar), nombre e idea · NA, tipo,
     tamaño, Rol y estructura (normal, jefe u horda) · PV en mesa.
-  - **Combate**: estadísticas calculadas —tabla por NA → Rol → Tamaño →
-    Rasgos → jefe u horda—, con el valor de la curva al lado del tuyo y el
-    botón «Ajustar a la curva» · ataque y daño con dado · salvaciones,
-    iniciativa y Moral.
-  - **Rasgos**: barra de Peso, Rasgos gratuitos de tipo y habilidad de Rol
+  - **Combate**: estadísticas calculadas con las fórmulas del Manual, con el
+    valor de la fórmula al lado del tuyo y el botón «Volver a las fórmulas» ·
+    ataque y daño con dado · atributos, Salvaciones, Iniciativa y Moral.
+  - **Rasgos**: barra de Potencial, Rasgos gratuitos de tipo y habilidad de Rol
     puestos solos, Biblioteca de 183 piezas en 16 familias, Dado de Uso de
     las Aptitudes (se tira y se degrada), rasgos propios.
   - **Notas**: señal y contexto táctico · fases, guarida y victoria
     alternativa de los jefes · revisión final · notas.
-- **Asistente de creación**: los ocho pasos del Manual (idea, NA, tipo y
-  tamaño, Rol, estadísticas, Rasgos, señal, contexto). El dado de la cabecera
+- **Asistente de creación**: los pasos del Manual (idea, NA, tipo y tamaño,
+  Rol, atributos, estadísticas, Rasgos, señal, contexto). El dado de la cabecera
   hace una **criatura al azar** con las tablas del Cap. 9. Se apaga en Ajustes.
 - **Plantillas** (menú de la ficha): Anciana, No-muerta, Alfa, Cría… y las
   otras ocho.
@@ -85,22 +123,28 @@ Fuentes: *Manual de Monstruos v1* y *Guía del Director v1*, con apoyo del
 Donde los libros se contradicen o callan, la app hace esto (y todo se puede
 cambiar en el Editor de Reglas):
 
-- **Vulnerabilidad**: el doble de daño, como dicen el Manual de Monstruos y el
-  bestiario de la Guía. El Manual Básico dice ×1,5.
-- **Los Rasgos cuentan en las cifras**: Piel Gruesa suma su Armadura, Lenta
-  resta su velocidad. En el bestiario impreso, el Basilisco y el Guardián de
-  Raíz muestran la línea de estadísticas sin ellos.
-- **El bestiario de la Guía** (Lobo, Orco, Oso…) no sigue las fórmulas de Rol
-  —la propia Guía lo llama «ajustes puntuales»—: se importa con sus números
-  impresos, marcados como ajuste a mano, y sus rasgos sin Peso.
-- **PV**: (base ± Rol × NA) × Tamaño, redondeado al entero más cercano; ×2 el
-  jefe. Así salen las 30 criaturas del Manual.
-- **NA del encuentro**: el +1 del jefe, el NA efectivo de la horda y el +1
-  por cada 2 de exceso de Peso se aplican a la criatura antes de buscar «la
-  más fuerte». Un jefe de NA 3 entra en la cuenta como NA 4.
+- **Atributos Débiles del tipo**: el Manual los «sugiere», a veces con una
+  disyuntiva («DES o INT», «e INT si no tiene mente»). La app pone uno por
+  defecto (el Gigante, INT) y deja cambiarlos; el bestiario trae los de cada
+  criatura tal como están impresos.
+- **Sin Rol y Esbirro**: sus dos Fuertes son libres. De entrada se ponen los
+  más propios de su tipo (una bestia, DES y CON) y se cambian en la ficha.
+- **Tamaño que deja un atributo en Débil** (FUE del Diminuto, DES del
+  Colosal): vale −2 aunque el Rol lo haga Fuerte, pero su Salvación sigue
+  sumando la Competencia. Así salen el Enjambre de Ratas y el Titán.
+- **Los Rasgos cuentan en las cifras**: Piel Gruesa suma su Armadura, Evasiva
+  su Guardia, Lenta resta su velocidad.
+- **Estúpida**: el Manual dice «Engaño contra su CD − 5»; la ficha del Ogro
+  imprime la CD entera. La app enseña la cuenta de la regla.
+- **NA del encuentro**: el +2 del jefe, el +1 del tamaño Enorme o Colosal, el
+  NA efectivo de la horda y el +1 por cada 2 de exceso de Potencial se aplican
+  a la criatura antes de buscar «la más fuerte». Un jefe de NA 3 entra en la
+  cuenta como NA 5.
+- **Criaturas de uno o tres NA menos**: la Guía solo da ½ para dos NA menos y
+  ¼ para cuatro. Las intermedias cuentan a medio camino: ¾ y ⅜.
 - **Menos de cuatro esbirros solos**: la Guía solo dice que cuatro cuentan
   como una criatura. Si el encuentro no llega a sumar 1, el NA baja: dos
-  esbirros, un NA menos; uno, dos menos.
+  esbirros, 2 NA menos; uno, 4 menos.
 - **Grupo de un solo personaje**: la Guía no da ajuste; se resta 2 NA a cada
   dificultad y se recuerda el Filo del Protagonista.
 - **Enemigo solo y encuentro no dicen lo mismo**: la tabla de calibrado de la
@@ -121,9 +165,10 @@ pelear con la caché: da de baja el worker y borra las cachés, ejecuta
 `python herramientas/verify.py` y abre `_verify.html?v=<algo único>`. Bórralo
 al terminar.
 
-- **Autodiagnóstico**: `?check=1`. Comprueba, entre otras cosas, que las 30
-  criaturas del Manual salen de la fórmula y caben en su Peso, y que el NA
-  del encuentro da lo que dan los ejemplos de la Guía. Fija antes el
+- **Autodiagnóstico**: `?check=1`. Comprueba, entre otras cosas, que las 43
+  criaturas del bestiario salen de las fórmulas —atributos, PV, Guardia,
+  ataque, daño, CD, Iniciativa y Moral, frente a lo impreso— y caben en su
+  Potencial, y que el NA del encuentro da lo que dan los ejemplos de la Guía. Fija antes el
   ancho de la ventana (390×844): con el panel oculto da falsos «texto que se
   sale».
 - **Sube `CACHE_VERSION`** (`sw.js`) en cada cambio, y `RULES_DATA_VERSION`
@@ -141,14 +186,14 @@ al terminar.
 | `index.html` | Pantallas, tarjetas y paneles |
 | `css/main.css` | La hoja de Companion, con sus colores convertidos en variables |
 | `css/temas.css` | Las tres paletas. **Generado**: `herramientas/gen_temas.py` |
-| `css/director.css` | Las piezas nuevas (dificultad, combate, Peso…) |
+| `css/director.css` | Las piezas nuevas (dificultad, combate, Potencial…) |
 | `js/reglas.js` | Base de reglas. **Generado**: `herramientas/gen_reglas.py` |
 | `js/base.js` | Piezas genéricas de Companion: gestos, dados, recorte, ajustes |
 | `js/app.js` | Núcleo: pantallas, roster, secciones, guardado, bestiario |
 | `js/amenaza.js` | La ficha: cálculo (`calcCr`) y tarjetas |
 | `js/biblioteca.js` | Biblioteca de Rasgos y Aptitudes |
 | `js/mesa.js` | Mesa del Director |
-| `js/asistente.js` | Asistente de ocho pasos |
+| `js/asistente.js` | Asistente de nueve pasos |
 | `js/editor.js` | Editor de reglas |
 | `js/storage.js` | IndexedDB `ss-director` (claves `ssd_*`) |
 | `js/respaldo.js` · `historial.js` · `plegables.js` · `autocheck.js` | Copias, tiradas, tarjetas plegables, autodiagnóstico |

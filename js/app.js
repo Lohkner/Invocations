@@ -27,10 +27,10 @@ Object.assign(app, {
      «Cancelar» devuelve a como estaba. */
   SECS: {
     personal: { card: 'card_personal', campos: ['nombre', 'idea', 'retrato'] },
-    identity: { card: 'card_identity', campos: ['na', 'tipo', 'tam', 'rol', 'estructura', 'miembros', 'rasgos', 'salv', 'moralNoTira', 'pvAct'] },
+    identity: { card: 'card_identity', campos: ['na', 'tipo', 'tam', 'rol', 'estructura', 'miembros', 'rasgos', 'fuertes', 'debiles', 'moralNoTira', 'pvAct'] },
     stats:    { card: 'fold_stats',    campos: ['manual', 'pvAct'] },
     attack:   { card: 'fold_ataques',  campos: ['ataqueNombre', 'danoTipo'] },
-    saves:    { card: 'fold_salv',     campos: ['salv', 'moralNoTira'] },
+    saves:    { card: 'fold_salv',     campos: ['fuertes', 'debiles', 'moralNoTira', 'pvAct'] },
     senal:    { card: 'fold_senal',    campos: ['senal', 'contexto', 'habitat', 'quiere', 'pelea', 'botin'] },
     jefe:     { card: 'fold_jefe',     campos: ['jefe'] },
   },
@@ -195,7 +195,7 @@ Object.assign(app, {
   },
 
   /* ── Amenazas: crear, abrir, ordenar, borrar ──────────────────── */
-  /** «Nueva amenaza». asistente.js lo envuelve para abrir los ocho pasos. */
+  /** «Nueva amenaza». asistente.js lo envuelve para abrir los pasos guiados. */
   newChar() { this.nuevaAmenazaManual(); },
 
   nuevaAmenazaManual() {
@@ -269,8 +269,10 @@ Object.assign(app, {
     return [cuerpo, rol].filter(Boolean).join(' · ');
   },
   _etiquetaNA(cr) {
-    const e = cr.estructura === 'jefe' ? ' · Jefe' : cr.estructura === 'horda' ? ' · Horda' : '';
-    return 'NA ' + cr.na + e;
+    // Una horda es una sola criatura de su NA efectivo: ese es el que se enseña
+    const horda = cr.estructura === 'horda';
+    const na = horda ? Math.min(15, cr.na + this._horda(cr.miembros).na) : cr.na;
+    return 'NA ' + na + (cr.estructura === 'jefe' ? ' · Jefe' : horda ? ' · Horda' : '');
   },
 
   renderHome() {

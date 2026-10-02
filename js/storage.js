@@ -21,7 +21,7 @@
 const STORAGE = {
   SCHEMA_VERSION: 2,
   /** Bump when DEFAULT_DB rules data changes so cached rules refresh automatically. */
-  RULES_DATA_VERSION: 'v1-monstruos-guia-r2',
+  RULES_DATA_VERSION: 'v1-monstruos-guia-r3',
   KEYS: {
     rules:          'ssd_rules',
     rulesVer:       'ssd_rules_ver',

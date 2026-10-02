@@ -3,10 +3,15 @@
    Cálculo (Manual de Monstruos, Cap. 1 y Apéndice B) y las tarjetas de
    las cuatro pestañas: Perfil · Combate · Rasgos · Notas.
 
-   Toda cifra sale de calcCr(): tabla por NA → Rol → Tamaño → Rasgos →
-   estructura (jefe, horda) → ajustes a mano. Nada se guarda calculado:
-   la amenaza solo recuerda sus decisiones (NA, tipo, tamaño, Rol,
-   Rasgos…) y los valores que el Director haya fijado a mano.
+   Una criatura se construye como un personaje: su NA hace de Nivel y da
+   la Competencia y el dado de daño; sus atributos (Fuerte, Normal o
+   Débil) dan el ataque, el daño, la Guardia, los PV, las Salvaciones, la
+   CD y la Iniciativa. Toda cifra sale de calcCr(). Nada se guarda
+   calculado: la amenaza solo recuerda sus decisiones (NA, tipo, tamaño,
+   Rol, atributos, Rasgos…) y los valores fijados a mano.
+
+   El «Potencial» del Manual se llama `peso` en el código y en los datos:
+   es el nombre que tenía, y cambiarlo rompería las amenazas guardadas.
 ══════════════════════════════════════════════════════════════ */
 Object.assign(app, {
   ATTRS: ['FUE', 'DES', 'CON', 'INT', 'SAB', 'CAR'],
@@ -23,23 +28,46 @@ Object.assign(app, {
   /* ── Modelo ───────────────────────────────────────────────────── */
   nuevaCr() {
     const cr = {
-      v: 1, nombre: '', idea: '', retrato: '',
+      v: 2, nombre: '', idea: '', retrato: '',
       na: 1, tipo: 'bestia', tam: 'mediano', rol: '', estructura: 'normal', miembros: 6,
-      salv: ['DES', 'CON'], manual: {}, ataqueNombre: '', danoTipo: '',
+      fuertes: [], debiles: [], manual: {}, ataqueNombre: '', danoTipo: '',
       rasgos: [], moralNoTira: false, pvAct: null,
       senal: '', contexto: '', habitat: '', quiere: '', pelea: '', botin: '', notas: '',
       jefe: { fases: '', guarida: '', victoria: '' }, revision: [false, false, false, false],
     };
     this._ponerRasgosDeTipo(cr);
+    Object.assign(cr, this._atributosDe(cr));
     return cr;
+  },
+
+  /** Los atributos que dan el Rol y el tipo (Cap. 1 y 2): el Rol decide los dos
+      Fuertes —si no los fija, los más propios de su tipo— y suma su Débil a los
+      que sugiere el tipo. Si chocan, manda el Rol. */
+  _atributosDe(cr) {
+    const rol = this.DB.roles[cr.rol] || {}, tipo = this.DB.tipos[cr.tipo] || {};
+    const fuertes = ((rol.fuertes || []).length === 2 ? rol.fuertes : (tipo.fuertesDef || ['FUE', 'CON'])).slice(0, 2);
+    return { fuertes, debiles: this._debilesDe(cr, fuertes) };
+  },
+  _debilesDe(cr, fuertes) {
+    const rol = this.DB.roles[cr.rol] || {}, tipo = this.DB.tipos[cr.tipo] || {};
+    return [...new Set([...(rol.debiles || []), ...(tipo.debiles || [])])].filter(a => !fuertes.includes(a));
+  },
+  /** Tras cambiar de Rol o de tipo. Los Fuertes elegidos a mano se respetan
+      mientras el Rol no fije los suyos. */
+  _reponerAtributos(cr, tipoAntes) {
+    const def = this._atributosDe(cr);
+    const rolFija = (this.DB.roles[cr.rol]?.fuertes || []).length === 2;
+    const eranDeTipo = tipoAntes && String(cr.fuertes) === String((this.DB.tipos[tipoAntes]?.fuertesDef || []).slice(0, 2));
+    if (rolFija || cr.fuertes.length < 2 || eranDeTipo) cr.fuertes = def.fuertes;
+    cr.debiles = this._debilesDe(cr, cr.fuertes);
   },
 
   /** Deja cualquier amenaza —guardada, importada o del bestiario— con
       todos sus campos, del tipo correcto y sin HTML dentro. */
   normalizarCr(d) {
     const base = {
-      v: 1, nombre: '', idea: '', retrato: '', na: 1, tipo: 'bestia', tam: 'mediano', rol: '', estructura: 'normal',
-      miembros: 6, salv: [], manual: {}, ataqueNombre: '', danoTipo: '', rasgos: [], moralNoTira: false, pvAct: null,
+      v: 2, nombre: '', idea: '', retrato: '', na: 1, tipo: 'bestia', tam: 'mediano', rol: '', estructura: 'normal',
+      miembros: 6, fuertes: [], debiles: [], manual: {}, ataqueNombre: '', danoTipo: '', rasgos: [], moralNoTira: false, pvAct: null,
       senal: '', contexto: '', habitat: '', quiere: '', pelea: '', botin: '', notas: '',
       jefe: { fases: '', guarida: '', victoria: '' }, revision: [false, false, false, false],
     };
@@ -59,12 +87,23 @@ Object.assign(app, {
     cr.estructura = ['normal', 'jefe', 'horda'].includes(d.estructura) ? d.estructura : 'normal';
     const m = parseInt(d.miembros, 10);
     cr.miembros = Number.isFinite(m) ? Math.max(2, Math.min(999, m)) : 6;
-    cr.salv = Array.isArray(d.salv) ? d.salv.filter(a => this.ATTRS.includes(a)).slice(0, 2) : [];
-    if (cr.salv.length < 2) cr.salv = (this.DB.tipos[cr.tipo]?.salvDef || ['FUE', 'CON']).slice(0, 2);
+    // Atributos. Las amenazas de antes (v1) solo guardaban sus dos Salvaciones
+    // fuertes: valen como Fuertes si su Rol no fija los suyos.
+    const lista = l => Array.isArray(l) ? [...new Set(l.filter(a => this.ATTRS.includes(a)))] : [];
+    const antigua = !(parseInt(d.v, 10) >= 2);
+    cr.fuertes = lista(d.fuertes).slice(0, 2);
+    if (cr.fuertes.length < 2) {
+      const delRol = this.DB.roles[cr.rol]?.fuertes || [];
+      const salv = lista(d.salv).slice(0, 2);
+      cr.fuertes = delRol.length === 2 ? delRol.slice() : salv.length === 2 ? salv : this._atributosDe(cr).fuertes;
+    }
+    cr.debiles = Array.isArray(d.debiles) ? lista(d.debiles).filter(a => !cr.fuertes.includes(a)) : this._debilesDe(cr, cr.fuertes);
     cr.moralNoTira = !!d.moralNoTira;
-    cr.pvAct = Number.isFinite(parseInt(d.pvAct, 10)) ? Math.max(0, parseInt(d.pvAct, 10)) : null;
+    cr.pvAct = !antigua && Number.isFinite(parseInt(d.pvAct, 10)) ? Math.max(0, parseInt(d.pvAct, 10)) : null;
     cr.manual = {};
-    if (d.manual && typeof d.manual === 'object') {
+    // Las cifras impresas del bestiario antiguo no valen con las fórmulas nuevas;
+    // lo que el Director fijó a mano en sus propias amenazas, sí se conserva.
+    if (d.manual && typeof d.manual === 'object' && !(antigua && d.fuente)) {
       ['pv', 'guardia', 'armadura', 'ataque', 'pa', 'vel', 'ini', 'moral'].forEach(k => {
         const n = parseInt(d.manual[k], 10);
         if (Number.isFinite(n)) cr.manual[k] = n;
@@ -149,21 +188,22 @@ Object.assign(app, {
   _fmtDano(d) { return `${d.n}d${d.caras}${d.bono > 0 ? '+' + d.bono : d.bono < 0 ? d.bono : ''}`; },
   _mediaDano(d) { return d.n * (d.caras + 1) / 2 + d.bono; },
 
-  /** Tamaño de horda (Manual de Monstruos, Cap. 6). */
+  /** Tamaño de horda (Manual de Monstruos, Cap. 6): cuánto sube el NA. */
   _horda(miembros) {
-    if (miembros <= 6)  return { n: 'Grupo', na: 1, dados: 0 };
-    if (miembros <= 12) return { n: 'Banda', na: 2, dados: 1 };
-    if (miembros <= 30) return { n: 'Turba', na: 3, dados: 2 };
-    return { n: 'Marea', na: 3, dados: 2, marea: true };
+    const lista = Object.values(this.DB.hordas || {});
+    const h = lista.find(x => miembros <= x.max) || lista[lista.length - 1] || { name: 'Turba', na: 6 };
+    return { n: h.name, na: h.marea ? 6 : (h.na || 0), marea: !!h.marea };
   },
 
   calcCr(cr) {
-    const na = cr.na;
-    const B = this.DB.na[na] || this.DB.na[1];
     const rol = this.DB.roles[cr.rol] || {};
-    const tam = this.DB.tamanos[cr.tam] || { pv: 1, g: 0 };
+    const tam = this.DB.tamanos[cr.tam] || {};
     const tipo = this.DB.tipos[cr.tipo] || {};
     const jefe = cr.estructura === 'jefe', horda = cr.estructura === 'horda', esbirro = !!rol.esbirro;
+    // Una horda se construye como una sola criatura de su NA efectivo (Cap. 6)
+    const H = horda ? this._horda(cr.miembros) : null;
+    const na = Math.min(15, cr.na + (H ? H.na : 0));
+    const B = this.DB.na[na] || this.DB.na[1];
 
     // Rasgos: qué son y cuál sale gratis por el tipo (Monstruosidad, Mutante)
     const infos = cr.rasgos.map(r => ({ r, i: this.rasgoInfo(r) }));
@@ -175,38 +215,47 @@ Object.assign(app, {
     const esGratis = x => !!x.r.gratis || x === autoGratis;
     const suma = k => infos.reduce((a, x) => a + ((x.i.mod && Number(x.i.mod[k])) || 0), 0);
 
-    // PV: (base ± Rol) × Tamaño, al entero más cercano; ×2 el jefe
-    let pvUno = esbirro ? Math.max(1, na * 2) : Math.max(1, Math.round((B.pv + (rol.pvNa || 0) * na) * (tam.pv || 1)));
-    infos.forEach(x => { if (x.i.mod && x.i.mod.pvMult) pvUno = Math.max(1, Math.round(pvUno * x.i.mod.pvMult)); });
-    let pv = pvUno * (jefe ? 2 : 1);
-    const H = horda ? this._horda(cr.miembros) : null;
-    if (H) pv = pvUno * cr.miembros;
-    const naEf = na + (H ? H.na : 0);
+    // Atributos: Fuerte = PB, Normal y Débil de la fila de su NA. El tamaño
+    // suma o resta en FUE, DES y CON, o los deja en Débil («D») sin más.
+    const fragil = infos.some(x => x.i.mod && x.i.mod.conDebil);
+    const mod = {}, cat = {}, salv = {};
+    this.ATTRS.forEach(a => {
+      const t = tam[a.toLowerCase()];
+      let c = cr.fuertes.includes(a) ? 'F' : cr.debiles.includes(a) ? 'D' : 'N';
+      if (t === 'D' || (a === 'CON' && fragil)) c = 'D';
+      cat[a] = c;
+      mod[a] = (c === 'F' ? B.fuerte : c === 'D' ? B.debil : B.normal) + (Number(t) || 0);
+      salv[a] = mod[a] + (cr.fuertes.includes(a) ? B.pb : 0);
+    });
+    const pega = Math.max(mod.FUE, mod.DES);            // «el mayor de FUE o DES»
 
-    const guardia = B.g + (rol.g || 0) + (tam.g || 0) + suma('g');
-    const armadura = Math.max(0, Math.min(B.a + (rol.a || 0) + suma('a'), na + 3));
-    const dBase = this._parseDano(B.dano) || { n: 1, caras: 4, bono: 0 };
-    const d = { n: dBase.n + (H ? H.dados : 0), caras: dBase.caras, bono: dBase.bono + (rol.dano || 0) };
+    // Las fórmulas (Cap. 1). NA 0: 1–4 PV; esbirro: NA × 2; jefe: el doble.
+    const pvUno = esbirro ? Math.max(1, cr.na * 2) : na === 0 ? 4 : Math.max(1, 50 + na * (5 + mod.CON));
+    const dBase = this._parseDano(B.dano) || { n: 1, caras: 6, bono: 0 };
     const calc = {
-      pv, guardia, armadura, ataque: B.atk, dano: this._fmtDano(d),
-      pa: B.pa + suma('pa'), vel: Math.max(0, 30 + (rol.vel || 0) + suma('vel')), ini: rol.ini || 0,
+      pv: pvUno * (jefe ? 2 : 1),
+      guardia: 10 + B.pb + mod.DES + suma('g'),
+      armadura: Math.max(0, Math.min(B.a + (rol.a || 0) + suma('a'), na + 3)),
+      ataque: B.pb + pega,
+      dano: this._fmtDano({ n: dBase.n + (rol.danoDados || 0), caras: dBase.caras, bono: pega }),
+      pa: B.pa + suma('pa'), vel: Math.max(0, 30 + (rol.vel || 0) + suma('vel')), ini: mod.DES + (rol.ini || 0),
       moral: 10 + na + suma('moral'),
     };
 
-    // Lo que el Director haya fijado a mano manda sobre la curva
+    // Lo que el Director haya fijado a mano manda sobre las fórmulas
     const M = cr.manual || {};
-    const S = { calc, na, naEf, B, rol, tam, tipo, jefe, horda, esbirro, H, pvUno, infos, autoGratis, esGratis };
+    const S = { calc, na, naEf: na, naMiembro: cr.na, B, pb: B.pb, mod, cat, salv, rol, tam, tipo, jefe, horda, esbirro, H, pvUno, infos, autoGratis, esGratis };
     ['pv', 'guardia', 'armadura', 'ataque', 'dano', 'pa', 'vel', 'ini', 'moral'].forEach(k => {
       S[k] = (M[k] != null && M[k] !== '') ? M[k] : calc[k];
     });
     S.aMano = Object.keys(calc).filter(k => M[k] != null && M[k] !== '' && String(M[k]) !== String(calc[k]));
     S.danoBase = B.dano;
-    S.cd = 10 + na;
-    S.sf = B.sf; S.sd = B.sd;
-    S.noMoral = !!cr.moralNoTira || tipo.noMoral === 'nunca' || esbirro ||
+    const fuertes = cr.fuertes.length ? cr.fuertes : this.ATTRS;
+    S.cd = 8 + B.pb + Math.floor(na / 2) + Math.max(...fuertes.map(a => mod[a]));
+    S.noMoral = !!cr.moralNoTira || tipo.noMoral === 'nunca' || esbirro || cat.INT === 'D' ||
       infos.some(x => x.i.mod && x.i.mod.noMoral) || (horda && cr.rasgos.some(r => r.id === 'enjambre'));
 
-    // Peso (Cap. 3): presupuesto por NA, +2 el jefe; cada Debilidad devuelve 1, hasta 2
+    // Potencial (Cap. 3): presupuesto por NA, +2 el jefe; cada Debilidad devuelve 1, hasta 2
     const debs = infos.filter(x => !esGratis(x) && (x.i.tipo === 'Debilidad' || x.i.peso < 0));
     S.pesoBase = esbirro ? 0 : B.peso + (jefe ? 2 : 0);
     S.devuelto = Math.min(2, debs.length);
@@ -215,28 +264,28 @@ Object.assign(app, {
     S.exceso = Math.max(0, S.pesoGastado - S.pesoMax);
     S.nDebs = debs.length;
 
-    // Al calibrar el encuentro (Guía, Cap. 2): la horda usa su NA efectivo, el
-    // jefe sube un NA y cada 2 de exceso de Peso, otro. Cuatro esbirros cuentan
-    // como una criatura de su NA.
-    S.naEnc = naEf + Math.floor(S.exceso / 2) + (jefe ? 1 : 0);
+    // Al calibrar el encuentro (Guía, Cap. 2): la horda usa su NA efectivo; el
+    // jefe sube 2; una criatura Enorme o Colosal, 1; cada 2 de exceso de
+    // Potencial, otro. Cuatro esbirros cuentan como una criatura de su NA.
+    S.naEnc = na + Math.floor(S.exceso / 2) + (jefe ? 2 : 0) + (tam.naEnc || 0);
     S.cuenta = esbirro ? .25 : 1;
     return S;
   },
   /** «NA 5», o «¼ de NA 2» si es un esbirro: lo que pesa al calibrar. */
   _txtCalibrar(S) { return (S.esbirro ? '¼ de ' : '') + 'NA ' + S.naEnc; },
 
-  /** Avisos de «fuera de la curva» (Guía, Cap. 16). */
+  /** Avisos de «lejos de las fórmulas» (Guía, Cap. 16). */
   _avisosCurva(S) {
     const av = [];
     const c = S.calc;
     if (S.aMano.includes('ataque') && S.ataque > c.ataque + 1)
-      av.push(`Ataque ${this._signo(S.ataque)} frente a ${this._signo(c.ataque)} de la curva: la amenaza vive en el daño, no en acertar más.`);
+      av.push(`Ataque ${this._signo(S.ataque)} frente a ${this._signo(c.ataque)} de la fórmula: la amenaza vive en el daño, no en acertar más.`);
     if (S.armadura > S.na + 3) av.push(`Armadura ${S.armadura}: nunca más de NA + 3 (${S.na + 3}).`);
-    if (S.aMano.includes('pv') && c.pv && Math.abs(S.pv - c.pv) / c.pv > .25) av.push(`PV ${S.pv}: la curva da ${c.pv}.`);
-    if (S.aMano.includes('guardia') && Math.abs(S.guardia - c.guardia) >= 3) av.push(`Guardia ${S.guardia}: la curva da ${c.guardia}.`);
+    if (S.aMano.includes('pv') && c.pv && Math.abs(S.pv - c.pv) / c.pv > .25) av.push(`PV ${S.pv}: la fórmula da ${c.pv}.`);
+    if (S.aMano.includes('guardia') && Math.abs(S.guardia - c.guardia) >= 3) av.push(`Guardia ${S.guardia}: la fórmula da ${c.guardia}.`);
     if (S.aMano.includes('dano')) {
       const a = this._parseDano(S.dano), b = this._parseDano(c.dano);
-      if (a && b && Math.abs(this._mediaDano(a) - this._mediaDano(b)) / this._mediaDano(b) > .3) av.push(`Daño ${S.dano}: la curva da ${c.dano}.`);
+      if (a && b && Math.abs(this._mediaDano(a) - this._mediaDano(b)) / this._mediaDano(b) > .3) av.push(`Daño ${S.dano}: la fórmula da ${c.dano}.`);
     }
     return av;
   },
@@ -341,16 +390,16 @@ Object.assign(app, {
     const badge = (cls, t) => { const s = this.h('span', 'ibadge ' + cls); s.appendChild(this.h('span', null, t)); return s; };
     const tipo = this.DB.tipos[cr.tipo]?.name || '—';
     const tam = this.DB.tamanos[cr.tam]?.name || '';
-    fila.append(badge('ib-desc', 'NA ' + cr.na), badge('ib-arq', `${tipo} ${tam.toLowerCase()}`.trim()),
+    fila.append(badge('ib-desc', 'NA ' + S.na), badge('ib-arq', `${tipo} ${tam.toLowerCase()}`.trim()),
       badge('ib-bg', this.DB.roles[cr.rol]?.name || 'Sin Rol'));
     const host = document.getElementById('identity_summary_view');
     let extra = host.querySelector('.dir-nota');
     if (!extra) { extra = this.h('p', 'dir-nota dir-centro'); host.appendChild(extra); }
     const partes = [];
-    if (S.jefe) partes.push('Jefe: PV ×2 · Peso +2');
-    if (S.horda) partes.push(`${S.H.marea ? 'Marea: registro Planetario' : `${S.H.n} de ${cr.miembros}`} · NA efectivo ${S.naEf}`);
+    if (S.jefe) partes.push('Jefe: PV ×2 · Potencial +2');
+    if (S.horda) partes.push(S.H.marea ? 'Marea: registro Planetario' : `${S.H.n} de ${cr.miembros}: una sola criatura de NA ${S.na}`);
     if (S.esbirro) partes.push('Esbirro: cuatro cuentan como una criatura');
-    if (S.naEnc !== cr.na) partes.push('Al calibrar el encuentro cuenta como NA ' + S.naEnc);
+    if (S.naEnc !== S.na) partes.push('Al calibrar el encuentro cuenta como NA ' + S.naEnc);
     extra.textContent = partes.join(' · ');
     extra.hidden = !partes.length;
   },
@@ -417,24 +466,27 @@ Object.assign(app, {
     const repintar = () => { this.cambio(); this._editar_identity(); };
 
     // NA
-    const B = this.DB.na[cr.na] || {};
+    const B = S.B, etq = (this.DB.na[cr.na] || {}).etiqueta;
     v.appendChild(this._campo('Nivel de Amenaza', this._paso(cr.na, 0, 15, n => { cr.na = n; cr.pvAct = null; repintar(); },
-      'el Nivel de Amenaza', 'NA ' + cr.na + (B.etiqueta ? ' · ' + B.etiqueta : '')),
-      'cuánto pesa en la escena'));
-    v.appendChild(this._info(`PV ${B.pv} · Guardia ${B.g} / Armadura ${B.a} · Ataque ${this._signo(B.atk)} · Daño ${B.dano} · PA ${B.pa} · CD ${B.cd} · Peso ${B.peso}`));
+      'el Nivel de Amenaza', 'NA ' + cr.na + (etq ? ' · ' + etq : '')),
+      S.horda ? 'el de cada miembro' : 'cuánto pesa en la escena'));
+    v.appendChild(this._info((S.horda ? `Como horda, NA ${S.na}. ` : '') +
+      `Competencia ${this._signo(B.pb)} · Fuerte ${this._signo(B.fuerte)} · Normal ${this._signo(B.normal)} · Débil ${this._signo(B.debil)}\nDado de daño ${B.dano} · Armadura ${B.a} · PA ${B.pa} · Potencial ${B.peso}`));
 
     // Tipo
     const tipos = Object.entries(this.DB.tipos).map(([k, t]) => [k, t.name]);
     v.appendChild(this._campo('Tipo', this._select(tipos, cr.tipo, k => {
+      const antes = cr.tipo;
       cr.tipo = k;
       this._ponerRasgosDeTipo(cr);
-      cr.salv = (this.DB.tipos[k].salvDef || cr.salv).slice(0, 2);
+      this._reponerAtributos(cr, antes);
       const t = this.DB.tipos[k];
       if (t.tamMin && this.ORDEN_TAM.indexOf(cr.tam) < this.ORDEN_TAM.indexOf(t.tamMin)) cr.tam = t.tamMin;
+      cr.pvAct = null;
       repintar();
-    }, 'Tipo de criatura'), 'da Rasgos gratuitos'));
+    }, 'Tipo de criatura'), 'Rasgos gratuitos y atributos Débiles'));
     const t = this.DB.tipos[cr.tipo] || {};
-    v.appendChild(this._info(`${t.txt || 'Sin Rasgos de tipo.'}\nSalvaciones fuertes: ${t.salv || '—'} · Debilidad coherente: ${t.deb || '—'}`));
+    v.appendChild(this._info(`${t.txt || 'Sin Rasgos de tipo.'}\nAtributos Débiles: ${t.atrDeb || '—'} · Debilidad coherente: ${t.deb || '—'}`));
     (t.elige || []).forEach(grupo => {
       const actual = cr.rasgos.find(r => r.gratis && r.origen === 'tipo' && grupo.includes(r.id));
       const ops = grupo.map(id => [id, this._libIdx()[id]?.e.name || id]);
@@ -446,30 +498,31 @@ Object.assign(app, {
 
     // Tamaño
     const tams = Object.entries(this.DB.tamanos).map(([k, x]) => [k, x.name]);
-    v.appendChild(this._campo('Tamaño', this._select(tams, cr.tam, k => { cr.tam = k; cr.pvAct = null; repintar(); }, 'Tamaño')));
+    v.appendChild(this._campo('Tamaño', this._select(tams, cr.tam, k => { cr.tam = k; cr.pvAct = null; repintar(); }, 'Tamaño'), 'cambia FUE, DES y CON'));
     const tm = this.DB.tamanos[cr.tam] || {};
-    v.appendChild(this._info(`PV ${tm.pvTxt || '×1'} · Guardia ${tm.g ? this._signo(tm.g) : '—'} · Alcance ${tm.alcance || '—'} · Espacio ${tm.espacio || '—'}`));
+    v.appendChild(this._info(`${tm.atrTxt || 'Sin cambios'} · Alcance ${tm.alcance || '—'} · Espacio ${tm.espacio || '—'}` +
+      (tm.naEnc ? `\nAl calibrar el encuentro, ${this._signo(tm.naEnc)} NA.` : '')));
 
     // Rol
     const roles = [['', 'Sin Rol']].concat(Object.entries(this.DB.roles).map(([k, x]) => [k, x.name]));
-    v.appendChild(this._campo('Rol', this._select(roles, cr.rol, k => { cr.rol = k; cr.pvAct = null; repintar(); }, 'Rol'), 'cómo se comporta en escena'));
+    v.appendChild(this._campo('Rol', this._select(roles, cr.rol, k => { cr.rol = k; this._reponerAtributos(cr); cr.pvAct = null; repintar(); }, 'Rol'), 'decide sus dos atributos Fuertes'));
     const r = this.DB.roles[cr.rol];
-    v.appendChild(this._info(r ? `${r.mod}\n${r.hab}: ${r.habTxt}` : 'Usa las estadísticas base de su NA.'));
+    v.appendChild(this._info(r ? `${r.mod}\n${r.hab}: ${r.habTxt}` : 'Sin Rol: sus dos atributos Fuertes los eliges tú, en Combate → Atributos.'));
 
     // Estructura
     v.appendChild(this._campo('Estructura', this._seg([['normal', 'Normal'], ['jefe', 'Jefe'], ['horda', 'Horda']], cr.estructura,
       k => { cr.estructura = k; cr.pvAct = null; repintar(); }, 'Estructura')));
-    if (cr.estructura === 'jefe') v.appendChild(this._info('PV ×2 y +2 de Peso. Usa al menos una: Acción de Jefe, Turno Doble o un séquito. Sus Aptitudes de Peso 3 se anuncian una ronda antes. Al calibrar el encuentro sube un NA.'));
+    if (cr.estructura === 'jefe') v.appendChild(this._info('PV ×2 y +2 de Potencial. Usa al menos una: Acción de Jefe, Turno Doble o un séquito. Sus Aptitudes de Potencial 3 se anuncian una ronda antes. Al calibrar el encuentro sube 2 NA.'));
     if (cr.estructura === 'horda') {
       const inp = document.createElement('input');
       inp.type = 'number'; inp.min = 2; inp.max = 999; inp.value = cr.miembros; inp.inputMode = 'numeric';
       inp.setAttribute('aria-label', 'Miembros de la horda');
       inp.addEventListener('change', () => { cr.miembros = Math.max(2, Math.min(999, parseInt(inp.value, 10) || 2)); cr.pvAct = null; repintar(); });
-      v.appendChild(this._campo('Miembros', inp, 'cada uno con las estadísticas de arriba'));
+      v.appendChild(this._campo('Miembros', inp, 'de 4 a 30'));
       const H = this._horda(cr.miembros);
       v.appendChild(this._info(H.marea
-        ? 'Marea (31 o más): ya es una entidad de registro Planetario (Guía, Cap. 9) y usa Daño de Escala.'
-        : `${H.n}: NA efectivo ${cr.na + H.na}${H.dados ? ` · daño +${H.dados} dado${H.dados > 1 ? 's' : ''}` : ''}. PV = suma de sus miembros; un solo turno; doble daño de área; a mitad de vida se divide en dos; pierde un dado de daño por cada cuarto de PV perdido.`));
+        ? 'Marea (31 o más): ya es una entidad de registro Planetario (Guía, Cap. 9).'
+        : `${H.n}: se construye como una sola criatura de NA ${S.na} (el de sus miembros + ${H.na}). Un solo turno; el doble de daño de los efectos de área; a mitad de sus PV se divide en dos hordas de NA ${Math.max(0, S.na - 2)}; pierde un dado de daño por cada cuarto de PV perdido.`));
     }
     v.appendChild(this._pieEdicion('identity'));
   },
@@ -514,7 +567,7 @@ Object.assign(app, {
       const cuartos = S.pv ? Math.min(4, Math.floor((S.pv - act) / (S.pv / 4))) : 0;
       const d = this._parseDano(S.dano);
       if (d && cuartos > 0) t.push(`Ha perdido ${cuartos} cuarto${cuartos > 1 ? 's' : ''} de sus PV: su daño baja a ${this._fmtDano({ ...d, n: Math.max(1, d.n - cuartos) })}.`);
-      if (act <= S.pv / 2) t.push('A mitad de vida: se divide en dos.');
+      if (act <= S.pv / 2) t.push(`A mitad de vida: se divide en dos hordas de NA ${Math.max(0, S.na - 2)}, cada una con la mitad de los PV que le queden.`);
     }
     if (S.esbirro) t.push('Esbirro: cae con cualquier golpe que le quite sus PV.');
     if (act === 0) t.push('A 0 PV.');
@@ -560,7 +613,7 @@ Object.assign(app, {
     const lineas = [
       ['Resistencia', def.resistencia.concat(otras.filter(x => x.r.id !== 'aversion').map(x => 'daño no mágico'))],
       ['Inmunidad', def.inmunidad], ['Inmune a estados', def.inmunidad_a_estados],
-      ['Vulnerabilidad', def.vulnerabilidad.map(x => x + ' (el doble)')],
+      ['Vulnerabilidad', def.vulnerabilidad.map(x => x + ' (×1,5)')],
       ['Aversión', otras.filter(x => x.r.id === 'aversion').map(x => x.r.nota || '—')],
     ].filter(l => l[1].length);
     if (lineas.length) {
@@ -570,7 +623,7 @@ Object.assign(app, {
     }
     if (S.aMano.length) {
       const N = { pv: 'PV', guardia: 'Guardia', armadura: 'Armadura', ataque: 'Ataque', dano: 'Daño', pa: 'PA', vel: 'Velocidad', ini: 'Iniciativa', moral: 'Moral' };
-      v.appendChild(this.h('p', 'dir-nota', 'Ajustado a mano: ' + S.aMano.map(k => `${N[k]} (curva ${S.calc[k]})`).join(' · ')));
+      v.appendChild(this.h('p', 'dir-nota', 'Ajustado a mano: ' + S.aMano.map(k => `${N[k]} (fórmula ${S.calc[k]})`).join(' · ')));
     }
     this._avisosCurva(S).forEach(a => v.appendChild(this.h('p', 'dir-aviso', a)));
     if (cr.equipo) v.appendChild(this.h('p', 'dir-nota', 'Equipo: ' + cr.equipo));
@@ -581,7 +634,7 @@ Object.assign(app, {
     const v = this._vista('stats', 'edit');
     v.textContent = '';
     const S = this.calcCr(cr);
-    v.appendChild(this.h('p', 'wiz-hint', 'Lo que da la curva para su NA, Rol, Tamaño y Rasgos. Escribe un valor solo si quieres apartarte de ella; vacío vuelve a la curva.'));
+    v.appendChild(this.h('p', 'wiz-hint', 'Lo que dan las fórmulas para su NA, sus atributos, su Rol y sus Rasgos. Escribe un valor solo si quieres apartarte de ellas; vacío vuelve a la fórmula.'));
     const g = this.h('div', 'g2 dir-g2');
     const CAMPOS = [['pv', 'PV'], ['guardia', 'Guardia'], ['armadura', 'Armadura'], ['ataque', 'Ataque'], ['dano', 'Daño'],
                     ['pa', 'PA'], ['vel', 'Velocidad'], ['ini', 'Iniciativa'], ['moral', 'Moral']];
@@ -592,7 +645,7 @@ Object.assign(app, {
       if (!esDano) inp.inputMode = 'numeric';
       inp.placeholder = String(S.calc[k]);
       inp.value = cr.manual[k] != null ? cr.manual[k] : '';
-      inp.setAttribute('aria-label', `${n} a mano (la curva da ${S.calc[k]})`);
+      inp.setAttribute('aria-label', `${n} a mano (la fórmula da ${S.calc[k]})`);
       inp.autocomplete = 'off';
       inp.addEventListener('input', () => {
         const t = inp.value.trim();
@@ -602,12 +655,12 @@ Object.assign(app, {
         if (k === 'pv') cr.pvAct = null;
         this.cambio();
       });
-      g.appendChild(this._campo(n, inp, 'curva ' + S.calc[k]));
+      g.appendChild(this._campo(n, inp, 'fórmula ' + S.calc[k]));
     });
     v.appendChild(g);
     const b = this.h('button', 'btn btn-g dir-ancho'); b.type = 'button';
-    b.innerHTML = this._ico('i-rot-l') + 'Ajustar a la curva';
-    b.addEventListener('click', () => { cr.manual = {}; cr.pvAct = null; this.cambio(); this._editar_stats(); this.toast('Estadísticas de vuelta en la curva', 'ok'); });
+    b.innerHTML = this._ico('i-rot-l') + 'Volver a las fórmulas';
+    b.addEventListener('click', () => { cr.manual = {}; cr.pvAct = null; this.cambio(); this._editar_stats(); this.toast('Estadísticas de vuelta en las fórmulas', 'ok'); });
     v.append(b, this._pieEdicion('stats'));
   },
 
@@ -642,7 +695,7 @@ Object.assign(app, {
     bd.querySelector('.aval').textContent = S.dano;
     ba.addEventListener('click', () => this.rollCheck('Ataque: ' + this._nombreAtaque(), S.ataque));
     bd.addEventListener('click', () => this.rollDice(S.dano, 'Daño: ' + this._nombreAtaque()));
-    v.appendChild(this.h('p', 'dir-nota', `Ataque Normal: 2 PA. Daño base de su NA: ${S.danoBase}.`));
+    v.appendChild(this.h('p', 'dir-nota', `Daño por turno: todo lo que hace en su turno si impacta${S.pa >= 4 ? ', repartido entre dos ataques de 2 PA' : ''}. Daño base de su NA: ${S.danoBase}.`));
   },
   _editar_attack() {
     const cr = this.cr;
@@ -658,27 +711,26 @@ Object.assign(app, {
     const dl = document.createElement('datalist'); dl.id = 'dir_danos';
     (this.DB.tablas.danos?.filas || []).forEach(x => dl.appendChild(new Option(x)));
     v.append(this._campo('Nombre del ataque', n), this._campo('Tipo de daño', t), dl,
-      this.h('p', 'wiz-hint', 'El arma no cambia el daño base: cambia el tipo y sus propiedades. El bono y el dado se ajustan en Estadísticas.'),
+      this.h('p', 'wiz-hint', 'Ataca con el mayor de FUE o DES (a distancia, DES). El arma no cambia el daño: cambia el tipo y sus propiedades.'),
       this._pieEdicion('attack'));
   },
 
-  /* ── Combate: salvaciones, iniciativa y Moral ─────────────────── */
-  _modSalv(S, a) { return this.cr.salv.includes(a) ? S.sf : S.sd; },
+  /* ── Combate: atributos, Salvaciones, Iniciativa y Moral ──────── */
   _pintarSalv(S) {
     const v = this._vista('saves', 'summary'); if (!v) return;
+    const cr = this.cr;
     v.textContent = '';
     const grid = this.h('div', 'saves-grid dir-sin-filete');
     this.ATTRS.forEach(a => {
-      const fuerte = this.cr.salv.includes(a);
-      const total = this._modSalv(S, a);
-      const box = this.h('button', 'svsbox' + (fuerte ? ' prof' : ''));
+      const box = this.h('button', 'svsbox' + (cr.fuertes.includes(a) ? ' prof' : ''));
       box.type = 'button';
-      box.setAttribute('aria-label', `Tirar Salvación de ${this.ATTR_N[a]}`);
-      box.append(this.h('span', 'svslbl', a), document.createTextNode(this._signo(total)));
-      box.addEventListener('click', () => this.rollCheck('Salvación ' + a, total));
+      box.setAttribute('aria-label', `${this.ATTR_N[a]} ${this._signo(S.mod[a])}. Tirar Salvación, ${this._signo(S.salv[a])}`);
+      box.append(this.h('span', 'svslbl', a), document.createTextNode(this._signo(S.mod[a])));
+      box.addEventListener('click', () => this.rollCheck('Salvación ' + a, S.salv[a]));
       grid.appendChild(box);
     });
     v.appendChild(grid);
+    v.appendChild(this.h('p', 'dir-nota', `Salvaciones fuertes: ${cr.fuertes.map(a => a + ' ' + this._signo(S.salv[a])).join(' · ') || '—'}. En las demás tira el modificador. Toca un atributo para tirar su Salvación.`));
     const g = this.h('div', 'dir-stats dir-stats-2');
     g.append(
       this._stat('Iniciativa', this._signo(S.ini), () => this.rollCheck('Iniciativa', S.ini), 'Tirar Iniciativa'),
@@ -696,32 +748,48 @@ Object.assign(app, {
       total: a + b, totalLabel: 'Daño' });
     return rompe;
   },
+  /** Seis filas Fuerte · Normal · Débil. Dos Fuertes: el tercero desplaza al
+      más antiguo. La usan la ficha y el asistente. */
+  _editorAtributos(host, alCambiar) {
+    const cr = this.cr, S = this.calcCr(cr);
+    const filas = this.h('div', 'dir-tres dir-atr');
+    this.ATTRS.forEach(a => {
+      const val = cr.fuertes.includes(a) ? 'F' : cr.debiles.includes(a) ? 'D' : 'N';
+      const seg = this._seg([['F', 'Fuerte'], ['N', 'Normal'], ['D', 'Débil']], val, v => {
+        cr.fuertes = cr.fuertes.filter(x => x !== a);
+        cr.debiles = cr.debiles.filter(x => x !== a);
+        if (v === 'F') { cr.fuertes.push(a); if (cr.fuertes.length > 2) cr.fuertes.shift(); }
+        if (v === 'D') cr.debiles.push(a);
+        cr.pvAct = null;
+        alCambiar();
+      }, this.ATTR_N[a]);
+      filas.appendChild(this._campo(`${a} ${this._signo(S.mod[a])}`, seg));
+    });
+    host.appendChild(filas);
+    const forzados = this.ATTRS.filter(a => S.tam[a.toLowerCase()] === 'D').map(a => `${a} es Débil por su tamaño (${S.tam.name})`);
+    if (S.cat.CON === 'D' && !cr.debiles.includes('CON') && S.tam.con !== 'D') forzados.push('CON es Débil por el Rasgo Frágil');
+    if (forzados.length) host.appendChild(this.h('p', 'dir-nota', forzados.join('. ') + ', elijas lo que elijas.'));
+    if (cr.fuertes.length < 2) host.appendChild(this.h('p', 'dir-aviso', 'Elige dos atributos Fuertes.'));
+    const def = this._atributosDe(cr);
+    if (String(def.fuertes) !== String(cr.fuertes) || String(def.debiles.slice().sort()) !== String(cr.debiles.slice().sort())) {
+      const b = this.h('button', 'btn btn-g dir-ancho'); b.type = 'button';
+      b.innerHTML = this._ico('i-rot-l') + 'Los de su Rol y su tipo';
+      b.addEventListener('click', () => { Object.assign(cr, this._atributosDe(cr)); cr.pvAct = null; alCambiar(); });
+      host.appendChild(b);
+    }
+  },
   _editar_saves() {
     const cr = this.cr;
     const v = this._vista('saves', 'edit');
     v.textContent = '';
     const S = this.calcCr(cr);
-    v.appendChild(this.h('p', 'wiz-hint', `Elige las dos Salvaciones fuertes (${this._signo(S.sf)}); el resto usa la débil (${this._signo(S.sd)}). Su tipo sugiere: ${S.tipo.salv || '—'}.`));
-    const grid = this.h('div', 'saves-grid dir-sin-filete');
-    this.ATTRS.forEach(a => {
-      const on = cr.salv.includes(a);
-      const box = this.h('button', 'svsbox' + (on ? ' prof' : ''));
-      box.type = 'button';
-      box.setAttribute('aria-pressed', String(on));
-      box.append(this.h('span', 'svslbl', a), document.createTextNode(on ? 'fuerte' : 'débil'));
-      box.addEventListener('click', () => {
-        if (on) cr.salv = cr.salv.filter(x => x !== a);
-        else { cr.salv.push(a); if (cr.salv.length > 2) cr.salv.shift(); }
-        this.cambio(); this._editar_saves();
-      });
-      grid.appendChild(box);
-    });
-    v.appendChild(grid);
-    const forzada = S.tipo.noMoral === 'nunca' || S.esbirro;
+    v.appendChild(this.h('p', 'wiz-hint', `El Rol decide los dos Fuertes (${this._signo(S.B.fuerte)}) y el tipo sugiere los Débiles (${this._signo(S.B.debil)}); el resto son Normales (${this._signo(S.B.normal)}). Su tipo sugiere: ${S.tipo.atrDeb || '—'}.`));
+    this._editorAtributos(v, () => { this.cambio(); this._editar_saves(); });
+    const forzada = S.tipo.noMoral === 'nunca' || S.esbirro || S.cat.INT === 'D';
     const fila = this.h('div', 'set-row dir-fila-toggle');
     const txt = this.h('div', 'set-row-txt');
     txt.append(this.h('span', 'set-lbl', 'No tira Moral'),
-      this.h('span', 'set-hint', forzada ? 'Por su tipo o por ser esbirro, nunca la tira.' : 'Bestias con INT 4 o menos: huyen cuando la pelea deja de compensar.'));
+      this.h('span', 'set-hint', forzada ? 'Con INT Débil, por su tipo o por ser esbirro, nunca la tira.' : 'Para la que huye o se detiene sin tirada cuando la pelea deja de compensar.'));
     const tg = this.h('button', 'toggle-btn'); tg.type = 'button';
     tg.setAttribute('aria-pressed', String(forzada || cr.moralNoTira));
     tg.setAttribute('aria-label', 'No tira Moral');
@@ -745,7 +813,9 @@ Object.assign(app, {
   _concretar(txt, S) {
     const out = [];
     const t = String(txt || '');
-    if (/contra (la|su) CD/.test(t) && !/CD \d/.test(t)) out.push('CD ' + S.cd);
+    const menos = t.match(/su CD − (\d+)/);
+    if (menos) out.push(`CD − ${menos[1]} = ${S.cd - parseInt(menos[1], 10)}`);
+    else if (/contra (la|su) CD/.test(t) && !/CD \d/.test(t)) out.push('CD ' + S.cd);
     if (/daño base/.test(t)) {
       const d = this._parseDano(S.danoBase);
       out.push('Daño base ' + S.danoBase + (d && /mitad del daño base/.test(t) ? ` (la mitad ≈ ${Math.max(1, Math.floor(this._mediaDano(d) / 2))})` : ''));
@@ -780,7 +850,7 @@ Object.assign(app, {
     const host = document.getElementById('rasgos_list'); if (!host) return;
     const abiertos = new Set([...host.querySelectorAll('.dc.open')].map(d => d.dataset.uid));
     host.textContent = '';
-    // 1 · la habilidad del Rol, que no gasta Peso
+    // 1 · la habilidad del Rol, que no gasta Potencial
     if (S.rol && S.rol.hab) {
       host.appendChild(this._tarjetaRasgo({ uid: 'rol', fijo: true }, { name: S.rol.hab, tipo: S.rol.habTipo, coste: S.rol.habCoste, frec: '', peso: 0,
         txt: S.rol.habTxt + (cr.rolNota ? '\n' + cr.rolNota : '') }, 'de Rol', S, abiertos.has('rol')));
@@ -789,7 +859,7 @@ Object.assign(app, {
     const orden = x => this._esGratisVisible(x, S) ? 0 : (x.i.tipo === 'Debilidad' || x.i.peso < 0) ? 2 : 1;
     S.infos.slice().sort((a, b) => orden(a) - orden(b)).forEach(x => {
       const gratis = this._esGratisVisible(x, S);
-      const etiqueta = gratis ? (x.r.origen === 'plantilla' ? 'plantilla' : 'de tipo') : (x.i.peso < 0 ? '−1' : x.i.custom && !x.i.peso ? '0' : 'Peso ' + x.i.peso);
+      const etiqueta = gratis ? (x.r.origen === 'plantilla' ? 'plantilla' : 'de tipo') : (x.i.peso < 0 ? '−1' : x.i.custom && !x.i.peso ? '0' : 'Pot. ' + x.i.peso);
       host.appendChild(this._tarjetaRasgo(x.r, x.i, etiqueta, S, abiertos.has(x.r.uid)));
     });
     if (!host.childElementCount) {
@@ -965,7 +1035,7 @@ Object.assign(app, {
     g.addEventListener('click', () => this.tirarTabla('guarida', 'Acción de Guarida'));
     acc.appendChild(g);
     v.appendChild(acc);
-    v.appendChild(this.h('p', 'dir-nota', 'La guarida actúa al final de cada ronda, sin gastar PA ni Reacción, y no repite la misma dos rondas seguidas. Toda Aptitud de Peso 3 se anuncia una ronda antes.'));
+    v.appendChild(this.h('p', 'dir-nota', 'La guarida actúa al final de cada ronda, sin gastar PA ni Reacción, y no repite la misma dos rondas seguidas. Toda Aptitud de Potencial 3 se anuncia una ronda antes.'));
   },
   _editar_jefe() {
     const cr = this.cr;
@@ -1015,18 +1085,18 @@ Object.assign(app, {
     });
     // Comprobaciones de las reglas
     const av = [];
-    if (S.exceso) av.push(`Peso ${S.pesoGastado} de ${S.pesoMax}: ${S.exceso >= 2 ? `cuenta como NA ${S.naEnc} al calibrar el encuentro` : 'un punto por encima del presupuesto'}.`);
+    if (S.exceso) av.push(`Potencial ${S.pesoGastado} de ${S.pesoMax}: ${S.exceso >= 2 ? `cuenta como NA ${S.naEnc} al calibrar el encuentro` : 'un punto por encima del presupuesto'}.`);
     if (S.esbirro && S.pesoGastado) av.push('Un esbirro no tiene Rasgos propios, solo los de su tipo.');
     const p3 = S.infos.filter(x => !S.esGratis(x) && x.i.peso === 3).length;
-    if (cr.na < 5 && p3 > 1) av.push('Por debajo de NA 5, una sola pieza de Peso 3 como máximo.');
+    if (S.na < 5 && p3 > 1) av.push('Por debajo de NA 5, una sola pieza de Potencial 3 como máximo.');
     (S.tipo.exige || []).forEach(id => { if (!ids.includes(id)) av.push(`${S.tipo.name}: debe tener ${this._libIdx()[id]?.e.name || id}.`); });
     if (S.tipo.tamMin && this.ORDEN_TAM.indexOf(cr.tam) < this.ORDEN_TAM.indexOf(S.tipo.tamMin)) av.push(`${S.tipo.name}: tamaño Grande o mayor.`);
     if (S.jefe && !ids.includes('accion_de_jefe') && !ids.includes('turno_doble')) av.push('Jefe sin Acción de Jefe ni Turno Doble: dale un séquito.');
     if (S.jefe && S.infos.filter(x => x.i.tipo !== 'Rasgo' || x.i.peso >= 2).length === 0) av.push('Un jefe necesita al menos una mecánica que no sea «más daño».');
-    if (S.nDebs > 2) av.push('Las Debilidades devuelven Peso hasta un máximo de 2.');
+    if (S.nDebs > 2) av.push('Las Debilidades devuelven Potencial hasta un máximo de 2.');
     this._avisosCurva(S).forEach(a => av.push(a));
     if (av.length) av.forEach(a => host.appendChild(this.h('p', 'dir-aviso', a)));
-    else host.appendChild(this.h('p', 'dir-nota dir-ok', 'Dentro de las reglas: Peso, tipo y curva en orden.'));
+    else host.appendChild(this.h('p', 'dir-nota dir-ok', 'Dentro de las reglas: Potencial, tipo y fórmulas en orden.'));
   },
 
   /* ── Plantillas (Manual de Monstruos, Cap. 4) ─────────────────── */
@@ -1041,12 +1111,13 @@ Object.assign(app, {
   },
   aplicarPlantilla(k) {
     const p = this.DB.plantillas[k]; if (!p) return;
-    const cr = this.cr;
+    const cr = this.cr, tipoAntes = cr.tipo;
     cr.na = Math.max(0, Math.min(15, cr.na + (parseInt(p.na, 10) || 0)));
     if (p.tam) cr.tam = this.ORDEN_TAM[Math.max(0, Math.min(5, this.ORDEN_TAM.indexOf(cr.tam) + p.tam))];
     if (p.rol && this.DB.roles[p.rol]) cr.rol = p.rol;
     if (p.horda) { cr.estructura = 'horda'; cr.tam = 'diminuto'; }
     if (p.tipo && this.DB.tipos[p.tipo]) { cr.tipo = p.tipo; this._ponerRasgosDeTipo(cr); }
+    if (p.rol || p.tipo) this._reponerAtributos(cr, tipoAntes);
     const idx = this._libIdx();
     (p.pierdeFam || []).forEach(f => { cr.rasgos = cr.rasgos.filter(r => r.gratis || idx[r.id]?.fam !== f); });
     if (p.pierdeMayor) {
@@ -1079,10 +1150,12 @@ Object.assign(app, {
     const tipo = this.DB.tipos[cr.tipo];
     if (tipo.tamMin && this.ORDEN_TAM.indexOf(cr.tam) < this.ORDEN_TAM.indexOf(tipo.tamMin)) cr.tam = tipo.tamMin;
     this._ponerRasgosDeTipo(cr);
-    cr.salv = (tipo.salvDef || ['FUE', 'CON']).slice(0, 2);
+    Object.assign(cr, this._atributosDe(cr));
+    // Mutante: un atributo Débil al azar
+    if (cr.tipo === 'mutante') cr.debiles = [...new Set(cr.debiles.concat(this._azar(this.ATTRS.filter(a => !cr.fuertes.includes(a)))))];
     // Lo que su tipo exige (Aliento, Aversión) va primero
     (tipo.exige || []).forEach(id => this._ponerEn(cr, id));
-    // Rasgos: familia con d20, pieza con el dado de la familia, hasta gastar el Peso
+    // Rasgos: familia con d20, pieza con el dado de la familia, hasta gastar el Potencial
     const fams = Object.keys(this.DB.rasgos);
     for (let intento = 0; intento < 60; intento++) {
       const S = this.calcCr(cr);
@@ -1096,11 +1169,19 @@ Object.assign(app, {
       if (fam === 'debilidades') { if (S.nDebs >= 2) continue; }
       else {
         if (e.peso > S.pesoMax - S.pesoGastado) continue;
-        if (e.peso === 3 && cr.na < 5 && S.infos.some(x => x.i.peso === 3 && !S.esGratis(x))) continue;
+        if (e.peso === 3 && S.na < 5 && S.infos.some(x => x.i.peso === 3 && !S.esGratis(x))) continue;
       }
       this._ponerEn(cr, e.id);
     }
-    const forma = this._azar(T.forma.filas), visible = this._azar(T.rasgoVisible.filas.filter(x => x !== 'Tira dos veces'));
+    // Si lo que su tipo exige no cabe (un dragón de NA 1 con Aliento), una Debilidad lo compensa
+    for (let k = 0; k < 2; k++) {
+      const S = this.calcCr(cr);
+      if (!S.exceso || S.nDebs >= 2) break;
+      const libres = (this.DB.rasgos.debilidades || []).filter(e => !cr.rasgos.some(r => r.id === e.id));
+      if (!libres.length) break;
+      this._ponerEn(cr, this._azar(libres).id);
+    }
+    const forma =this._azar(T.forma.filas), visible = this._azar(T.rasgoVisible.filas.filter(x => x !== 'Tira dos veces'));
     const mueve = this._azar(T.mueve.filas), ataca = this._azar(T.ataca.filas);
     cr.idea = `Forma ${forma.toLowerCase()}; ${visible.toLowerCase()}. Se mueve ${mueve} y ataca con ${ataca.replace(/^no ataca: /, 'nada: ')}.`;
     cr.ataqueNombre = /no ataca/.test(ataca) ? 'Presa' : ataca.replace(/^(un|una|la|el) /, '').replace(/^./, c => c.toUpperCase());

@@ -12,7 +12,7 @@ Object.assign(app, {
 
   /* [clave en DB, rótulo]. `rasgos` es la única agrupada (familia → lista). */
   DB_CATS: [
-    ['Amenazas', [['na', 'Tabla por NA'], ['roles', 'Roles'], ['tamanos', 'Tamaños'], ['tipos', 'Tipos de criatura'],
+    ['Amenazas', [['na', 'Valores por NA'], ['roles', 'Roles'], ['tamanos', 'Tamaños'], ['hordas', 'Hordas'], ['tipos', 'Tipos de criatura'],
                   ['rasgos', 'Biblioteca'], ['familias', 'Familias'], ['plantillas', 'Plantillas'], ['estados', 'Estados']]],
     ['Mesa', [['encuentros', 'NA del encuentro'], ['riqueza', 'Riqueza por nivel'], ['rarezas', 'Rarezas'], ['propiedades', 'Propiedades'],
               ['maldiciones', 'Maldiciones'], ['focos', 'Focos'], ['modulos', 'Módulos'], ['costes', 'Costes'],
@@ -20,12 +20,12 @@ Object.assign(app, {
     ['Azar', [['tablas', 'Tablas']]],
   ],
   DB_ROTULOS: {
-    name: 'Nombre', txt: 'Texto', id: 'Identificador', tipo: 'Tipo', peso: 'Peso', coste: 'Coste', frec: 'Frecuencia', pide: 'Dato que pide',
+    name: 'Nombre', txt: 'Texto', id: 'Identificador', tipo: 'Tipo', peso: 'Potencial', coste: 'Coste', frec: 'Frecuencia', pide: 'Dato que pide',
     multi: 'Se puede tomar varias veces', mod: 'Modificadores a la ficha', pv: 'PV', g: 'Guardia', a: 'Armadura', atk: 'Ataque', dano: 'Daño',
     pa: 'PA', sf: 'Salvación fuerte', sd: 'Salvación débil', cd: 'CD', etiqueta: 'Etiqueta', hab: 'Habilidad',
-    habTipo: 'Tipo de la habilidad', habCoste: 'Coste de la habilidad', habTxt: 'Texto de la habilidad', pvNa: 'PV por NA', vel: 'Velocidad',
-    ini: 'Iniciativa', esbirro: 'Es esbirro', ej: 'Ejemplos', pvTxt: 'PV (texto)', alcance: 'Alcance', espacio: 'Espacio', salv: 'Salvaciones fuertes',
-    deb: 'Debilidad coherente', gratis: 'Rasgos gratuitos', elige: 'Rasgos a elegir', exige: 'Rasgos obligatorios', salvDef: 'Salvaciones por defecto',
+    habTipo: 'Tipo de la habilidad', habCoste: 'Coste de la habilidad', habTxt: 'Texto de la habilidad', pb: 'Competencia (PB)', fuerte: 'Atributo Fuerte', normal: 'Atributo Normal', debil: 'Atributo Débil', vel: 'Velocidad',
+    ini: 'Iniciativa', esbirro: 'Es esbirro', ej: 'Ejemplos', fue: 'FUE (número, o D = Débil)', des: 'DES (número, o D = Débil)', con: 'CON (número, o D = Débil)', atrTxt: 'Atributos (texto)', naEnc: 'NA que suma al encuentro', alcance: 'Alcance', espacio: 'Espacio', fuertes: 'Atributos Fuertes', debiles: 'Atributos Débiles', danoDados: 'Dados de daño extra', atrDeb: 'Atributos Débiles (texto)',
+    deb: 'Debilidad coherente', gratis: 'Rasgos gratuitos', elige: 'Rasgos a elegir', exige: 'Rasgos obligatorios', fuertesDef: 'Fuertes si el Rol no los fija', marea: 'Registro Planetario',
     noMoral: 'No tira Moral', tamMin: 'Tamaño mínimo', gratisFam: 'Rasgo gratuito de una familia', equipo: 'Lleva equipo', naTxt: 'NA (texto)',
     na: 'NA', gana: 'Rasgos que gana', notas: 'Notas de los Rasgos', pierdeFam: 'Familias que pierde', pierdeMayor: 'Pierde su Rasgo mayor',
     tam: 'Cambio de tamaño', rol: 'Rol', horda: 'Pasa a horda', cond: 'Condición', senal: 'Señal', cons: 'Consecuencia', filas: 'Filas',

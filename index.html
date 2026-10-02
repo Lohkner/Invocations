@@ -273,7 +273,7 @@
 
         <div class="page" id="page_1" data-modo="ficha">
           <!-- Estadísticas: lo que sale de la tabla por NA, ajustado por Rol,
-               Tamaño y Rasgos; en edición, el valor de la curva frente al tuyo. -->
+               Tamaño y Rasgos; en edición, el valor de la fórmula frente al tuyo. -->
           <details class="panel fold def-card" id="fold_stats" data-fold="stats" open>
             <summary class="ph"><span class="pt">Estadísticas</span></summary>
             <div id="stats_summary_view"></div>
@@ -287,7 +287,7 @@
           </details>
 
           <details class="panel fold" id="fold_salv" data-fold="salv" open>
-            <summary class="ph"><span class="pt">Salvaciones y Moral</span></summary>
+            <summary class="ph"><span class="pt">Atributos y Moral</span></summary>
             <div id="saves_summary_view"></div>
             <div id="saves_edit_view" style="display:none"></div>
           </details>
@@ -297,12 +297,12 @@
           <details class="panel fold" id="fold_rasgos" data-fold="rasgos" open>
             <summary class="ph">
               <span class="pt">Rasgos y Aptitudes</span>
-              <div class="pill-badge" title="Peso gastado / presupuesto">
+              <div class="pill-badge" title="Potencial gastado / presupuesto">
                 <span id="peso_gastado" style="color:var(--gold);font-weight:700">0</span><span id="peso_max" style="color:var(--rim)">/0</span>
               </div>
             </summary>
             <div class="dir-load">
-              <span class="dir-load-lbl">Peso</span>
+              <span class="dir-load-lbl">Potencial</span>
               <span class="dir-load-val" id="peso_txt">0/0</span>
             </div>
             <div class="lbar"><div id="peso_bar" class="lfill"></div></div>
@@ -551,7 +551,7 @@
         <div class="set-row">
           <div class="set-row-txt">
             <span class="set-lbl">Asistente de creación</span>
-            <span class="set-hint">«Nueva amenaza» abre los ocho pasos guiados. Apagado, abre la ficha en blanco.</span>
+            <span class="set-hint">«Nueva amenaza» abre los nueve pasos guiados. Apagado, abre la ficha en blanco.</span>
           </div>
           <button id="wiz_toggle_btn" class="toggle-btn" data-action="toggleAsistente" aria-pressed="true" aria-label="Usar el asistente al crear una amenaza"></button>
         </div>
@@ -613,7 +613,7 @@
   </div>
 </dialog>
 
-<!-- ── Asistente de creación: los ocho pasos del Manual de Monstruos, Cap. 4 ── -->
+<!-- ── Asistente de creación: los pasos del Manual de Monstruos, Cap. 4 ── -->
 <div id="wiz_panel" class="fs-panel" role="region" aria-label="Crear una amenaza paso a paso">
   <div class="fs-hdr">
     <button class="fs-hdr-back" id="wiz_back" aria-label="Paso anterior"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg></button>
@@ -676,7 +676,7 @@
     <div class="tm-toolbar">
       <input class="tm-search" id="lib_search" type="search" placeholder="Buscar por nombre o efecto…" autocomplete="off" spellcheck="false" oninput="app._libFiltro()" aria-label="Buscar en la Biblioteca">
       <div class="tm-filters">
-        <button type="button" class="tm-fchip" id="lib_f_caben" onclick="app._libChip('caben', this)" aria-pressed="false"><span class="tm-fchip-dot"></span>Caben en mi Peso</button>
+        <button type="button" class="tm-fchip" id="lib_f_caben" onclick="app._libChip('caben', this)" aria-pressed="false"><span class="tm-fchip-dot"></span>Caben en mi Potencial</button>
         <button type="button" class="tm-fchip" id="lib_f_mias" onclick="app._libChip('mias', this)" aria-pressed="false"><span class="tm-fchip-dot"></span>Las que tiene</button>
       </div>
     </div>
@@ -689,7 +689,7 @@
   </div>
   <div class="fs-footer">
     <div class="fs-footer-info">
-      Peso: <span class="mft-count" id="lib_peso">0</span><span id="lib_peso_max" style="color:var(--border)">/0</span>
+      Potencial: <span class="mft-count" id="lib_peso">0</span><span id="lib_peso_max" style="color:var(--border)">/0</span>
     </div>
     <button class="btn btn-gold" data-action="cerrarBiblioteca"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>Confirmar</button>
   </div>
@@ -764,7 +764,7 @@
        amenaza.js     La ficha: cálculo y tarjetas
        biblioteca.js  Biblioteca de Rasgos y Aptitudes
        mesa.js        Mesa del Director
-       asistente.js   Asistente de creación (ocho pasos)
+       asistente.js   Asistente de creación (nueve pasos)
        editor.js      Editor de reglas
        boot.js        Arranque + registro del Service Worker
      ───────────────────────────────────────────────────────────── -->
