@@ -395,16 +395,8 @@ Object.assign(app, {
     const tam = this.DB.tamanos[cr.tam]?.name || '';
     fila.append(badge('ib-desc', 'NA ' + S.na), badge('ib-arq', `${tipo} ${tam.toLowerCase()}`.trim()),
       badge('ib-bg', this.DB.roles[cr.rol]?.name || 'Sin Rol'));
-    const host = document.getElementById('identity_summary_view');
-    let extra = host.querySelector('.dir-nota');
-    if (!extra) { extra = this.h('p', 'dir-nota dir-centro'); host.appendChild(extra); }
-    const partes = [];
-    if (S.jefe) partes.push('Jefe: PV ×2 · Potencial +2');
-    if (S.horda) partes.push(S.H.marea ? 'Marea: registro Planetario' : `${S.H.n} de ${cr.miembros}: una sola criatura de NA ${S.na}`);
-    if (S.esbirro) partes.push('Esbirro: cuatro cuentan como una criatura');
-    if (S.naEnc !== S.na) partes.push('Al calibrar el encuentro cuenta como NA ' + S.naEnc);
-    extra.textContent = partes.join(' · ');
-    extra.hidden = !partes.length;
+    // Solo las medallas: lo que cuentan el jefe, la horda o el NA al calibrar
+    // se ve al editar la tarjeta y en Combate → Estadísticas («Al calibrar»).
   },
 
   /** Campo con rótulo. */

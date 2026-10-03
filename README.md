@@ -6,7 +6,7 @@ sin build, sin dependencias, funciona sin conexión.
 
 ## Novedades v1.2 — Manuales del 2-10-2026: atributos y fórmulas
 
-`CACHE_VERSION` es `ss-director-v9` y `RULES_DATA_VERSION`,
+`CACHE_VERSION` es `ss-director-v10` y `RULES_DATA_VERSION`,
 `v1-monstruos-guia-r4` (entrega de los manuales del 2-10-2026, 22:01).
 
 El Manual de Monstruos y la Guía han cambiado cómo se construye una criatura:
