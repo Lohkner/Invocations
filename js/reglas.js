@@ -465,7 +465,7 @@ const DEFAULT_DB = {
    "debiles": [
     "INT"
    ],
-   "deb": "Estúpida, Lenta",
+   "deb": "Crédula, Lenta",
    "gratis": [
     {
      "id": "gigantismo"
@@ -565,7 +565,7 @@ const DEFAULT_DB = {
     "INT",
     "CAR"
    ],
-   "deb": "Mando Único, Estúpida",
+   "deb": "Mando Único, Crédula",
    "gratis": [
     {
      "id": "vigor_inagotable"
@@ -2245,8 +2245,8 @@ const DEFAULT_DB = {
     }
    },
    {
-    "id": "estupida",
-    "name": "Estúpida",
+    "id": "credula",
+    "name": "Crédula",
     "tipo": "Debilidad",
     "peso": -1,
     "txt": "Cae en cualquier finta: Engaño contra su CD − 5, y Desventaja en las Salvaciones contra ilusiones."
@@ -3274,8 +3274,8 @@ const DEFAULT_DB = {
      "txt": "1 PA · 1/combate: hasta su siguiente turno, Ventaja en sus ataques y en los ataques contra él."
     },
     {
-     "id": "estupida",
-     "txt": "Cae en cualquier finta: Engaño contra CD 17."
+     "id": "credula",
+     "txt": "Cae en cualquier finta: Engaño contra CD 12."
     }
    ],
    "fuente": "Manual de Monstruos",

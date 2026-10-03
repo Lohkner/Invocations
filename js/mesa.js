@@ -621,7 +621,7 @@ Object.assign(app, {
     grupo('Focos', this.DB.focos, e => [e.ud, `Fuente afín: ${e.fuente} · ${e.coste}\nResonancia: ${e.txt}`]);
     grupo('Módulos de Mejora', this.DB.modulos, e => [e.coste, `${e.tipo} · instalación CD ${e.cd}\n${e.txt}`]);
     grupo('Costes que generan decisiones', this.DB.costes, e => [e.coste, e.txt]);
-    host.appendChild(this.h('p', 'dir-nota', 'Sintonía: máximo 3 objetos (Legendarios y Únicos cuentan 2). Los bonos mágicos a un mismo eje no se suman: se aplica el mayor.'));
+    host.appendChild(this.h('p', 'dir-nota', 'Sintonía: máximo 3 objetos (Legendarios y Únicos cuentan 2). Los bonos mágicos a un mismo eje no se suman: se aplica el mayor. Los Módulos de Mejora son para armas, armaduras y equipo; los Chips de un Sintético son otra cosa (Manual Básico, Cap. 3).'));
   },
 
   /* ══════════ ZONAS ══════════ */

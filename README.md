@@ -6,8 +6,8 @@ sin build, sin dependencias, funciona sin conexión.
 
 ## Novedades v1.2 — Manuales del 2-10-2026: atributos y fórmulas
 
-`CACHE_VERSION` es `ss-director-v8` y `RULES_DATA_VERSION`,
-`v1-monstruos-guia-r3`.
+`CACHE_VERSION` es `ss-director-v9` y `RULES_DATA_VERSION`,
+`v1-monstruos-guia-r4` (entrega de los manuales del 2-10-2026, 22:01).
 
 El Manual de Monstruos y la Guía han cambiado cómo se construye una criatura:
 ya no se lee una fila de estadísticas, **se calcula como un personaje**.
@@ -36,6 +36,8 @@ ya no se lee una fila de estadísticas, **se calcula como un personaje**.
   +6—. Un jefe sube 2.
 - **Moral**: toda criatura con INT Débil deja de tirarla, sea del tipo que sea.
 - **Vulnerabilidad** ×1,5 (antes el doble) y **Frágil** deja la CON en Débil.
+- **Estúpida ahora se llama Crédula**, y la ficha del Ogro ya da su CD bien
+  (12 = su CD − 5). Las amenazas guardadas con Estúpida la cambian solas.
 - **Bestiario**: las 43 criaturas —también las 13 de la Guía, que antes iban
   con números a mano— salen de las fórmulas. Solo queda fijado a mano lo que
   viene del equipo o de la propia criatura (la Armadura del Mercenario, la
@@ -134,8 +136,6 @@ cambiar en el Editor de Reglas):
   sumando la Competencia. Así salen el Enjambre de Ratas y el Titán.
 - **Los Rasgos cuentan en las cifras**: Piel Gruesa suma su Armadura, Evasiva
   su Guardia, Lenta resta su velocidad.
-- **Estúpida**: el Manual dice «Engaño contra su CD − 5»; la ficha del Ogro
-  imprime la CD entera. La app enseña la cuenta de la regla.
 - **NA del encuentro**: el +2 del jefe, el +1 del tamaño Enorme o Colosal, el
   NA efectivo de la horda y el +1 por cada 2 de exceso de Potencial se aplican
   a la criatura antes de buscar «la más fuerte». Un jefe de NA 3 entra en la

@@ -22,6 +22,8 @@ Object.assign(app, {
   AZAR_ROL: ['arrollador', 'hostigador', 'represor', 'comandante', 'soporte', 'explorador', 'artillero', 'acechador', 'guardian', ''],
   /* Roles que cambiaron de nombre en el Manual: las amenazas guardadas antes siguen abriendo */
   ROL_ANTES: { bruto: 'arrollador', controlador: 'represor', emboscador: 'acechador' },
+  /* Rasgos que cambiaron de nombre en el Manual (Estúpida → Crédula, 2-10-2026) */
+  RASGO_ANTES: { estupida: 'credula' },
   ORDEN_TAM: ['diminuto', 'pequeno', 'mediano', 'grande', 'enorme', 'colosal'],
   UD: ['Ud12', 'Ud10', 'Ud8', 'Ud6', 'Ud4'],
 
@@ -137,6 +139,7 @@ Object.assign(app, {
       }
     } else {
       o.id = String(r.id).slice(0, 60);
+      if (this.RASGO_ANTES[o.id] && !this._libIdx()[o.id]) o.id = this.RASGO_ANTES[o.id];
       if (r.txt) o.txt = s(r.txt);
     }
     if (r.nota) o.nota = s(r.nota).slice(0, 160);
