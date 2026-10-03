@@ -26,7 +26,8 @@
   const S = () => app._S;
   const RESUMEN = {
     estado: () => `PV ${val('cur_pv', '0')}/${txt('max_pv', '0')}`,
-    stats: () => S() ? `G: ${S().guardia} | A: ${S().armadura}` : '—',
+    stats: () => S() ? `${S().vel} pies · Ini ${app._signo(S().ini)}` : '—',
+    defensa: () => S() ? `G: ${S().guardia} | A: ${S().armadura}` : '—',
     ataques: () => S() ? `${app._signo(S().ataque)} · ${S().dano}` : '—',
     salv: () => S() ? (S().noMoral ? 'Sin Moral' : 'Moral ' + S().moral) : '—',
     grupo: () => app.mesa ? `${app.mesa.grupo.pjs} PJ · Nv ${app.mesa.grupo.nivel}` : '—',

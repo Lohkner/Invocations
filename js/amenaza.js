@@ -92,7 +92,9 @@ Object.assign(app, {
     // Atributos. Las amenazas de antes (v1) solo guardaban sus dos Salvaciones
     // fuertes: valen como Fuertes si su Rol no fija los suyos.
     const lista = l => Array.isArray(l) ? [...new Set(l.filter(a => this.ATTRS.includes(a)))] : [];
-    const antigua = !(parseInt(d.v, 10) >= 2);
+    // Solo las guardadas con las reglas anteriores llevan v: 1; las del
+    // bestiario de fábrica no llevan versión y sus ajustes a mano valen.
+    const antigua = parseInt(d.v, 10) === 1;
     cr.fuertes = lista(d.fuertes).slice(0, 2);
     if (cr.fuertes.length < 2) {
       const delRol = this.DB.roles[cr.rol]?.fuertes || [];
@@ -277,20 +279,21 @@ Object.assign(app, {
   /** «NA 5», o «¼ de NA 2» si es un esbirro: lo que pesa al calibrar. */
   _txtCalibrar(S) { return (S.esbirro ? '¼ de ' : '') + 'NA ' + S.naEnc; },
 
-  /** Avisos de «lejos de las fórmulas» (Guía, Cap. 16). */
-  _avisosCurva(S) {
+  /** Avisos de «lejos de las fórmulas» (Guía, Cap. 16). `solo`: las claves
+      de la tarjeta que los enseña; sin él, todos (la revisión final). */
+  _avisosCurva(S, solo) {
     const av = [];
     const c = S.calc;
     if (S.aMano.includes('ataque') && S.ataque > c.ataque + 1)
-      av.push(`Ataque ${this._signo(S.ataque)} frente a ${this._signo(c.ataque)} de la fórmula: la amenaza vive en el daño, no en acertar más.`);
-    if (S.armadura > S.na + 3) av.push(`Armadura ${S.armadura}: nunca más de NA + 3 (${S.na + 3}).`);
-    if (S.aMano.includes('pv') && c.pv && Math.abs(S.pv - c.pv) / c.pv > .25) av.push(`PV ${S.pv}: la fórmula da ${c.pv}.`);
-    if (S.aMano.includes('guardia') && Math.abs(S.guardia - c.guardia) >= 3) av.push(`Guardia ${S.guardia}: la fórmula da ${c.guardia}.`);
+      av.push(['ataque', `Ataque ${this._signo(S.ataque)} frente a ${this._signo(c.ataque)} de la fórmula: la amenaza vive en el daño, no en acertar más.`]);
+    if (S.armadura > S.na + 3) av.push(['armadura', `Armadura ${S.armadura}: nunca más de NA + 3 (${S.na + 3}).`]);
+    if (S.aMano.includes('pv') && c.pv && Math.abs(S.pv - c.pv) / c.pv > .25) av.push(['pv', `PV ${S.pv}: la fórmula da ${c.pv}.`]);
+    if (S.aMano.includes('guardia') && Math.abs(S.guardia - c.guardia) >= 3) av.push(['guardia', `Guardia ${S.guardia}: la fórmula da ${c.guardia}.`]);
     if (S.aMano.includes('dano')) {
       const a = this._parseDano(S.dano), b = this._parseDano(c.dano);
-      if (a && b && Math.abs(this._mediaDano(a) - this._mediaDano(b)) / this._mediaDano(b) > .3) av.push(`Daño ${S.dano}: la fórmula da ${c.dano}.`);
+      if (a && b && Math.abs(this._mediaDano(a) - this._mediaDano(b)) / this._mediaDano(b) > .3) av.push(['dano', `Daño ${S.dano}: la fórmula da ${c.dano}.`]);
     }
-    return av;
+    return av.filter(([k]) => !solo || solo.includes(k)).map(([, t]) => t);
   },
 
   /* ── Pintado general ──────────────────────────────────────────── */
@@ -305,6 +308,7 @@ Object.assign(app, {
       this._pintarIdentidad(S);
       this._pintarEstado(S);
       this._pintarStats(S);
+      this._pintarDefensa(S);
       this._pintarAtaque(S);
       this._pintarSalv(S);
       this._pintarRasgos(S);
@@ -577,31 +581,52 @@ Object.assign(app, {
     this.toast(conPV ? 'PV y Aptitudes restablecidos' : 'Aptitudes recargadas', 'ok');
   },
 
-  /* ── Combate: estadísticas ────────────────────────────────────── */
+  /* ── Cifras: Estadísticas (Perfil) y Defensa (Combate) ─────────── */
   _stat(rotulo, valor, alPulsar, etiqueta) {
     const e = this.h(alPulsar ? 'button' : 'div', 'dir-stat' + (alPulsar ? ' dir-stat-btn' : ''));
     if (alPulsar) { e.type = 'button'; e.addEventListener('click', alPulsar); if (etiqueta) e.setAttribute('aria-label', etiqueta); }
     e.append(this.h('span', 'dir-slbl', rotulo), this.h('span', 'dir-sval', valor));
     return e;
   },
+  CIFRAS_N: { pv: 'PV', guardia: 'Guardia', armadura: 'Armadura', ataque: 'Ataque', dano: 'Daño', pa: 'PA', vel: 'Velocidad', ini: 'Iniciativa', moral: 'Moral' },
+  /** «Ajustado a mano: …» y los avisos, solo de las cifras de esa tarjeta. */
+  _notasAMano(v, S, claves) {
+    const propias = S.aMano.filter(k => claves.includes(k));
+    if (propias.length) v.appendChild(this.h('p', 'dir-nota', 'Ajustado a mano: ' + propias.map(k => `${this.CIFRAS_N[k]} (fórmula ${S.calc[k]})`).join(' · ')));
+    this._avisosCurva(S, claves).forEach(a => v.appendChild(this.h('p', 'dir-aviso', a)));
+  },
 
+  /* Estadísticas: Velocidad, Alcance, Iniciativa y Moral */
+  CAMPOS_STATS: ['vel', 'ini', 'moral', 'pv', 'pa'],
   _pintarStats(S) {
     const v = this._vista('stats', 'summary'); if (!v) return;
+    v.textContent = '';
+    const g = this.h('div', 'dir-stats dir-stats-cifras');
+    g.append(
+      this._stat('Velocidad', S.vel + ' pies'),
+      this._stat('Alcance', (S.tam.alcance || '5 pies').replace(/\s*\(.*\)/, '')),
+      this._stat('Iniciativa', this._signo(S.ini), () => this.rollCheck('Iniciativa', S.ini), 'Tirar Iniciativa'),
+      S.noMoral ? this._stat('Moral', 'no tira') : this._stat('Moral', String(S.moral), () => this.tirarMoral(S.moral), 'Tirar Moral'));
+    v.appendChild(g);
+    this._notasAMano(v, S, this.CAMPOS_STATS);
+  },
+
+  /* Defensa: Guardia, Armadura y la Guardia Desprevenida (Manual Básico:
+     sin el Bono de Competencia ni el escudo; conserva DES y Armadura). */
+  CAMPOS_DEFENSA: ['guardia', 'armadura'],
+  _pintarDefensa(S) {
+    const v = this._vista('defensa', 'summary'); if (!v) return;
     const cr = this.cr;
     v.textContent = '';
+    const nunca = cr.rasgos.some(r => r.id === 'nunca_desprevenida');
     const grid = this.h('div', 'def-grid');
     const celda = (rot, val, cls) => { const c = this.h('div', 'def-cell' + (cls ? ' ' + cls : '')); c.append(this.h('span', 'def-lbl', rot), this.h('span', 'def-val', String(val))); return c; };
-    grid.append(celda('Guardia', S.guardia, 'def-cell--guardia'), celda('Armadura', S.armadura), celda('CD', S.cd));
+    grid.append(celda('Guardia', S.guardia, 'def-cell--guardia'), celda('Armadura', S.armadura),
+      celda('Desprevenido', nunca ? '—' : S.guardia - S.pb));
     v.appendChild(grid);
+    if (nunca) v.appendChild(this.h('p', 'dir-nota', 'Nunca Desprevenida: no pierde su Competencia ante un ataque por sorpresa.'));
 
-    const g1 = this.h('div', 'dir-stats');
-    g1.append(this._stat('PV', String(S.pv)), this._stat('Ataque', this._signo(S.ataque)), this._stat('Daño', S.dano), this._stat('PA', String(S.pa)));
-    const g2 = this.h('div', 'dir-stats dir-stats-3');
-    g2.append(this._stat('Velocidad', S.vel + ' pies'), this._stat('Alcance', (S.tam.alcance || '5 pies').replace(/\s*\(.*\)/, '')),
-      this._stat('Al calibrar', this._txtCalibrar(S)));
-    v.append(g1, g2);
-
-    // Defensas: salen de los Rasgos, que son la única fuente
+    // Resistencias, inmunidades y debilidades: salen de los Rasgos, que son la única fuente
     const def = { resistencia: [], inmunidad: [], inmunidad_a_estados: [], vulnerabilidad: [] };
     S.infos.forEach(x => { if (def[x.r.id]) def[x.r.id].push(x.r.nota || '—'); });
     const otras = S.infos.filter(x => ['resistencia_sobrenatural', 'incorporeo', 'aversion'].includes(x.r.id));
@@ -616,24 +641,17 @@ Object.assign(app, {
       lineas.forEach(([k, vals]) => { const p = this.h('div', 'dir-linea'); p.append(this.h('span', 'dir-linea-k', k), this.h('span', 'dir-linea-v', [...new Set(vals)].join(' · '))); box.appendChild(p); });
       v.appendChild(box);
     }
-    if (S.aMano.length) {
-      const N = { pv: 'PV', guardia: 'Guardia', armadura: 'Armadura', ataque: 'Ataque', dano: 'Daño', pa: 'PA', vel: 'Velocidad', ini: 'Iniciativa', moral: 'Moral' };
-      v.appendChild(this.h('p', 'dir-nota', 'Ajustado a mano: ' + S.aMano.map(k => `${N[k]} (fórmula ${S.calc[k]})`).join(' · ')));
-    }
-    this._avisosCurva(S).forEach(a => v.appendChild(this.h('p', 'dir-aviso', a)));
+    this._notasAMano(v, S, this.CAMPOS_DEFENSA);
     if (cr.equipo) v.appendChild(this.h('p', 'dir-nota', 'Equipo: ' + cr.equipo));
   },
 
-  _editar_stats() {
+  /** Campos «a mano» de una tarjeta: vacío vuelve a la fórmula. */
+  _editorManual(v, campos, alVolver) {
     const cr = this.cr;
-    const v = this._vista('stats', 'edit');
-    v.textContent = '';
     const S = this.calcCr(cr);
-    v.appendChild(this.h('p', 'wiz-hint', 'Lo que dan las fórmulas para su NA, sus atributos, su Rol y sus Rasgos. Escribe un valor solo si quieres apartarte de ellas; vacío vuelve a la fórmula.'));
     const g = this.h('div', 'g2 dir-g2');
-    const CAMPOS = [['pv', 'PV'], ['guardia', 'Guardia'], ['armadura', 'Armadura'], ['ataque', 'Ataque'], ['dano', 'Daño'],
-                    ['pa', 'PA'], ['vel', 'Velocidad'], ['ini', 'Iniciativa'], ['moral', 'Moral']];
-    CAMPOS.forEach(([k, n]) => {
+    campos.forEach(k => {
+      const n = this.CIFRAS_N[k];
       const inp = document.createElement('input');
       const esDano = k === 'dano';
       inp.type = esDano ? 'text' : 'number';
@@ -653,10 +671,31 @@ Object.assign(app, {
       g.appendChild(this._campo(n, inp, 'fórmula ' + S.calc[k]));
     });
     v.appendChild(g);
-    const b = this.h('button', 'btn btn-g dir-ancho'); b.type = 'button';
-    b.innerHTML = this._ico('i-rot-l') + 'Volver a las fórmulas';
-    b.addEventListener('click', () => { cr.manual = {}; cr.pvAct = null; this.cambio(); this._editar_stats(); this.toast('Estadísticas de vuelta en las fórmulas', 'ok'); });
-    v.append(b, this._pieEdicion('stats'));
+    if (campos.some(k => cr.manual[k] != null)) {
+      const b = this.h('button', 'btn btn-g dir-ancho'); b.type = 'button';
+      b.innerHTML = this._ico('i-rot-l') + 'Volver a las fórmulas';
+      b.addEventListener('click', () => {
+        campos.forEach(k => delete cr.manual[k]);
+        if (campos.includes('pv')) cr.pvAct = null;
+        this.cambio(); alVolver();
+        this.toast('De vuelta en las fórmulas', 'ok');
+      });
+      v.appendChild(b);
+    }
+  },
+  _editar_stats() {
+    const v = this._vista('stats', 'edit');
+    v.textContent = '';
+    v.appendChild(this.h('p', 'wiz-hint', 'Lo que dan las fórmulas para su NA, sus atributos, su Rol y sus Rasgos. Escribe un valor solo si quieres apartarte de ellas; vacío vuelve a la fórmula. Los PV se llevan en Estado.'));
+    this._editorManual(v, this.CAMPOS_STATS, () => this._editar_stats());
+    v.appendChild(this._pieEdicion('stats'));
+  },
+  _editar_defensa() {
+    const v = this._vista('defensa', 'edit');
+    v.textContent = '';
+    v.appendChild(this.h('p', 'wiz-hint', 'Guardia = 10 + Competencia + DES; Armadura, la de su NA más Rasgos y equipo. Desprevenida, su Guardia pierde la Competencia. Vacío vuelve a la fórmula.'));
+    this._editorManual(v, this.CAMPOS_DEFENSA, () => this._editar_defensa());
+    v.appendChild(this._pieEdicion('defensa'));
   },
 
   /* ── Combate: ataque ──────────────────────────────────────────── */
@@ -691,6 +730,7 @@ Object.assign(app, {
     ba.addEventListener('click', () => this.rollCheck('Ataque: ' + this._nombreAtaque(), S.ataque));
     bd.addEventListener('click', () => this.rollDice(S.dano, 'Daño: ' + this._nombreAtaque()));
     v.appendChild(this.h('p', 'dir-nota', `Daño por turno: todo lo que hace en su turno si impacta${S.pa >= 4 ? ', repartido entre dos ataques de 2 PA' : ''}. Daño base de su NA: ${S.danoBase}.`));
+    this._notasAMano(v, S, ['ataque', 'dano']);
   },
   _editar_attack() {
     const cr = this.cr;
@@ -706,11 +746,12 @@ Object.assign(app, {
     const dl = document.createElement('datalist'); dl.id = 'dir_danos';
     (this.DB.tablas.danos?.filas || []).forEach(x => dl.appendChild(new Option(x)));
     v.append(this._campo('Nombre del ataque', n), this._campo('Tipo de daño', t), dl,
-      this.h('p', 'wiz-hint', 'Ataca con el mayor de FUE o DES (a distancia, DES). El arma no cambia el daño: cambia el tipo y sus propiedades.'),
-      this._pieEdicion('attack'));
+      this.h('p', 'wiz-hint', 'Ataca con el mayor de FUE o DES (a distancia, DES). El arma no cambia el daño: cambia el tipo y sus propiedades.'));
+    this._editorManual(v, ['ataque', 'dano'], () => this._editar_attack());
+    v.appendChild(this._pieEdicion('attack'));
   },
 
-  /* ── Combate: atributos, Salvaciones, Iniciativa y Moral ──────── */
+  /* ── Combate: atributos, Salvaciones y Moral ──────────────────── */
   _pintarSalv(S) {
     const v = this._vista('saves', 'summary'); if (!v) return;
     const cr = this.cr;
@@ -726,10 +767,8 @@ Object.assign(app, {
     });
     v.appendChild(grid);
     v.appendChild(this.h('p', 'dir-nota', `Salvaciones fuertes: ${cr.fuertes.map(a => a + ' ' + this._signo(S.salv[a])).join(' · ') || '—'}. En las demás tira el modificador. Toca un atributo para tirar su Salvación.`));
-    const g = this.h('div', 'dir-stats dir-stats-2');
-    g.append(
-      this._stat('Iniciativa', this._signo(S.ini), () => this.rollCheck('Iniciativa', S.ini), 'Tirar Iniciativa'),
-      S.noMoral ? this._stat('Moral', 'no tira') : this._stat('Moral', String(S.moral), () => this.tirarMoral(S.moral), 'Tirar Moral'));
+    const g = this.h('div', 'dir-stats dir-stats-1');
+    g.appendChild(S.noMoral ? this._stat('Moral', 'no tira') : this._stat('Moral', String(S.moral), () => this.tirarMoral(S.moral), 'Tirar Moral'));
     v.appendChild(g);
     v.appendChild(this.h('p', 'dir-nota', S.noMoral
       ? 'No tira Moral: huye o se detiene cuando la pelea deja de tener sentido para ella.'

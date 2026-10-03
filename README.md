@@ -6,7 +6,7 @@ sin build, sin dependencias, funciona sin conexión.
 
 ## Novedades v1.2 — Manuales del 2-10-2026: atributos y fórmulas
 
-`CACHE_VERSION` es `ss-director-v10` y `RULES_DATA_VERSION`,
+`CACHE_VERSION` es `ss-director-v11` y `RULES_DATA_VERSION`,
 `v1-monstruos-guia-r4` (entrega de los manuales del 2-10-2026, 22:01).
 
 El Manual de Monstruos y la Guía han cambiado cómo se construye una criatura:
@@ -82,10 +82,12 @@ Fuentes: *Manual de Monstruos v1* y *Guía del Director v1*, con apoyo del
   para borrar.
 - **Ficha de amenaza**, cuatro pestañas deslizables:
   - **Perfil**: retrato (elegir foto y recortar), nombre e idea · NA, tipo,
-    tamaño, Rol y estructura (normal, jefe u horda) · PV en mesa.
-  - **Combate**: estadísticas calculadas con las fórmulas del Manual, con el
-    valor de la fórmula al lado del tuyo y el botón «Volver a las fórmulas» ·
-    ataque y daño con dado · atributos, Salvaciones, Iniciativa y Moral.
+    tamaño, Rol y estructura (normal, jefe u horda) · PV en mesa ·
+    Estadísticas (Velocidad, Alcance, Iniciativa y Moral).
+  - **Combate**: atributos, Salvaciones y Moral · ataque y daño con dado ·
+    Defensa (Guardia, Armadura y Guardia Desprevenida, que pierde la
+    Competencia). Todo sale de las fórmulas del Manual; al editar cada tarjeta,
+    el valor de la fórmula va al lado del tuyo, con «Volver a las fórmulas».
   - **Rasgos**: barra de Potencial, Rasgos gratuitos de tipo y habilidad de Rol
     puestos solos, Biblioteca de 183 piezas en 16 familias, Dado de Uso de
     las Aptitudes (se tira y se degrada), rasgos propios.

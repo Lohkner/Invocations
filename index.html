@@ -269,15 +269,21 @@
               <div class="rest-list" id="rest_list"></div>
             </details>
           </details>
-        </div><!-- /page 0 -->
 
-        <div class="page" id="page_1" data-modo="ficha">
-          <!-- Estadísticas: lo que sale de la tabla por NA, ajustado por Rol,
-               Tamaño y Rasgos; en edición, el valor de la fórmula frente al tuyo. -->
-          <details class="panel fold def-card" id="fold_stats" data-fold="stats" open>
+          <!-- Estadísticas: Velocidad, Alcance, Iniciativa y Moral; en edición,
+               el valor de la fórmula frente al tuyo. -->
+          <details class="panel fold" id="fold_stats" data-fold="stats" open>
             <summary class="ph"><span class="pt">Estadísticas</span></summary>
             <div id="stats_summary_view"></div>
             <div id="stats_edit_view" style="display:none"></div>
+          </details>
+        </div><!-- /page 0 -->
+
+        <div class="page" id="page_1" data-modo="ficha">
+          <details class="panel fold" id="fold_salv" data-fold="salv" open>
+            <summary class="ph"><span class="pt">Atributos y Moral</span></summary>
+            <div id="saves_summary_view"></div>
+            <div id="saves_edit_view" style="display:none"></div>
           </details>
 
           <details class="panel fold" id="fold_ataques" data-fold="ataques" open>
@@ -286,10 +292,11 @@
             <div id="attack_edit_view" style="display:none"></div>
           </details>
 
-          <details class="panel fold" id="fold_salv" data-fold="salv" open>
-            <summary class="ph"><span class="pt">Atributos y Moral</span></summary>
-            <div id="saves_summary_view"></div>
-            <div id="saves_edit_view" style="display:none"></div>
+          <!-- Defensa: Guardia, Armadura y la Guardia Desprevenida (sin Competencia) -->
+          <details class="panel fold def-card" id="fold_defensa" data-fold="defensa" open>
+            <summary class="ph"><span class="pt">Defensa</span></summary>
+            <div id="defensa_summary_view"></div>
+            <div id="defensa_edit_view" style="display:none"></div>
           </details>
         </div><!-- /page 1 -->
 

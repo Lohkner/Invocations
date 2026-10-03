@@ -113,6 +113,7 @@
 .dir-stats + .dir-stats{margin-top:0;background-size:0 0,100% 1px}
 .dir-stats-3{grid-template-columns:repeat(3,minmax(0,1fr))}
 .dir-stats-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.dir-stats-1{grid-template-columns:minmax(0,1fr)}
 .dir-stat{
   min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:3px 2px;
 }

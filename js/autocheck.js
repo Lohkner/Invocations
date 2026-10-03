@@ -73,7 +73,7 @@
 
   const IDS_CRITICOS = [
     'home-roster', 'char_name', 'char_concept', 'char_img', 'char_img_summary', 'cur_pv', 'max_pv', 'res_fill_pv',
-    'id_fila', 'stats_summary_view', 'stats_edit_view', 'attack_summary_view', 'saves_summary_view', 'rasgos_list',
+    'id_fila', 'stats_summary_view', 'stats_edit_view', 'defensa_summary_view', 'defensa_edit_view', 'attack_summary_view', 'saves_summary_view', 'rasgos_list',
     'peso_bar', 'peso_txt', 'senal_summary_view', 'revision_list', 'char_notes', 'rest_list',
     'grupo_body', 'encuentro_body', 'combate_body', 'botin_body', 'objeto_body', 'tesoro_body',
     'tiradas_body', 'zonas_body', 'peligros_body', 'facciones_body', 'conflicto_body', 'turno_body',
@@ -103,7 +103,11 @@
       const dif = [];
       app.ATTRS.forEach(a => { if (S.mod[a] !== imp.attrs[a]) dif.push(`${a} ${S.mod[a]}/${imp.attrs[a]}`); });
       [['PV', S.calc.pv, imp.pv], ['Guardia', gSinRasgos, imp.g], ['Ataque', S.calc.ataque, imp.atk], ['Daño', S.calc.dano, imp.dano],
-       ['CD', S.cd, imp.cd], ['Iniciativa', S.calc.ini, imp.ini]].forEach(([k, sale, debe]) => { if (sale !== debe) dif.push(`${k} ${sale}/${debe}`); });
+       ['CD', S.cd, imp.cd], ['Iniciativa', S.calc.ini, imp.ini],
+       // Armadura y velocidad: con los ajustes a mano del equipo (Mercenario, Oso…)
+       ['Armadura', S.aMano.includes('armadura') ? S.armadura : S.calc.armadura - S.infos.reduce((a, x) => a + ((x.i.mod && x.i.mod.a) || 0), 0), imp.a],
+       // (lo impreso no lleva lo que mueven los Rasgos: Lenta, Piel Gruesa…)
+       ['Velocidad', S.aMano.includes('vel') ? S.vel : S.calc.vel - S.infos.reduce((a, x) => a + ((x.i.mod && x.i.mod.vel) || 0), 0), imp.vel]].forEach(([k, sale, debe]) => { if (sale !== debe) dif.push(`${k} ${sale}/${debe}`); });
       if (imp.moral == null ? !S.noMoral : (S.noMoral || S.calc.moral !== imp.moral)) dif.push(`Moral ${S.noMoral ? '—' : S.calc.moral}/${imp.moral == null ? '—' : imp.moral}`);
       if (dif.length) malos.push(`${c.nombre}: ${dif.join(', ')}`);
       if (S.exceso && c.fuente === 'Manual de Monstruos') malPeso.push(`${c.nombre}: ${S.pesoGastado}/${S.pesoMax}`);
@@ -168,7 +172,7 @@
     };
     await recorrer(['Perfil', 'Combate', 'Rasgos', 'Notas']);
     // Las vistas de edición también cuentan
-    ['identity', 'stats', 'saves', 'senal'].forEach(s => app.editSection(s));
+    ['identity', 'stats', 'defensa', 'attack', 'saves', 'senal'].forEach(s => app.editSection(s));
     await esperar(200);
     await recorrer(['Perfil (edición)', 'Combate (edición)', 'Rasgos', 'Notas (edición)']);
     app.limpiarFicha();
