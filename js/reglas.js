@@ -5227,7 +5227,7 @@ const DEFAULT_DB = {
     "SAB"
    ],
    "debiles": [],
-   "contexto": "El Batidor casi nunca es el combate: es lo que decide si hay combate. Ponlo antes del encuentro principal y deja que los jugadores decidan si lo persiguen (p. 40), lo dejan ir o lo esperan en una emboscada.",
+   "contexto": "El Batidor casi nunca es el combate: es lo que decide si hay combate. Ponlo antes del encuentro principal y deja que los jugadores decidan si lo persiguen (p. 41), lo dejan ir o lo esperan en una emboscada.",
    "impreso": {
     "pv": 60,
     "g": 14,

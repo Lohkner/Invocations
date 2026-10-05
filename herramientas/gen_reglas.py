@@ -18,7 +18,7 @@ como [t_pasivo].
 import re, json, sys, os, unicodedata, zipfile, html, shutil, tempfile
 sys.stdout.reconfigure(encoding='utf-8')
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-FUENTE = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.expanduser('~'), 'OneDrive', 'S&S', 'Ultimate')
+FUENTE = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.expanduser('~'), 'OneDrive', 'S&S', 'Official')
 OUT = os.path.join(RAIZ, 'js', 'reglas.js')
 
 

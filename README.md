@@ -6,8 +6,10 @@ sin build, sin dependencias, funciona sin conexión.
 
 ## Novedades v1.2 — Manuales del 2-10-2026: atributos y fórmulas
 
-`CACHE_VERSION` es `ss-director-v11` y `RULES_DATA_VERSION`,
-`v1-monstruos-guia-r4` (entrega de los manuales del 2-10-2026, 22:01).
+`CACHE_VERSION` es `ss-director-v12` y `RULES_DATA_VERSION`,
+`v1-monstruos-guia-r5` (entrega de los manuales del 3-10-2026, carpeta
+`OneDrive\S&S\Official`: el Sintético pasa a llamarse Construido; para
+Director no cambia ninguna regla).
 
 El Manual de Monstruos y la Guía han cambiado cómo se construye una criatura:
 ya no se lee una fila de estadísticas, **se calcula como un personaje**.
