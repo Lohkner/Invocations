@@ -5570,10 +5570,10 @@ const DEFAULT_DB = {
    "name": "Lo que deja al caer (d12)",
    "filas": [
     "Nada útil, pero sí una pista sobre quién la envió.",
-    "Un órgano valioso para un alquimista (NA × 20 pp).",
-    "Piel o placas para una armadura (Artesanía; NA × 50 pp de ahorro).",
+    "Un órgano valioso para un alquimista (NA × 20 cr).",
+    "Piel o placas para una armadura (Artesanía; NA × 50 cr de ahorro).",
     "Veneno o glándula (1d4 dosis de su Aguijón o su Aliento).",
-    "Objetos de sus víctimas: 1d6 × NA × 10 pp.",
+    "Objetos de sus víctimas: 1d6 × NA × 10 cr.",
     "Un objeto Infrecuente (Guía del Director, Cap. 13).",
     "Un mapa, un diario o una orden escrita.",
     "Un huevo, una cría o un núcleo que sigue vivo.",
@@ -5890,80 +5890,80 @@ const DEFAULT_DB = {
  "riqueza": {
   "1": {
    "name": "Nivel 1",
-   "acum": "100–300 pp",
-   "sesion": "50–100 pp",
+   "acum": "100–300 cr",
+   "sesion": "50–100 cr",
    "sesMin": 50,
    "sesMax": 100,
    "objetos": "0–1 Comunes"
   },
   "2": {
    "name": "Nivel 2",
-   "acum": "300–600 pp",
-   "sesion": "100–200 pp",
+   "acum": "300–600 cr",
+   "sesion": "100–200 cr",
    "sesMin": 100,
    "sesMax": 200,
    "objetos": "1 Común, posible Infrecuente"
   },
   "3": {
    "name": "Nivel 3",
-   "acum": "600–1.200 pp",
-   "sesion": "150–300 pp",
+   "acum": "600–1.200 cr",
+   "sesion": "150–300 cr",
    "sesMin": 150,
    "sesMax": 300,
    "objetos": "1–2 Infrecuentes"
   },
   "4": {
    "name": "Nivel 4",
-   "acum": "1.200–2.500 pp",
-   "sesion": "200–400 pp",
+   "acum": "1.200–2.500 cr",
+   "sesion": "200–400 cr",
    "sesMin": 200,
    "sesMax": 400,
    "objetos": "1 Infrecuente + posible Raro"
   },
   "5": {
    "name": "Nivel 5",
-   "acum": "2.500–5.000 pp",
-   "sesion": "300–600 pp",
+   "acum": "2.500–5.000 cr",
+   "sesion": "300–600 cr",
    "sesMin": 300,
    "sesMax": 600,
    "objetos": "1–2 Raros"
   },
   "6": {
    "name": "Nivel 6",
-   "acum": "5.000–10.000 pp",
-   "sesion": "500–1.000 pp",
+   "acum": "5.000–10.000 cr",
+   "sesion": "500–1.000 cr",
    "sesMin": 500,
    "sesMax": 1000,
    "objetos": "1–2 Raros, posible Muy Raro"
   },
   "7": {
    "name": "Nivel 7",
-   "acum": "10.000–20.000 pp",
-   "sesion": "800–1.500 pp",
+   "acum": "10.000–20.000 cr",
+   "sesion": "800–1.500 cr",
    "sesMin": 800,
    "sesMax": 1500,
    "objetos": "1 Muy Raro"
   },
   "8": {
    "name": "Nivel 8",
-   "acum": "20.000–40.000 pp",
-   "sesion": "1.000–2.500 pp",
+   "acum": "20.000–40.000 cr",
+   "sesion": "1.000–2.500 cr",
    "sesMin": 1000,
    "sesMax": 2500,
    "objetos": "1–2 Muy Raros"
   },
   "9": {
    "name": "Nivel 9",
-   "acum": "40.000–80.000 pp",
-   "sesion": "2.000–4.000 pp",
+   "acum": "40.000–80.000 cr",
+   "sesion": "2.000–4.000 cr",
    "sesMin": 2000,
    "sesMax": 4000,
    "objetos": "1 Muy Raro, posible Legendario"
   },
   "10": {
    "name": "Nivel 10",
-   "acum": "80.000+ pp",
-   "sesion": "3.000–6.000 pp",
+   "acum": "80.000+ cr",
+   "sesion": "3.000–6.000 cr",
    "sesMin": 3000,
    "sesMax": 6000,
    "objetos": "1 Legendario o recompensa especial"
@@ -5972,42 +5972,42 @@ const DEFAULT_DB = {
  "costes": {
   "informacion_de_calidad": {
    "name": "Información de calidad",
-   "coste": "50–500 pp",
+   "coste": "50–500 cr",
    "txt": "Un contacto revela la Moneda de un PNJ, el plano de un edificio, o el punto débil de una facción."
   },
   "soborno_menor": {
    "name": "Soborno menor",
-   "coste": "50–500 pp",
+   "coste": "50–500 cr",
    "txt": "+1 escalón de actitud con un PNJ o facción."
   },
   "soborno_mayor": {
    "name": "Soborno mayor",
-   "coste": "1.000–5.000 pp",
+   "coste": "1.000–5.000 cr",
    "txt": "+2 escalones. Solo funciona una vez por relación sin acción narrativa adicional."
   },
   "entrenamiento_especializado": {
    "name": "Entrenamiento especializado",
-   "coste": "300 pp × Nivel",
-   "txt": "Equivale a 1 PD extra entre sesiones (no más de 1 vez por sesión)."
+   "coste": "300 cr × Nivel",
+   "txt": "Equivale a 1 PD extra entre sesiones (no más de 1 vez por sesión). No puede gastarse en Vigor ni en Reserva."
   },
   "curacion_avanzada": {
    "name": "Curación avanzada",
-   "coste": "100 pp",
+   "coste": "100 cr",
    "txt": "Restaura 1 punto de Flesh o elimina un estado persistente básico —elige uno— (el Flesh se recupera muy despacio: ver Manual Básico, Cap. 10)."
   },
   "mercenarios_100_soldados_1_mes": {
    "name": "Mercenarios (100 soldados, 1 mes)",
-   "coste": "60.000 pp",
+   "coste": "60.000 cr",
    "txt": "Fuerza disponible para una operación de Escala Planetaria."
   },
   "fortaleza_basica": {
    "name": "Fortaleza básica",
-   "coste": "10.000–50.000 pp",
+   "coste": "10.000–50.000 cr",
    "txt": "Base de Poder física con F 1, A 1 y R 2."
   },
   "nave_estelar_usada": {
    "name": "Nave estelar usada",
-   "coste": "50.000–150.000 pp",
+   "coste": "50.000–150.000 cr",
    "txt": "Vehículo con Ud de Integridad degradado; requiere reparación."
   }
  },
@@ -6036,7 +6036,7 @@ const DEFAULT_DB = {
    "def": "+1",
    "cd": "—",
    "dano": "+1d4",
-   "precio": "400–1.200 pp"
+   "precio": "400–1.200 cr"
   },
   "raro": {
    "name": "Raro",
@@ -6049,7 +6049,7 @@ const DEFAULT_DB = {
    "def": "+2",
    "cd": "+1",
    "dano": "+1d6",
-   "precio": "3.000–8.000 pp"
+   "precio": "3.000–8.000 cr"
   },
   "muy_raro": {
    "name": "Muy Raro",
@@ -6062,7 +6062,7 @@ const DEFAULT_DB = {
    "def": "+3",
    "cd": "+2",
    "dano": "+1d8",
-   "precio": "15.000–30.000 pp"
+   "precio": "15.000–30.000 cr"
   },
   "legendario": {
    "name": "Legendario",
@@ -6222,42 +6222,42 @@ const DEFAULT_DB = {
    "ud": "Ud8",
    "fuente": "Erudición",
    "txt": "El siguiente Axioma del turno no requiere Concentración aunque normalmente la necesite.",
-   "coste": "200 pp"
+   "coste": "200 cr"
   },
   "foco_de_devocion": {
    "name": "Foco de Devoción",
    "ud": "Ud8",
    "fuente": "Divinidad",
    "txt": "Restaura 1d6 PV a ti o a un aliado adyacente inmediatamente.",
-   "coste": "200 pp"
+   "coste": "200 cr"
   },
   "foco_de_pacto": {
    "name": "Foco de Pacto",
    "ud": "Ud6",
    "fuente": "Pacto",
    "txt": "Tu Patrono bloquea 1 ataque dirigido a ti como Reacción en el próximo turno enemigo.",
-   "coste": "250 pp"
+   "coste": "250 cr"
   },
   "foco_natural": {
    "name": "Foco Natural",
    "ud": "Ud8",
    "fuente": "Naturaleza",
    "txt": "Un aliado adyacente recupera 4 puntos de Adrenalina.",
-   "coste": "175 pp"
+   "coste": "175 cr"
   },
   "foco_psionico": {
    "name": "Foco Psiónico",
    "ud": "Ud10",
    "fuente": "Psiónica",
    "txt": "El siguiente Axioma de esa Fuente afecta a 1 objetivo adicional sin coste extra de Reserva.",
-   "coste": "300 pp"
+   "coste": "300 cr"
   },
   "foco_indefinido": {
    "name": "Foco Indefinido",
    "ud": "Ud6",
    "fuente": "Cualquier Fuente",
    "txt": "Sin Resonancia especial. Reduce el Coste en 3 puntos (no 2) mientras activo.",
-   "coste": "350 pp"
+   "coste": "350 cr"
   }
  },
  "modulos": {
@@ -6266,56 +6266,56 @@ const DEFAULT_DB = {
    "cd": "12",
    "tipo": "Ofensivo",
    "txt": "+1d4 de daño de Energía (sónico) en cada impacto; ignora 2 puntos de Armadura no mágica.",
-   "coste": "500 pp"
+   "coste": "500 cr"
   },
   "carga_de_plasma": {
    "name": "Carga de Plasma",
    "cd": "15",
    "tipo": "Ofensivo",
    "txt": "1 vez por combate: +2d6 daño de plasma en un Ataque Normal.",
-   "coste": "1.800 pp"
+   "coste": "1.800 cr"
   },
   "modulador_de_frecuencia": {
    "name": "Modulador de Frecuencia",
    "cd": "12",
    "tipo": "Ofensivo",
    "txt": "Como 0 PA al inicio del turno: cambia el tipo de daño del arma al tipo declarado.",
-   "coste": "600 pp"
+   "coste": "600 cr"
   },
   "capa_ablativa": {
    "name": "Capa Ablativa",
    "cd": "12",
    "tipo": "Defensivo",
    "txt": "RD 2 permanente. Al inicio de cada combate tira Ud8; en 1–2, la RD baja a 1 hasta repararse.",
-   "coste": "800 pp"
+   "coste": "800 cr"
   },
   "disipador_de_energia": {
    "name": "Disipador de Energía",
    "cd": "15",
    "tipo": "Defensivo",
    "txt": "Resistencia al tipo energético elegido al instalar. Tira Ud8 tras cada impacto resistido.",
-   "coste": "2.500 pp"
+   "coste": "2.500 cr"
   },
   "refuerzo_de_articulaciones": {
    "name": "Refuerzo de Articulaciones",
    "cd": "12",
    "tipo": "Defensivo",
    "txt": "Elimina la penalización de Sigilo de armaduras medias.",
-   "coste": "1.000 pp"
+   "coste": "1.000 cr"
   },
   "receptor_de_datos": {
    "name": "Receptor de Datos",
    "cd": "10",
    "tipo": "Utilitario",
    "txt": "Comunicación con dispositivos en red; enviar mensajes cuesta 0 PA.",
-   "coste": "200 pp"
+   "coste": "200 cr"
   },
   "visor_termo_espectral": {
    "name": "Visor Termo-espectral",
    "cd": "12",
    "tipo": "Utilitario",
    "txt": "Visión en oscuridad total mediante calor residual.",
-   "coste": "700 pp"
+   "coste": "700 cr"
   }
  },
  "etiquetas": {

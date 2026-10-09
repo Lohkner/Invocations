@@ -484,7 +484,7 @@ Object.assign(app, {
     acc.appendChild(this._boton(this._ico('i-d20') + 'Tirar el botín de la sesión', () => {
       const paso = r.sesMax >= 1000 ? 50 : 5;
       const pp = Math.round((r.sesMin + Math.random() * (r.sesMax - r.sesMin)) / paso) * paso;
-      this.mesa.botinUlt = `Esta sesión: ${pp.toLocaleString('es')} pp`;
+      this.mesa.botinUlt = `Esta sesión: ${pp.toLocaleString('es')} cr`;
       this.mesaCambio();
     }));
     host.appendChild(acc);
@@ -621,7 +621,7 @@ Object.assign(app, {
     grupo('Focos', this.DB.focos, e => [e.ud, `Fuente afín: ${e.fuente} · ${e.coste}\nResonancia: ${e.txt}`]);
     grupo('Módulos de Mejora', this.DB.modulos, e => [e.coste, `${e.tipo} · instalación CD ${e.cd}\n${e.txt}`]);
     grupo('Costes que generan decisiones', this.DB.costes, e => [e.coste, e.txt]);
-    host.appendChild(this.h('p', 'dir-nota', 'Sintonía: máximo 3 objetos (Legendarios y Únicos cuentan 2). Los bonos mágicos a un mismo eje no se suman: se aplica el mayor. Los Módulos de Mejora son para armas, armaduras y equipo; los Chips de un Construido son otra cosa (Manual Básico, Cap. 3).'));
+    host.appendChild(this.h('p', 'dir-nota', 'Sintonía: máximo 3 objetos (Legendarios y Únicos cuentan 2); solo el Artífice con El Sintonizador llega a 5. Los bonos mágicos a un mismo eje no se suman: se aplica el mayor. Los Módulos de Mejora son para armas, armaduras y equipo; los Chips de un Construido son otra cosa (Manual Básico, Cap. 3).'));
   },
 
   /* ══════════ ZONAS ══════════ */

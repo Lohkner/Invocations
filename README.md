@@ -6,10 +6,12 @@ sin build, sin dependencias, funciona sin conexión.
 
 ## Novedades v1.2 — Manuales del 2-10-2026: atributos y fórmulas
 
-`CACHE_VERSION` es `ss-director-v12` y `RULES_DATA_VERSION`,
-`v1-monstruos-guia-r5` (entrega de los manuales del 3-10-2026, carpeta
-`OneDrive\S&S\Official`: el Sintético pasa a llamarse Construido; para
-Director no cambia ninguna regla).
+`CACHE_VERSION` es `ss-director-v13` y `RULES_DATA_VERSION`,
+`v1-monstruos-guia-r6` (entrega de los manuales del 8-10-2026, carpeta
+`OneDrive\S&S\Official`). Desde el 8-10 la moneda es el crédito (cr) en
+lugar de pp: botín, riqueza, costes, precios de rareza, Focos y Módulos. El
+bestiario de la Guía imprime el tamaño y el generador lo comprueba. Las
+reglas de criaturas no cambian.
 
 El Manual de Monstruos y la Guía han cambiado cómo se construye una criatura:
 ya no se lee una fila de estadísticas, **se calcula como un personaje**.

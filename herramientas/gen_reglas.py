@@ -537,10 +537,18 @@ def comprobar(c, imp, attrs, salv, errores, solo=None):
     return f, manual
 
 
+TAM_PREF = {k[:5]: k for k in TAM}   # «diminutas» → diminuto, «grande» → grande
+
+
 def leer_stats(partes, c, imp, extra, errores):
     """Las piezas de la línea de estadísticas, comunes al Manual y a la Guía."""
     for p in partes:
-        if p in ROL_K: c['rol'] = ROL_K[p]
+        mt = re.match(r'^(\w+)(?: \(horda\))?$', p)
+        tam_k = mt and TAM_PREF.get(mt.group(1).lower()[:5])
+        if tam_k:                       # «Mediano», «Diminutas (horda)»: la Guía imprime el tamaño desde el 8-10
+            if c.get('tam') and c['tam'] != tam_k: errores.append((c['nombre'], 'tamaño', c['tam'], tam_k))
+            c['tam'] = tam_k
+        elif p in ROL_K: c['rol'] = ROL_K[p]
         elif p.startswith('Rol: '): c['rol'] = '' if p[5:] == 'Sin Rol' else ROL_K[p[5:]]
         elif p == 'Sin Rol': pass
         elif p == 'Jefe': c['estructura'] = 'jefe'
@@ -643,7 +651,7 @@ for k, (rid, nota) in VEL_NOTA.items():
         if r['id'] == rid: r['nota'] = nota
 
 # ───────────────────────── Bestiario básico de la Guía ─────────────────────────
-GUIA_TT = {  # tipo y tamaño no vienen en la Guía: se asignan por lo que la criatura es
+GUIA_TT = {  # el tipo no viene en la Guía: se asigna por lo que la criatura es (el tamaño, sí, y se comprueba)
     'Lobo': ('bestia', 'mediano'), 'Esqueleto': ('no_muerto', 'mediano'), 'Zombie': ('no_muerto', 'mediano'),
     'Orco': ('humanoide', 'mediano'), 'Oso Pardo': ('bestia', 'grande'), 'Azotamente / Mente Devoradora': ('aberracion', 'mediano'),
     'Gigante de la Tormenta': ('gigante', 'enorme'), 'Licántropo / Hombre Lobo': ('monstruosidad', 'mediano'),
