@@ -143,28 +143,28 @@ Object.assign(app, {
     if (g.pjs === 3 || g.pjs >= 5) host.appendChild(this.h('p', 'dir-nota',
       `La tabla es para cuatro personajes: con ${g.pjs}, ${g.pjs > 4 ? '+1' : '−1'} NA en cada dificultad.`));
     if (g.pjs <= 2) host.appendChild(this.h('p', 'dir-aviso', g.pjs === 1
-      ? 'Un solo personaje: la Guía no da ajuste (aquí, −2 NA en cada dificultad). Aplica el Filo del Protagonista —todo el daño enemigo a la mitad— y el Barrido de secuaces.'
+      ? 'Un solo personaje: el Manual no da ajuste (aquí, −2 NA en cada dificultad). Aplica el Filo del Protagonista —todo el daño enemigo a la mitad— y el Barrido de secuaces.'
       : 'Dúo: −1 NA en cada dificultad. Aplica el Filo del Protagonista —el daño enemigo se reduce un tercio— y el Barrido de secuaces.'));
   },
 
-  /** NA del encuentro (Guía, Cap. 2). Parte del NA más alto: cada criatura de
-      ese NA cuenta 1; una de dos NA menos, ½; una de cuatro menos, ¼; las que
-      están más abajo no cuentan. Total 2–3: +2 · 4–7: +4 · 8 o más: +6.
-      `lineas` = [{ na, cuenta }]: el jefe (+2), el tamaño Enorme o Colosal
-      (+1), la horda y el exceso de Potencial ya vienen en el NA de cada
+  /** NA del encuentro (Manual de Monstruos, Cap. 4). Parte del NA de encuentro
+      más alto: cada criatura cuenta 1 si está a 0 o 1 NA de él; ½ a 2 o 3; ¼ a 4;
+      nada a 5 o más. Sube con lo que sumen: 1½, +2; 2, +3; 3, +4; 4 o 5, +6;
+      6 o 7, +7; 8 o más, +9.
+      `lineas` = [{ na, cuenta }]: el jefe, la Aptitud de área, el tamaño, los
+      Axiomas, la horda y el exceso de Potencial ya vienen en el NA de cada
       criatura (calcCr → naEnc), y el esbirro cuenta ¼.
-      Lo que la Guía no dice y aquí se resuelve por proporción: una criatura de
-      uno o tres NA menos cuenta ¾ o ⅜ (a medio camino), y si solo hay esbirros
-      y no llegan a cuatro, el total baja de 1 y el NA con él (dos esbirros,
-      2 NA menos; uno, 4 menos). */
+      Lo que el Manual no dice: entre 1 y 1½ el NA no sube; y si solo hay
+      esbirros y no llegan a cuatro, el NA baja (dos esbirros, 3 menos; uno, 6). */
   _naDeLineas(lineas) {
     if (!lineas.length) return { na: null, max: null, suma: 0, sube: 0 };
     const max = Math.max(...lineas.map(l => l.na));
     const suma = lineas.reduce((a, l) => a + l.cuenta * this._pesoEnc(max - l.na), 0);
-    const sube = suma >= 8 ? 6 : suma >= 4 ? 4 : suma >= 2 ? 2 : suma >= 1 ? 0 : suma >= .5 ? -2 : -4;
+    const sube = suma >= 8 ? 9 : suma >= 6 ? 7 : suma >= 4 ? 6 : suma >= 3 ? 4 : suma >= 2 ? 3 : suma >= 1.5 ? 2
+      : suma >= 1 ? 0 : suma >= .5 ? -3 : -6;
     return { na: Math.max(0, max + sube), max, suma, sube };
   },
-  _pesoEnc(porDebajo) { return [1, .75, .5, .375, .25][porDebajo] || 0; },
+  _pesoEnc(porDebajo) { return porDebajo <= 1 ? 1 : porDebajo <= 3 ? .5 : porDebajo === 4 ? .25 : 0; },
   _naEncuentro() {
     const roster = STORAGE.loadRoster();
     const lineas = [];
@@ -239,7 +239,7 @@ Object.assign(app, {
     host.appendChild(caja);
     if (E.na != null) host.appendChild(this.h('p', 'dir-nota dir-centro',
       `La más fuerte es NA ${E.max} y el encuentro suma ${this._fmtSuma(E.suma)}` + (E.sube ? `: ${this._signo(E.sube)} NA.` : '.')));
-    host.appendChild(this.h('p', 'dir-nota', 'NA del encuentro: cada criatura del NA más alto cuenta 1; una de dos NA menos, ½; de cuatro menos, ¼. Si suman 2–3, +2 NA; 4–7, +4; 8 o más, +6. Un jefe sube 2; una criatura Enorme o Colosal, 1; cuatro esbirros cuentan como una; cada 2 de exceso de Potencial, +1.'));
+    host.appendChild(this.h('p', 'dir-nota', 'NA del encuentro: cada criatura cuenta 1 si está a 0 o 1 NA de la más fuerte; ½ a 2 o 3; ¼ a 4. Si suman 1½, +2 NA; 2, +3; 3, +4; 4 o 5, +6; 6 o 7, +7; 8 o más, +9. Cada criatura entra con su NA de encuentro (jefe, Aptitud de área, tamaño, Axiomas, exceso de Potencial); cuatro esbirros cuentan como una. Lo que pueda invocar, súmalo como si estuviera desde el principio, a mitad de valor.'));
 
     const acc = this.h('div', 'dir-acc dir-acc-centro');
     acc.append(

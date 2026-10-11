@@ -1,8 +1,9 @@
 /* ══════════════════════════════════════════════════════════════
    ASISTENTE DE CREACIÓN DE AMENAZAS
-   Los nueve pasos del Manual de Monstruos, Cap. 4, uno por pantalla:
-   Idea · NA · Tipo y tamaño · Rol · Atributos · Estadísticas · Rasgos ·
-   Señal · Contexto táctico. «Empieza por lo que el grupo va a sentir. Los
+   Los diez pasos del Manual de Monstruos, Cap. 4, uno por pantalla:
+   Idea · NA · Tipo y tamaño · Rol · Atributos · Estadísticas · Rasgos de
+   especie · Potencial · Si es un jefe · Encuentro y cierre. El paso del
+   jefe solo aparece si la criatura lo es. «Empieza por lo que el grupo va a sentir. Los
    números vienen después, y casi solos.»
 
    Trabaja directamente sobre app.cr —la ficha está oculta mientras
@@ -12,9 +13,11 @@
 ══════════════════════════════════════════════════════════════ */
 (function () {
   const $ = id => document.getElementById(id);
-  const PASOS = ['La idea', 'El NA', 'Tipo y tamaño', 'Rol', 'Atributos', 'Estadísticas', 'Rasgos', 'La señal', 'Contexto'];
-  const ULTIMO = PASOS.length - 1;
-  let paso = 0, pintado = -1, abierto = false;
+  const PASOS = ['La idea', 'El NA', 'Tipo y tamaño', 'Rol', 'Atributos', 'Estadísticas', 'La especie', 'Potencial', 'El jefe', 'El cierre'];
+  const ULTIMO = PASOS.length - 1, JEFE = 8;
+  let paso = 0, pintado = -1, abierto = false, iguales = 1;
+  /* El paso del jefe solo existe si la criatura es un jefe */
+  const visibles = () => PASOS.map((_, i) => i).filter(i => i !== JEFE || cr().estructura === 'jefe');
   const el = (t, c, x) => app.h(t, c, x);
   const cr = () => app.cr;
 
@@ -54,27 +57,29 @@
   }
 
   /* ── Paso 2 · El NA ───────────────────────────────────────────── */
+  /* Si van a ser varias iguales, se resta al NA de la casilla (Cap. 4) */
+  const RESTA = n => n >= 8 ? 9 : n >= 6 ? 7 : n >= 4 ? 6 : n === 3 ? 4 : n === 2 ? 3 : 0;
   function pasoNA(b) {
-    b.appendChild(el('p', 'wiz-hint', 'Según el peso que debe tener en la escena. Parte de la tabla de calibrado de la Guía: estándar, serio o mortal para el nivel del grupo.'));
+    b.appendChild(el('p', 'wiz-hint', 'El peso que debe tener en la escena. Una criatura sola del NA de la casilla da esa dificultad; si van a ser varias iguales, cada una es más baja.'));
     const g = app.mesa.grupo;
-    b.appendChild(app._campo('Nivel del grupo', app._paso(g.nivel, 1, 10, n => { g.nivel = n; app.guardarMesa(); pintar(); }, 'el nivel del grupo', 'Nivel ' + g.nivel)));
-    const f = app._filaEncuentro(g.nivel);
-    const opciones = [
-      ['Estándar', f.estandar, 'Un rival digno.'],
-      ['Serio', f.serio, 'Exige recursos.'],
-      ['Mortal', f.mortal, 'Puede matar a alguien.'],
-    ];
-    opciones.forEach(([n, rango, t]) => {
-      const nums = String(rango).match(/\d+/g).map(Number);
-      const desde = nums[0], hasta = /\+/.test(rango) ? 99 : nums[nums.length - 1];
-      const sel = cr().na >= desde && cr().na <= hasta;
-      b.appendChild(app.tarjetaOpcion(n, 'NA ' + rango, t, '', sel, () => { cr().na = Math.min(15, desde); cr().pvAct = null; pintar(); }));
+    const fila = el('div', 'g2 dir-g2');
+    fila.append(
+      app._campo('Nivel del grupo', app._paso(g.nivel, 1, 10, n => { g.nivel = n; app.guardarMesa(); pintar(); }, 'el nivel del grupo', 'Nivel ' + g.nivel)),
+      app._campo('Cuántas iguales', app._paso(iguales, 1, 8, n => { iguales = n; pintar(); }, 'cuántas criaturas iguales', iguales >= 8 ? '8+' : String(iguales))));
+    b.appendChild(fila);
+    const U = app.umbrales(), resta = RESTA(iguales);
+    [['Fácil', U.f, ''], ['Estándar', U.e, 'El grupo pierde en torno a una séptima parte de sus PV.'],
+     ['Peligroso', U.p, 'Pierde entre un cuarto y un tercio; alguien puede caer.'], ['Mortal', U.m, 'Casi la mitad o más; puede caer cualquiera.']].forEach(([n, casilla, t]) => {
+      const na = Math.max(0, casilla - resta);
+      b.appendChild(app.tarjetaOpcion(n, 'NA ' + na + (n === 'Mortal' ? '+' : ''), t, resta ? `Casilla NA ${casilla}, menos ${resta} por ser ${iguales >= 8 ? 'ocho o más' : iguales}` : '',
+        cr().na === na, () => { cr().na = Math.min(15, na); cr().pvAct = null; pintar(); }));
     });
     const sub = el('div', 'wiz-sub');
     const B = app.DB.na[cr().na];
     sub.appendChild(app._campo('Nivel de Amenaza', app._paso(cr().na, 0, 15, n => { cr().na = n; cr().pvAct = null; pintar(); }, 'el Nivel de Amenaza',
       'NA ' + cr().na + (B.etiqueta ? ' · ' + B.etiqueta : ''))));
-    sub.appendChild(app._info(`Competencia ${app._signo(B.pb)} · Fuerte ${app._signo(B.fuerte)} · Normal ${app._signo(B.normal)} · Débil ${app._signo(B.debil)}\nDado de daño ${B.dano} · Armadura ${B.a} · PA ${B.pa} · Potencial ${B.peso}\nCon CON Normal, ${cr().na ? 50 + cr().na * (5 + B.normal) : '1–4'} PV`));
+    const ajuste = B.ajuste ? ` (${app._signo(B.ajuste)})` : '';
+    sub.appendChild(app._info(`Competencia ${app._signo(B.pb)} · Fuerte ${app._signo(B.fuerte)} · Normal ${app._signo(B.normal)} · Débil ${app._signo(B.debil)}\nDado de daño ${B.dano}${ajuste} · Armadura ${B.a} · PA ${B.pa} · Potencial ${B.peso}\nCon CON Normal, ${cr().na ? Math.floor((50 + cr().na * (5 + B.normal)) * 3 / 2) : '1–4'} PV`));
     b.appendChild(sub);
   }
 
@@ -88,7 +93,7 @@
     const sub = el('div', 'wiz-sub');
     Object.entries(app.DB.tipos).forEach(([k, t]) => {
       const sel = cr().tipo === k;
-      sub.appendChild(app.tarjetaOpcion(t.name, 'Débil: ' + t.atrDeb, t.txt, 'Debilidad coherente: ' + t.deb, sel, () => {
+      sub.appendChild(app.tarjetaOpcion(t.name, '', t.txt, `Atributos Débiles: ${t.atrDeb} · Debilidad coherente: ${t.deb}`, sel, () => {
         if (cr().tipo !== k) {
           const antes = cr().tipo;
           cr().tipo = k;
@@ -182,38 +187,72 @@
     b.appendChild(sub2);
   }
 
-  /* ── Paso 7 · Rasgos y Aptitudes ──────────────────────────────── */
-  function pasoRasgos(b) {
-    const S = app.calcCr(cr());
-    b.appendChild(el('p', 'wiz-hint', 'Empieza por la pieza que sostiene la idea; después, lo que la hace jugable (movilidad, defensa); por último, una Debilidad si quieres que el grupo pueda descubrir algo.'));
+  /* Lista de los Rasgos propios (no de tipo) con su etiqueta de Potencial */
+  function tarjetasRasgos(caja, S, alTocar, etiqueta) {
+    S.infos.filter(x => !x.r.gratis).forEach(x => {
+      caja.appendChild(app.tarjetaOpcion(x.i.name + (x.r.nota ? ` (${x.r.nota})` : ''), etiqueta(x), x.i.txt, app._lineaTipo(x.i), !!alTocar.sel(x), () => alTocar.fn(x)));
+    });
+  }
+  function barraPotencial(b, S) {
     const carga = el('div', 'dir-load');
     carga.append(el('span', 'dir-load-lbl', 'Potencial'), el('span', 'dir-load-val', `${S.pesoGastado}/${S.pesoMax}`));
     const barra = el('div', 'lbar'); const fill = el('div', 'lfill' + (S.exceso ? ' dir-exceso' : ''));
     fill.style.width = (S.pesoMax ? Math.min(100, S.pesoGastado / S.pesoMax * 100) : (S.pesoGastado ? 100 : 0)) + '%';
     barra.appendChild(fill);
     b.append(carga, barra);
-    if (S.exceso) b.appendChild(el('p', 'dir-aviso', `Excede en ${S.exceso}` + (S.exceso >= 2 ? `: al calibrar cuenta como NA ${S.naEnc}.` : ': con 2 de exceso contará como +1 NA.')));
-    (S.tipo.exige || []).forEach(id => {
-      if (!cr().rasgos.some(r => r.id === id)) b.appendChild(el('p', 'dir-aviso', `${S.tipo.name}: debe tener ${app._libIdx()[id]?.e.name || id}.`));
-    });
+  }
+  function botonBiblioteca(b) {
     const abrir = el('button', 'btn btn-gold dir-ancho'); abrir.type = 'button';
     abrir.textContent = 'Abrir la Biblioteca';
     abrir.onclick = () => app.abrirBiblioteca();
     b.appendChild(abrir);
+  }
 
+  /* ── Paso 7 · Rasgos de especie ───────────────────────────────── */
+  function pasoEspecie(b) {
+    const S = app.calcCr(cr());
+    b.appendChild(el('p', 'wiz-hint', `Lo que la hace ser lo que es. Los de narrativa son gratis, y uno de combate también si no pasa de Potencial ${S.tope} (el tope de su NA). Toca un Rasgo para marcarlo como de especie.` +
+      (S.na >= 3 ? ' Desde NA 3, el más fuerte es su Aptitud definitoria: la que decide el combate.' : '')));
+    botonBiblioteca(b);
+    const sub = el('div', 'wiz-sub');
+    tarjetasRasgos(sub, S, { sel: x => x.r.especie, fn: x => { if (x.r.especie) { delete x.r.especie; delete x.r.definitoria; delete x.r.racial; } else x.r.especie = true; pintar(); } },
+      x => x.r.especie ? (S.motivoGratis(x) === 'especie' ? 'especie · gratis' : 'especie') : 'tocar: de especie');
+    if (!sub.childElementCount) sub.appendChild(el('p', 'dir-nota', 'Aún no tiene Rasgos propios: ábrelos en la Biblioteca.'));
+    b.appendChild(sub);
+    const especie = S.infos.filter(x => x.r.especie && !x.r.gratis);
+    if (S.na >= 3 && especie.length) {
+      const s2 = el('div', 'wiz-sub');
+      const ops = [['', '— Sin elegir —']].concat(especie.map(x => [x.r.uid, x.i.name]));
+      const actual = especie.find(x => x.r.definitoria);
+      s2.appendChild(app._campo('Aptitud definitoria', app._select(ops, actual ? actual.r.uid : '', uid => {
+        especie.forEach(x => { if (x.r.uid === uid) x.r.definitoria = true; else delete x.r.definitoria; });
+        pintar();
+      }, 'Aptitud definitoria')));
+      const ta = document.createElement('textarea');
+      ta.value = cr().proteccion || ''; ta.style.minHeight = '64px';
+      ta.placeholder = 'Apartar la mirada da Ventaja; un antídoto bebido antes baja Paralizado a Ralentizado.';
+      ta.setAttribute('aria-label', 'Protección');
+      ta.addEventListener('input', () => { cr().proteccion = ta.value; });
+      s2.appendChild(app._campo('Protección', ta, 'Ventaja o un escalón menos, nunca la anula'));
+      b.appendChild(s2);
+    }
+  }
+
+  /* ── Paso 8 · Potencial ───────────────────────────────────────── */
+  function pasoPotencial(b) {
+    const S = app.calcCr(cr());
+    b.appendChild(el('p', 'wiz-hint', 'Gasta el Potencial de su NA: primero lo que sostiene la idea, después lo que la hace jugable (movilidad, defensa) y, si quieres que el grupo descubra algo, una Debilidad. Por debajo de NA 5, una sola pieza de Potencial 3. Puedes pasarte: cada 2 de exceso suben 1 su NA de encuentro.'));
+    barraPotencial(b, S);
+    if (S.exceso) b.appendChild(el('p', 'dir-aviso', `Excede en ${S.exceso}` + (S.exceso >= 2 ? `: cuenta como NA ${S.naEnc} al calcular el encuentro.` : ': con 2 de exceso contará como +1 NA.')));
+    (S.tipo.exige || []).forEach(id => {
+      if (!cr().rasgos.some(r => r.id === id)) b.appendChild(el('p', 'dir-aviso', `${S.tipo.name}: debe tener ${app._libIdx()[id]?.e.name || id}.`));
+    });
+    botonBiblioteca(b);
     const sub = el('div', 'wiz-sub');
     if (S.rol && S.rol.hab) sub.appendChild(app.tarjetaOpcion(S.rol.hab, 'de Rol', S.rol.habTxt, '', true, () => {}));
-    S.infos.forEach(x => {
-      const gratis = S.esGratis(x);
-      const tag = gratis ? 'de tipo ✓' : (x.i.peso < 0 ? 'devuelve 1 · quitar' : `Potencial ${x.i.peso} · quitar`);
-      sub.appendChild(app.tarjetaOpcion(x.i.name + (x.r.nota ? ` (${x.r.nota})` : ''), tag, x.i.txt, app._lineaTipo(x.i), true, () => {
-        if (x.r.gratis) { app.toast('Es un Rasgo de su tipo', 'info'); return; }
-        cr().rasgos = cr().rasgos.filter(r => r !== x.r);
-        pintar();
-      }));
-    });
+    tarjetasRasgos(sub, S, { sel: () => true, fn: x => { cr().rasgos = cr().rasgos.filter(r => r !== x.r); pintar(); } },
+      x => S.motivoGratis(x) ? S.motivoGratis(x) + ' ✓ · quitar' : (x.i.peso < 0 ? 'devuelve 1 · quitar' : `Potencial ${x.i.peso} · quitar`));
     b.appendChild(sub);
-
     // Debilidades coherentes con su tipo, a un toque
     const nombres = String(S.tipo.deb || '').split(',').map(t => t.trim().replace(/\s*\(.*\)$/, '')).filter(Boolean);
     const sugeridas = app.DB.rasgos.debilidades.filter(e => nombres.includes(e.name) && !cr().rasgos.some(r => r.id === e.id));
@@ -225,17 +264,56 @@
     }
   }
 
-  /* ── Paso 8 · La señal ────────────────────────────────────────── */
-  function pasoSenal(b) {
-    b.appendChild(el('p', 'wiz-hint', 'Qué percibe el grupo antes de verla: huellas, olor, un silencio, restos.'));
+  /* ── Paso 9 · Si es un jefe ───────────────────────────────────── */
+  const RAREZA = na => na <= 5 ? 'Infrecuente, con 1 propiedad' : na <= 8 ? 'Raro, con 2' : na <= 11 ? 'Muy Raro, con 3' : 'Legendario, con 4';
+  function pasoJefe(b) {
+    const S = app.calcCr(cr());
+    b.appendChild(el('p', 'wiz-hint', 'PV ×2 y +2 de Potencial (ya aplicados). Además: Acción de Jefe, Turno Doble o un séquito; un Rasgo racial mayor gratuito; y un objeto mágico de la rareza de su NA, con sus bonos ya sumados.'));
+    const ids = cr().rasgos.map(r => r.id);
+    const eco = ids.includes('accion_de_jefe') ? 'Acción de Jefe' : ids.includes('turno_doble') ? 'Turno Doble' : '';
+    b.appendChild(el('p', eco ? 'dir-nota dir-ok' : 'dir-aviso', eco ? `Responde entre los turnos del grupo con ${eco}.` : 'Sin Acción de Jefe ni Turno Doble: añade una en la Biblioteca (Mando y jefes) o dale un séquito.'));
+    const sub = el('div', 'wiz-sub');
+    sub.appendChild(el('span', 'fl', 'Rasgo racial mayor — de Potencial 3, o 2 si ninguno encaja'));
+    tarjetasRasgos(sub, S, { sel: x => x.r.racial, fn: x => { S.infos.forEach(y => { delete y.r.racial; }); if (!x.r.racial) { x.r.racial = true; x.r.especie = true; } pintar(); } },
+      x => x.r.racial ? 'racial mayor ✓' : `Potencial ${x.i.peso}`);
+    b.appendChild(sub);
+    botonBiblioteca(b);
+    const s2 = el('div', 'wiz-sub');
     const ta = document.createElement('textarea');
-    ta.value = cr().senal; ta.style.minHeight = '84px';
+    ta.value = cr().equipo || ''; ta.style.minHeight = '64px';
+    ta.placeholder = `Objeto ${RAREZA(S.na)}: +bono al ataque, a la CD, a la Armadura o a la Guardia; daño de energía; Resistencia; o atravesar una defensa.`;
+    ta.setAttribute('aria-label', 'Su objeto mágico');
+    ta.addEventListener('input', () => { cr().equipo = ta.value; });
+    s2.appendChild(app._campo('Su objeto mágico', ta, RAREZA(S.na)));
+    s2.appendChild(el('p', 'dir-nota', 'Sus bonos se suman a mano en la ficha (Defensa, Ataque o Estadísticas). Si el jefe cae, es botín.'));
+    b.appendChild(s2);
+  }
+
+  /* ── Paso 10 · El encuentro y el cierre ───────────────────────── */
+  function pasoCierre(b) {
+    const S = app.calcCr(cr());
+    const partes = [];
+    if (S.exceso >= 2) partes.push(`exceso de Potencial +${Math.floor(S.exceso / 2)}`);
+    if (S.jefe) partes.push(`jefe +${S.na >= 6 ? 4 : 3}`);
+    if (S.area) partes.push(`Aptitud de área +${S.area}`);
+    if (S.tam.naEnc) partes.push(`tamaño +${S.tam.naEnc}`);
+    if (S.axiomas) partes.push('Axiomas +1');
+    b.appendChild(app._info(S.naEnc === S.na ? `Encuentro: cuenta como NA ${S.na}, su propio NA.` : `Encuentro: cuenta como NA ${S.naEnc} (${S.na} + ${partes.join(', ')}).`));
+    const ta = document.createElement('textarea');
+    ta.value = cr().senal; ta.style.minHeight = '72px';
     ta.placeholder = 'Hilos pegajosos a la altura de la cabeza; ratas envueltas; ningún eco en la galería.';
     ta.setAttribute('aria-label', 'La señal');
     ta.addEventListener('input', () => { cr().senal = ta.value; pie(); });
     const caja = el('div', 'dir-con-dado');
     caja.append(ta, app._botonDado('Señal al azar', () => { ta.value = cr().senal = app._azar(app.DB.tablas.senal.filas); pie(); }));
-    b.appendChild(app._campo('La señal', caja));
+    b.appendChild(app._campo('La señal', caja, 'qué percibe el grupo antes de verla'));
+    const ctx = document.createElement('textarea');
+    ctx.value = cr().contexto; ctx.style.minHeight = '84px';
+    ctx.placeholder = 'No pelea: atrapa con la tela al último de la fila y se lo lleva. El grupo decide entre perseguirla o dejar atrás a un compañero.';
+    ctx.setAttribute('aria-label', 'Contexto táctico');
+    ctx.addEventListener('input', () => { cr().contexto = ctx.value; pie(); });
+    b.appendChild(app._campo('Contexto táctico', ctx, 'una o dos frases; si no salen, vuelve a sus Rasgos'));
+    b.appendChild(el('p', 'dir-nota', S.noMoral ? 'Cuándo huye: no tira Moral; anótalo en el contexto.' : `Cuándo huye: Moral ${S.moral} (2d10 por encima, rompe).`));
     const sub = el('div', 'wiz-sub');
     [['habitat', 'Hábitat', 'habitat'], ['quiere', 'Qué quiere', 'quiere'], ['pelea', 'Cómo pelea', 'pelea'], ['botin', 'Lo que deja al caer', 'botinCae']].forEach(([k, rot, tabla]) => {
       const inp = document.createElement('input');
@@ -248,20 +326,6 @@
       }));
       sub.appendChild(app._campo(rot, c));
     });
-    b.appendChild(sub);
-  }
-
-  /* ── Paso 9 · Contexto táctico ────────────────────────────────── */
-  function pasoContexto(b) {
-    b.appendChild(el('p', 'wiz-hint', '¿Qué problema le plantea al grupo? No qué puede hacer, sino qué decisiones obliga a tomar. Una o dos frases.'));
-    const ta = document.createElement('textarea');
-    ta.value = cr().contexto; ta.style.minHeight = '96px';
-    ta.placeholder = 'No pelea: elige al último de la fila, lo inmoviliza y se lo lleva. El grupo decide entre perseguirla hacia su terreno o dejar atrás a un compañero.';
-    ta.setAttribute('aria-label', 'Contexto táctico');
-    ta.addEventListener('input', () => { cr().contexto = ta.value; pie(); });
-    b.appendChild(app._campo('Contexto táctico', ta));
-    const S = app.calcCr(cr());
-    const sub = el('div', 'wiz-sub');
     sub.appendChild(el('span', 'fl', 'Así queda'));
     sub.appendChild(app._info(`${cr().nombre || 'Sin nombre'} — ${app._etiquetaNA(cr())} · ${app._lineaCr(cr())}\n` +
       `PV ${S.pv} · Guardia ${S.guardia} · Armadura ${S.armadura} · Ataque ${app._signo(S.ataque)} · Daño ${S.dano}\n` +
@@ -269,7 +333,7 @@
     b.appendChild(sub);
   }
 
-  const PINTORES = [pasoIdea, pasoNA, pasoTipo, pasoRol, pasoAtributos, pasoStats, pasoRasgos, pasoSenal, pasoContexto];
+  const PINTORES = [pasoIdea, pasoNA, pasoTipo, pasoRol, pasoAtributos, pasoStats, pasoEspecie, pasoPotencial, pasoJefe, pasoCierre];
 
   function queFalta() {
     const c = cr();
@@ -278,8 +342,9 @@
         if (!c.idea.trim()) return 'Escribe la idea en una frase';
         return c.nombre.trim() ? '' : 'Ponle un nombre';
       case 4: return c.fuertes.length === 2 ? '' : 'Elige dos atributos Fuertes';
-      case 7: return c.senal.trim() ? '' : 'Toda amenaza tiene señal';
-      case 8: return c.contexto.trim() ? '' : 'Escribe el contexto táctico';
+      case 9:
+        if (!c.senal.trim()) return 'Toda amenaza tiene señal';
+        return c.contexto.trim() ? '' : 'Escribe el contexto táctico';
     }
     return '';
   }
@@ -292,10 +357,12 @@
   }
 
   function pintar() {
+    const vis = visibles();
+    if (!vis.includes(paso)) paso = vis.find(i => i > paso) ?? ULTIMO;
     $('wiz_ttl').textContent = PASOS[paso];
-    $('wiz_sub').textContent = `Paso ${paso + 1} de ${PASOS.length}`;
+    $('wiz_sub').textContent = `Paso ${vis.indexOf(paso) + 1} de ${vis.length}`;
     const bars = $('wiz_bars'); bars.textContent = '';
-    PASOS.forEach((_, i) => bars.appendChild(el('span', 'wiz-bar' + (i === paso ? ' on' : (i < paso ? ' done' : '')))));
+    vis.forEach(i => bars.appendChild(el('span', 'wiz-bar' + (i === paso ? ' on' : (i < paso ? ' done' : '')))));
     const b = $('wiz_body');
     const y = pintado === paso ? b.scrollTop : 0;
     b.textContent = '';
@@ -317,7 +384,7 @@
     app.cr = app.nuevaCr();
     app._nombreOriginal = '';
     app.modo = 'ficha';
-    paso = 0; pintado = -1; abierto = true;
+    paso = 0; pintado = -1; abierto = true; iguales = 1;
     app._retratoRecortado = () => { if (abierto) pintar(); };
     app._alCerrarBiblioteca = () => { if (abierto) pintar(); };
     $('wiz_panel').classList.add('fs-open');
@@ -340,14 +407,16 @@
   }
 
   $('wiz_back').onclick = () => {
-    if (paso > 0) { paso--; pintar(); return; }
+    const vis = visibles(), i = vis.indexOf(paso);
+    if (i > 0) { paso = vis[i - 1]; pintar(); return; }
     cerrar();
     app.showScreen('home');
   };
   $('wiz_next').onclick = () => {
     if (queFalta()) return;
     if (paso === ULTIMO) { volcar(true); return; }
-    paso++; pintar();
+    const vis = visibles();
+    paso = vis[vis.indexOf(paso) + 1]; pintar();
   };
   $('wiz_manual').onclick = () => volcar(false);
   $('wiz_dado').onclick = () => {
@@ -366,7 +435,7 @@
     try { localStorage.setItem(CLAVE, this.asistenteActivo ? '1' : '0'); } catch (e) { /* la sesión sigue */ }
     sincronizar();
     this.toast(this.asistenteActivo
-      ? 'Asistente activado — «Nueva amenaza» te guiará por los nueve pasos'
+      ? 'Asistente activado — «Nueva amenaza» te guiará por los pasos del Manual'
       : 'Asistente desactivado — «Nueva amenaza» abrirá la ficha en blanco', 'ok');
   };
   const _open = app.openSettings;

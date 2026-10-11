@@ -18,7 +18,8 @@ como [t_pasivo].
 import re, json, sys, os, unicodedata, zipfile, html, shutil, tempfile
 sys.stdout.reconfigure(encoding='utf-8')
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-FUENTE = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.expanduser('~'), 'OneDrive', 'S&S', 'Official')
+FUENTE = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.expanduser('~'), 'OneDrive', 'S&S', 'Official',
+                                                           'Stars_and_Sorcery_v1_Paquete_Completo_1')
 OUT = os.path.join(RAIZ, 'js', 'reglas.js')
 
 
@@ -51,6 +52,7 @@ def extraer(nombre):
 
 M = extraer('Stars_and_Sorcery_Manual_de_Monstruos_v1.docx')
 G = extraer('Stars_and_Sorcery_Guia_del_Director_v1.docx')
+MB = extraer('Stars_and_Sorcery_Manual_Basico_v1.docx')
 
 
 def slug(s):
@@ -97,8 +99,10 @@ assert rows[0] == ['NA', 'PB', 'Fuerte', 'Normal', 'Débil', 'Dado de daño', 'A
 NA = {}
 for r in rows[1:]:
     na, pb, fuerte, normal, debil, dano, arm, pa, pot = r
+    md = re.match(r'(\d+d\d+)(?: \(([+−]\d+)\))?$', dano)
+    assert md, dano
     NA[na] = {'name': 'NA ' + na, 'pb': num(pb), 'fuerte': num(fuerte), 'normal': num(normal), 'debil': num(debil),
-              'dano': dano, 'a': int(arm), 'pa': int(pa), 'peso': int(pot)}
+              'dano': md.group(1), 'ajuste': num(md.group(2)) if md.group(2) else 0, 'a': int(arm), 'pa': int(pa), 'peso': int(pot)}
 assert len(NA) == 16
 ETIQ_NA = {'0': 'Civil', '1': 'Novato', '3': 'Veterano', '10': 'Élite', '12': 'Legendario'}
 for k, v in ETIQ_NA.items():
@@ -107,8 +111,11 @@ for k, v in ETIQ_NA.items():
 # las cambia, esto avisa antes de generar nada.
 for frase in ['ROW: | Ataque | PB + el mayor de FUE o DES; a distancia, DES',
               'ROW: | Guardia | 10 + PB + MOD DES',
-              'ROW: | PV | 50 + NA × (5 + MOD CON)',
-              'ROW: | Salvaciones | MOD; en sus dos atributos Fuertes, MOD + PB',
+              'ROW: | Daño por turno | Dado de daño de su NA + su ajuste + el MOD con el que ataca',
+              'ROW: | PV | (50 + NA × (5 + MOD CON)) × 1,5, redondeando hacia abajo',
+              'ROW: | Salvaciones | MOD; en sus atributos Fuertes, MOD + PB (dos; tres en un dragón)',
+              'Con 4 PA o más son dos Ataques Normales: reparte los dados entre los dos, y el primero lleva el impar',
+              'Un Arrollador Grande o mayor tiene al menos 4 PA desde NA 5',
               'ROW: | CD | 8 + PB + ½ NA + el MOD de su atributo Fuerte más alto',
               'ROW: | Iniciativa | MOD DES',
               'ROW: | Moral | 10 + NA',
@@ -120,8 +127,8 @@ i = find(M, '#Heading2 Roles', exact=True)
 rows, _ = rows_from(M, i)
 assert rows[0] == ['Rol', 'Fuertes', 'Débil', 'Ajuste', 'Habilidad de Rol'], rows[0]
 ROL_HAB = {  # nombre de la habilidad, tipo y coste (el texto sale de la tabla)
-    'arrollador': ('Ataque Masivo', 'Aptitud', '2 PA'), 'hostigador': ('Flanqueo', 'Rasgo', ''),
-    'represor': ('Control de Zona', 'Aptitud', '3 PA'), 'comandante': ('Aura de Mando', 'Aura', ''),
+    'arrollador': ('Ataque Masivo', 'Modificador', '1/ronda'), 'hostigador': ('Flanqueo', 'Rasgo', ''),
+    'represor': ('Represión', 'Aptitud', '3 PA · 1/ronda'), 'comandante': ('Aura de Mando', 'Aura', ''),
     'soporte': ('Restaurar', 'Aptitud', '2 PA'), 'explorador': ('Primero en Llegar', 'Rasgo', ''),
     'artillero': ('Posición', 'Rasgo', ''), 'acechador': ('Primer Golpe', 'Modificador', ''),
     'guardian': ('Custodia', 'Reacción', ''), 'esbirro': ('Esbirro', 'Rasgo', ''),
@@ -146,7 +153,7 @@ def ajuste_rol(txt):
         if m: e['ini'] = num(m.group(1)); continue
         m = re.match(r'([+−]\d+) Armadura$', trozo)
         if m: e['a'] = num(m.group(1)); continue
-        if trozo == 'PV = NA × 2': e['esbirro'] = True; continue
+        if trozo.startswith('PV = NA × 2'): e['esbirro'] = True; continue
         raise ValueError('ajuste de Rol desconocido: ' + trozo)
     return e
 
@@ -155,7 +162,7 @@ ROLES = {}
 for nombre, fuertes, debil, ajuste, hab in rows[1:]:
     k = slug(nombre)
     hn, ht, hc = ROL_HAB[k]
-    txt = re.sub(r'^[^:]{3,22}(?:\s*\([^)]*\))?:\s*', '', hab) if k not in ('represor', 'explorador', 'esbirro') else hab
+    txt = re.sub(r'^[^:]{3,22}(?:\s*\([^)]*\))?:\s*', '', hab) if k not in ('explorador', 'esbirro') else hab
     txt = txt[0].upper() + txt[1:]
     f, d = lista_atr(fuertes), lista_atr(debil)
     assert len(f) == 2 or fuertes == 'Libres', (nombre, fuertes)
@@ -167,7 +174,7 @@ for nombre, fuertes, debil, ajuste, hab in rows[1:]:
     e.update(ajuste_rol(ajuste))
     ROLES[k] = e
 assert len(ROLES) == 10 and ROLES['esbirro'].get('esbirro'), list(ROLES)
-ROLES['esbirro']['habTxt'] = 'Cae con cualquier golpe que le quite sus PV. Sin Rasgos propios salvo los de tipo. No tira Moral: huye cuando cae su líder o la mitad de su grupo. Todos los esbirros de un mismo tipo actúan en la misma Iniciativa.'
+ROLES['esbirro']['habTxt'] = 'Cae con cualquier golpe que le quite sus PV. Sin más Rasgos que los de su tipo y su Rasgo de especie gratuito. No tira Moral: huye cuando cae su líder o la mitad de su grupo. Todos los esbirros de un mismo tipo actúan en la misma Iniciativa.'
 
 # ───────────────────────── Tamaños ─────────────────────────
 i = find(M, '#Heading2 Tamaño', exact=True)
@@ -186,8 +193,8 @@ for nombre, ej, fue, des, con, alc in rows[1:]:
     e = {'name': nombre, 'ej': ej, 'fue': ajuste_tam(fue), 'des': ajuste_tam(des), 'con': ajuste_tam(con),
          'atrTxt': f'FUE {fue} · DES {des} · CON {con}', 'alcance': alcance, 'espacio': espacio}
     TAM[slug(nombre)] = e
-# «Una criatura Enorme o Colosal […] Al calibrar el encuentro suma +1 al NA del encuentro.»
-find(M, 'Al calibrar el encuentro suma +1 al NA del encuentro')
+# «Una criatura Enorme o Colosal suma +1 a su NA de encuentro (Cap. 4).»
+find(M, 'Una criatura Enorme o Colosal suma +1 a su NA de encuentro')
 TAM['enorme']['naEnc'] = 1
 TAM['colosal']['naEnc'] = 1
 
@@ -214,6 +221,10 @@ MODS = {
     'sin_rendicion': {'noMoral': True}, 'colmena': {'noMoral': True},
 }
 MULTI = {'resistencia', 'inmunidad', 'inmunidad_a_estados'}
+# Rasgos de especie «de narrativa» (Cap. 2): no gastan Potencial ni tienen límite.
+NARRATIVA = {'resurgir', 'pesadillas', 'corrupcion_del_lugar', 'rastro_falso', 'imitacion', 'mente_colmena', 'silenciosa'}
+# Aptitudes que hacen daño a varios a la vez (Cap. 4): suben el NA de encuentro.
+AREA = {'aliento', 'tormenta_personal', 'andanada', 'ataque_barrido', 'chillido', 'carga_arrolladora'}
 PIDE = {
     'resistencia': 'Un tipo físico o dos de energía', 'inmunidad': 'Tipo de daño', 'inmunidad_a_estados': 'Dos estados',
     'vulnerabilidad': 'Tipo de daño', 'aversion': 'Material o símbolo', 'aliento': 'Tipo de energía',
@@ -249,6 +260,8 @@ while j < fin:
             if e['id'] in MODS: e['mod'] = MODS[e['id']]
             if e['id'] in MULTI: e['multi'] = True
             if e['id'] in PIDE: e['pide'] = PIDE[e['id']]
+            if e['id'] in NARRATIVA: e['narrativa'] = True
+            if e['id'] in AREA: e['area'] = True
             lst.append(e)
         RASGOS[k] = lst
         j = j2
@@ -262,6 +275,11 @@ for k, lst in RASGOS.items():
         POR_ID[e['id']] = (k, e)
 POR_NOMBRE = {e['name']: e for _, e in POR_ID.values()}
 print('piezas de biblioteca:', len(POR_ID))
+assert NARRATIVA <= set(POR_ID) and AREA <= set(POR_ID), (NARRATIVA - set(POR_ID), AREA - set(POR_ID))
+for frase in ['De narrativa. Los que solo actúan fuera del combate o sobre la historia: Resurgir, Pesadillas, Corrupción del Lugar, Rastro Falso, Imitación, Mente Colmena, Silenciosa',
+              'si su Potencial no pasa de 1 hasta NA 4, de 2 entre NA 5 y 9, ni de 3 desde NA 10',
+              'Tiene una Aptitud que hace daño a varios a la vez | +3 si es de Potencial 3 y +2 si es de menos; en un jefe, uno menos']:
+    find(M, frase)
 
 # dado de cada familia en la tabla aleatoria
 i = find(M, 'ROW: | d20 | Familia | Dado')
@@ -278,7 +296,9 @@ TIPO_EXTRA = {
     'humanoide': dict(fuertesDef=['FUE', 'CON'], equipo=True),
     'gigante': dict(gratis=[{'id': 'gigantismo'}], fuertesDef=['FUE', 'CON'], tamMin='grande'),
     'monstruosidad': dict(gratisFam={'fam': 'forma', 'peso': 1}, fuertesDef=['FUE', 'CON']),
-    'dragon': dict(gratis=[{'id': 'vision_en_la_oscuridad'}, {'id': 'inmunidad', 'nota': 'su elemento'}], exige=['aliento'], fuertesDef=['DES', 'CON']),
+    'dragon': dict(gratis=[{'id': 'vision_en_la_oscuridad'}, {'id': 'telepatia'}, {'id': 'inmunidad', 'nota': 'su elemento'}],
+                   exige=['aliento', 'uso_de_axiomas'], fuertesDef=['FUE', 'CON'], fuerteExtra='INT', alientoGratis=True, tamMin='enorme'),
+    'draconido': dict(gratis=[{'id': 'vision_en_la_oscuridad'}, {'id': 'inmunidad', 'nota': 'su elemento'}], exige=['aliento'], fuertesDef=['FUE', 'CON']),
     'no_muerto': dict(gratis=[{'id': 'vigor_inagotable'}, {'id': 'inmunidad_a_estados', 'nota': 'Envenenado y Aterrado'}], fuertesDef=['CON', 'SAB']),
     'espiritu': dict(gratis=[{'id': 'telepatia'}], fuertesDef=['DES', 'SAB']),
     'constructo': dict(gratis=[{'id': 'vigor_inagotable'}, {'id': 'inmunidad_a_estados', 'nota': 'Envenenado y Encantado'}], fuertesDef=['FUE', 'CON'], noMoral='nunca'),
@@ -296,6 +316,7 @@ T_DEB = {'bestia': ['INT'],
          'gigante': ['INT'],
          'monstruosidad': ['CAR'],
          'dragon': [],
+         'draconido': ['INT', 'CAR'],
          'no_muerto': ['CAR'],
          'espiritu': ['FUE'],
          'constructo': ['INT', 'CAR'],
@@ -317,7 +338,8 @@ for nombre, rasgos, atr_deb, deb in rows[1:]:
     for gr in e.get('gratis', []):
         assert gr['id'] in POR_ID, gr
     TIPOS[k] = e
-assert len(TIPOS) == 16
+assert len(TIPOS) == 17, len(TIPOS)
+find(M, 'Su INT es Fuerte, además de los dos de su Rol, y su Salvación también suma el PB')
 
 
 # ───────────────────────── Tablas sueltas ─────────────────────────
@@ -435,13 +457,15 @@ def rasgo_de(nombre, txt=None, nota=None, gratis=False):
 
 
 def parse_dano(s):
-    m = re.match(r'(\d+d\d+(?:[+−-]\d+)?)\s*(.*)$', s)
+    """«3d6+2 y 2d6+2 Cortante (garras)» → ('3d6+2 y 2d6+2', 'Cortante', 'garras')."""
+    m = re.match(r'(\d+d\d+(?:[+−-]\d+)?(?: y \d+d\d+(?:[+−-]\d+)?)?)\s*(.*)$', s)
     formula = m.group(1).replace('−', '-')
     resto = m.group(2)
     arma = ''
     ma = re.search(r'\(([^)]*)\)\s*$', resto)
     if ma:
         arma = ma.group(1); resto = resto[:ma.start()].strip()
+    if arma == 'dos ataques': arma = ''
     return formula, resto, arma
 
 
@@ -479,15 +503,51 @@ def n_horda(miembros):
     return 6
 
 
+def tope_especie(na):
+    """El Rasgo de especie de combate gratuito: hasta Potencial 1, 2 o 3 según el NA (Cap. 2)."""
+    return 1 if na <= 4 else 2 if na <= 9 else 3
+
+
+def pesos(c, na):
+    """Potencial gastado y presupuesto, con los Rasgos de especie, el racial mayor y
+    los de tipo (lo mismo que hace calcCr en la app)."""
+    tipo, rol = TIPOS[c['tipo']], ROLES.get(c['rol'], {})
+    infos = []
+    for r in c['rasgos']:
+        e = POR_ID[r['id']][1] if r.get('id') in POR_ID else r
+        if r.get('id') in POR_ID and 'peso' in r: e = dict(e, peso=r['peso'])   # Uso de Axiomas de Nivel 4 o más: 3
+        infos.append((r, e))
+    auto = None
+    gf = tipo.get('gratisFam')
+    if gf:
+        for r, e in infos:
+            if not r.get('gratis') and r.get('id') in POR_ID and POR_ID[r['id']][0] == gf['fam'] and e['peso'] > 0 \
+                    and (gf.get('peso') is None or e['peso'] == gf['peso']):
+                auto = r; break
+    libre = None
+    if tipo.get('alientoGratis'):
+        libre = next((r for r, e in infos if r.get('id') == 'aliento'), None)
+    if libre is None:
+        cand = [(e['peso'], i) for i, (r, e) in enumerate(infos) if r.get('especie') and not e.get('narrativa')
+                and 0 < e['peso'] <= tope_especie(na) and not r.get('gratis') and not r.get('racial')]
+        if cand: libre = infos[max(cand)[1]][0]
+    gratis = lambda r, e: r.get('gratis') or r is auto or r is libre or r.get('racial') or (r.get('especie') and e.get('narrativa'))
+    debs = [1 for r, e in infos if not gratis(r, e) and (e.get('tipo') == 'Debilidad' or e['peso'] < 0)]
+    base = 0 if rol.get('esbirro') else NA[str(na)]['peso'] + (2 if c['estructura'] == 'jefe' else 0)
+    gasto = sum(e['peso'] for r, e in infos if not gratis(r, e) and e['peso'] > 0)
+    return gasto, base + min(2, len(debs))
+
+
 def calcular(c):
     """Las fórmulas del Cap. 1, para comprobar lo impreso (el cálculo de la app
     está en js/amenaza.js; el autodiagnóstico repite esta comprobación allí)."""
     na = c['na'] + (n_horda(c['miembros']) if c['estructura'] == 'horda' else 0)
-    B, rol, tam = NA[str(na)], ROLES.get(c['rol'], {}), TAM[c['tam']]
+    B, rol, tam, tipo = NA[str(na)], ROLES.get(c['rol'], {}), TAM[c['tam']], TIPOS[c['tipo']]
     mods_r = [POR_ID[r['id']][1].get('mod', {}) for r in c['rasgos'] if r.get('id') in POR_ID]
+    fuertes = c['fuertes'] + ([tipo['fuerteExtra']] if tipo.get('fuerteExtra') else [])
     mod = {}
     for a in ATR:
-        cat = 'F' if a in c['fuertes'] else 'D' if a in c['debiles'] else 'N'
+        cat = 'F' if a in fuertes else 'D' if a in c['debiles'] else 'N'
         t = tam.get(a.lower(), 0)
         if a == 'CON' and any(m.get('conDebil') for m in mods_r): cat = 'D'
         if t == 'D': mod[a] = B['debil']
@@ -495,14 +555,29 @@ def calcular(c):
     pega = max(mod['FUE'], mod['DES'])
     n, caras = [int(x) for x in B['dano'].split('d')]
     n += rol.get('danoDados', 0)
-    pv = max(1, c['na'] * 2) if rol.get('esbirro') else 4 if na == 0 else 50 + na * (5 + mod['CON'])
+    pa = B['pa'] + sum(m.get('pa', 0) for m in mods_r)
+    if rol.get('danoDados') and c['tam'] in ('grande', 'enorme', 'colosal') and na >= 5: pa = max(pa, 4)
+    bono = B['ajuste'] + pega
+    sb = f'+{bono}' if bono > 0 else str(bono) if bono < 0 else ''
+    dano = f'{(n + 1) // 2}d{caras}{sb} y {n // 2}d{caras}{sb}' if pa >= 4 else f'{n}d{caras}{sb}'
+    pv = max(1, c['na'] * 2) if rol.get('esbirro') else 4 if na == 0 else (50 + na * (5 + mod['CON'])) * 3 // 2
     if c['estructura'] == 'jefe': pv *= 2
+    gasto, maximo = pesos(c, na)
+    exceso = max(0, gasto - maximo)
+    area = 0
+    for r in c['rasgos']:
+        e = POR_ID[r['id']][1] if r.get('id') in POR_ID else r
+        if e.get('area') is True: area = max(area, 3 if e['peso'] >= 3 else 2)
+        elif r.get('area'): area = max(area, r['area'])
+    jefe = c['estructura'] == 'jefe'
+    axiomas = any(r.get('id') == 'uso_de_axiomas' or r.get('axiomas') for r in c['rasgos'])
+    enc = na + exceso // 2 + ((4 if na >= 6 else 3) if jefe else 0) + (max(0, area - 1) if jefe else area) \
+        + tam.get('naEnc', 0) + (1 if axiomas else 0)
     return {
         'attrs': mod, 'pv': pv, 'g': 10 + B['pb'] + mod['DES'], 'a': min(B['a'] + rol.get('a', 0), na + 3),
         'vel': 30 + rol.get('vel', 0), 'ini': mod['DES'] + rol.get('ini', 0), 'atk': B['pb'] + pega,
-        'dano': f'{n}d{caras}' + (f'+{pega}' if pega > 0 else str(pega) if pega < 0 else ''),
-        'pa': B['pa'], 'cd': 8 + B['pb'] + na // 2 + max([mod[a] for a in c['fuertes']] or [0]),
-        'salv': {a: mod[a] + B['pb'] for a in c['fuertes']},
+        'dano': dano, 'pa': pa, 'cd': 8 + B['pb'] + na // 2 + max([mod[a] for a in fuertes] or [0]),
+        'salv': {a: mod[a] + B['pb'] for a in fuertes}, 'enc': enc, 'gasto': gasto, 'max': maximo,
     }
 
 
@@ -513,10 +588,11 @@ def leer_atributos(c, linea):
     attrs = {a: num(v) for a, v in re.findall(r'\b(FUE|DES|CON|INT|SAB|CAR) ([+−]\d+)', cab)}
     assert len(attrs) == 6, linea
     fuertes = re.findall(r'\b(FUE|DES|CON|INT|SAB|CAR) ([+−]\d+)', salv)
-    c['fuertes'] = [a for a, _ in fuertes]
+    extra = TIPOS[c['tipo']].get('fuerteExtra')       # el dragón: INT Fuerte por su tipo
+    c['fuertes'] = [a for a, _ in fuertes if a != extra]
     assert len(c['fuertes']) == 2, linea
     tam = TAM[c['tam']]
-    c['debiles'] = [a for a in ATR if a not in c['fuertes'] and tam.get(a.lower(), 0) != 'D'
+    c['debiles'] = [a for a in ATR if a not in c['fuertes'] and a != extra and tam.get(a.lower(), 0) != 'D'
                     and attrs[a] - tam.get(a.lower(), 0) == -2]
     return attrs, {a: num(v) for a, v in fuertes}
 
@@ -532,8 +608,22 @@ def comprobar(c, imp, attrs, salv, errores, solo=None):
     for k, rot in [('pv', 'PV'), ('g', 'Guardia'), ('atk', 'Ataque'), ('dano', 'Daño'), ('cd', 'CD'), ('ini', 'Iniciativa'), ('pa', 'PA')]:
         if k in imp and f[k] != imp[k]: errores.append((c['nombre'], rot, f[k], imp[k]))
     manual = {}
-    if imp.get('a') is not None and imp['a'] != f['a']: manual['armadura'] = imp['a']
-    if imp.get('vel') is not None and imp['vel'] != f['vel']: manual['vel'] = imp['vel']
+    # Desde el 11-10 la ficha impresa ya suma lo que mueven los Rasgos (Piel Gruesa,
+    # Lenta…), igual que la app: solo queda a mano lo que viene del equipo.
+    mods_r = [POR_ID[r['id']][1].get('mod', {}) for r in c['rasgos'] if r.get('id') in POR_ID]
+    na_ef = c['na'] + (n_horda(c['miembros']) if c['estructura'] == 'horda' else 0)
+    rol = ROLES.get(c['rol'], {})
+    a_con = min(NA[str(na_ef)]['a'] + rol.get('a', 0) + sum(m.get('a', 0) for m in mods_r), na_ef + 3)
+    vel_con = 30 + rol.get('vel', 0) + sum(m.get('vel', 0) for m in mods_r)
+    if imp.get('a') is not None and imp['a'] != a_con: manual['armadura'] = imp['a']
+    if imp.get('vel') is not None and imp['vel'] != vel_con: manual['vel'] = imp['vel']
+    # El objeto de un jefe o un Comandante va ya sumado en la ficha («ya incluido»)
+    if c.get('equipo'):
+        for k, km in [('g', 'guardia'), ('atk', 'ataque'), ('cd', 'cd')]:
+            if k in imp and imp[k] != f[k]:
+                manual[km] = imp[k]
+                errores[:] = [e for e in errores if not (e[0] == c['nombre'] and e[1] == {'g': 'Guardia', 'atk': 'Ataque', 'cd': 'CD'}[k])]
+    if 'enc' in imp and imp['enc'] != f['enc']: errores.append((c['nombre'], 'NA de encuentro', f['enc'], imp['enc'], f'Potencial {f["gasto"]}/{f["max"]}'))
     return f, manual
 
 
@@ -554,7 +644,7 @@ def leer_stats(partes, c, imp, extra, errores):
         elif p == 'Jefe': c['estructura'] = 'jefe'
         elif p.startswith('PV '): imp['pv'] = int(re.match(r'PV (\d+)', p).group(1))
         elif p.startswith('Guardia '): imp['g'] = int(p[8:])
-        elif p.startswith('Armadura '): imp['a'] = int(p[9:])
+        elif p.startswith('Armadura '): imp['a'] = int(re.match(r'Armadura (\d+)', p).group(1))
         elif p.startswith('Velocidad '):
             imp['vel'] = int(re.match(r'Velocidad (\d+)', p).group(1))
             if '/' in p: extra.append(p.split('/', 1)[1].strip())
@@ -573,6 +663,29 @@ def leer_stats(partes, c, imp, extra, errores):
 
 
 NUM_TXT = {'cuatro': 4, 'cinco': 5, 'seis': 6, 'siete': 7, 'ocho': 8, 'diez': 10, 'doce': 12}
+# Piezas del bestiario que no están en la Biblioteca: su tipo y su Potencial, por
+# la pieza de la Biblioteca a la que más se parecen (la línea «Encuentro» lo confirma).
+CUSTOM_PESO = {
+    'Garras Paralizantes': ('Modificador', 3), 'Toque Paralizante': ('Modificador', 3), 'Mirada Dominante': ('Aptitud', 3),
+    'Miembros que Siguen': ('Rasgo', 1), 'Hijos de la Noche': ('Aptitud', 0), 'Forma de Niebla': ('Rasgo', 0),
+    'Filacteria': ('Rasgo', 0), 'Palabra Atada': ('Debilidad', 0),
+}
+
+
+def poner_flags(r, flags):
+    """«especie», «definitoria», «racial mayor» → marcas en el Rasgo."""
+    f = [x.strip() for x in re.split(r'[,;]', flags)]
+    if 'especie' in f: r['especie'] = True
+    if 'definitoria' in f: r['definitoria'] = True; r['especie'] = True   # la definitoria es su Rasgo de especie más fuerte
+    if 'racial mayor' in f: r['racial'] = True; r['especie'] = True
+
+
+def leer_encuentro(c, imp, txt):
+    """«… cuenta como NA 11; como jefe, 15, y por sus Axiomas, 16.» → el último número."""
+    c['encuentroTxt'] = txt
+    nums = re.findall(r'NA (\d+)', txt) + re.findall(r', (\d+)(?:,| y |\.| \()', txt)
+    todos = [int(x) for x in re.findall(r'(?:NA |, )(\d+)', txt)]
+    imp['enc'] = todos[-1] if todos else None
 BEST = {}
 i0 = find(M, '#Heading1 Bestiario')
 i1 = find(M, '#Heading1 Referencia rápida')
@@ -618,25 +731,42 @@ while j < i1:
             elif ln.startswith('Contexto táctico. '): c['contexto'] = ln[18:]
             elif ln.startswith('Esbirro:') or ln.startswith('Custodia (Reacción)') or ln.startswith('Horda:'): pass
             elif ln.startswith('Equipo:'): c['equipo'] = ln[8:]
+            elif re.match(r'Equipo( de jefe)?\. ', ln): c['equipo'] = ln.split('. ', 1)[1]
+            elif ln.startswith('Protección. '): c['proteccion'] = ln[12:]
+            elif ln.startswith('Encuentro. '): leer_encuentro(c, imp, ln[11:])
+            elif ln.startswith('Edad. '): c['notas'] = (c.get('notas', '') + '\n' + ln).strip()
             else:
-                m2 = re.match(r'([^.]+)\. (.+)$', ln)
-                if m2 and m2.group(1) in POR_NOMBRE:
-                    r = rasgo_de(m2.group(1), txt=m2.group(2))
-                    if r['id'] == 'vulnerabilidad':
-                        mm = re.search(r'daño (?:de )?(\w+)', m2.group(2))
-                        r['nota'] = mm.group(1)
+                m2 = re.match(r'([^.(]+?)(?: \(([^)]*)\))?\. (.+)$', ln)
+                if m2:
+                    nm, flags, txt = m2.group(1), m2.group(2) or '', m2.group(3)
+                    if nm in POR_NOMBRE:
+                        r = rasgo_de(nm, txt=txt)
+                        mx = re.search(r'de hasta Nivel (\d)', txt)
+                        if r['id'] == 'uso_de_axiomas' and mx and int(mx.group(1)) >= 4: r['peso'] = 3
+                        if r['id'] == 'vulnerabilidad':
+                            mm = re.search(r'daño (?:de )?(\w+)', txt)
+                            r['nota'] = mm.group(1)
+                    elif nm in CUSTOM_PESO:
+                        tp, peso = CUSTOM_PESO[nm]
+                        r = {'custom': True, 'name': nm, 'tipo': tp, 'peso': peso, 'txt': txt}
+                        mc = re.match(r'(\d PA)(?: · ([^:]+))?: (.+)$', txt)
+                        if mc: r['coste'] = mc.group(1); r['frec'] = mc.group(2) or ''; r['txt'] = mc.group(3)
+                    else:
+                        errores.append((nombre, 'línea?', ln[:60])); k += 1; continue
+                    poner_flags(r, flags)
                     c['rasgos'].append(r)
                 else:
                     errores.append((nombre, 'línea?', ln[:60]))
             k += 1
         f, manual = comprobar(c, imp, attrs, salv, errores)
-        if 'vel' in manual:                      # Piel Gruesa, Lenta, Veloz… ya mueven la cifra en la app
-            vel_r = sum(POR_ID[r['id']][1].get('mod', {}).get('vel', 0) for r in c['rasgos'] if r.get('id') in POR_ID)
-            if f['vel'] + vel_r == imp['vel']: del manual['vel']
         if manual: c['manual'] = manual
         if imp.get('moral') is None and c['tipo'] == 'bestia' and 'INT' not in c['debiles']: c['moralNoTira'] = True
         c['impreso'] = {'pv': imp['pv'], 'g': imp['g'], 'a': imp['a'], 'vel': imp.get('vel'), 'atk': imp['atk'],
-                        'dano': imp['dano'], 'cd': imp['cd'], 'ini': imp['ini'], 'moral': imp.get('moral'), 'attrs': attrs}
+                        'dano': imp['dano'], 'cd': imp['cd'], 'ini': imp['ini'], 'moral': imp.get('moral'), 'attrs': attrs,
+                        'enc': imp.get('enc', f['enc'] if 'enc' not in imp else imp['enc'])}
+        if 'enc' not in imp and f['enc'] != (c['na'] + (n_horda(c['miembros']) if c['estructura'] == 'horda' else 0)):
+            errores.append((nombre, 'NA de encuentro sin línea «Encuentro»', f['enc'], f'Potencial {f["gasto"]}/{f["max"]}'))
+        c['impreso']['enc'] = imp.get('enc', c['na'] + (n_horda(c['miembros']) if c['estructura'] == 'horda' else 0))
         BEST[slug(nombre)] = c
         j = k
     else:
@@ -648,7 +778,7 @@ VEL_NOTA = {'dron_centinela': ('vuelo', '30 pies'), 'fuego_fatuo': ('vuelo', '30
             'serafin_ceniciento': ('vuelo', '60 pies'), 'dragon_rojo_adulto': ('vuelo', '80 pies')}
 for k, (rid, nota) in VEL_NOTA.items():
     for r in BEST[k]['rasgos']:
-        if r['id'] == rid: r['nota'] = nota
+        if r.get('id') == rid: r['nota'] = nota
 
 # ───────────────────────── Bestiario básico de la Guía ─────────────────────────
 GUIA_TT = {  # el tipo no viene en la Guía: se asigna por lo que la criatura es (el tamaño, sí, y se comprueba)
@@ -683,23 +813,40 @@ while j < i1:
             ln = G[k]
             m2 = re.match(r'([^(:]+) \(([^)]*)\): (.+)$', ln)
             if ln.startswith('Contexto táctico. '): ctx.append(ln[18:])
-            elif m2 and (m2.group(2).split(',')[0].strip() in ICONO_TIPO):
-                partes = [x.strip() for x in m2.group(2).split(',')]
-                r = {'custom': True, 'name': m2.group(1), 'tipo': ICONO_TIPO[partes[0]], 'peso': 0, 'txt': m2.group(3)[0].upper() + m2.group(3)[1:]}
-                for x in partes[1:]:
-                    if 'PA' in x: r['coste'] = x
-                    elif x.startswith('Ud'): r['frec'] = x
-                    elif 'pies' in x: r['tipo'] = 'Aura'; r['txt'] = f'Radio de {x}: ' + r['txt'][0].lower() + r['txt'][1:]
-                c['rasgos'].append(r)
+            elif m2 and (re.split(r'[,;]', m2.group(2))[0].strip() in ICONO_TIPO):
+                nm, txt = m2.group(1), m2.group(3)[0].upper() + m2.group(3)[1:]
+                partes = [x.strip() for x in re.split(r'[,;]', m2.group(2))]
+                if nm == 'Protección': c['proteccion'] = txt
+                elif nm == 'Encuentro': leer_encuentro(c, imp, txt)
+                elif nm.startswith('Equipo'): c['equipo'] = (partes[1] + ': ' if len(partes) > 1 else '') + txt
+                else:
+                    r = {'custom': True, 'name': nm, 'tipo': ICONO_TIPO[partes[0]], 'peso': 0, 'txt': txt}
+                    for x in partes[1:]:
+                        if 'PA' in x: r['coste'] = x
+                        elif x.startswith('Ud') or x.startswith('1/'): r['frec'] = x
+                        elif 'pies' in x: r['tipo'] = 'Aura'; r['txt'] = f'Radio de {x}: ' + r['txt'][0].lower() + r['txt'][1:]
+                    poner_flags(r, m2.group(2))
+                    if nm == 'Uso de Axiomas': r['axiomas'] = True
+                    c['rasgos'].append(r)
             elif ctx: ctx.append(ln)
+            elif re.match(r'[^.]+ \(NA \d+\)\. ', ln): c['notas'] = (c.get('notas', '') + '\n' + ln).strip()
             else: errores.append((nombre, 'línea guía?', ln[:60]))
             k += 1
         c['contexto'] = '\n\n'.join(ctx)
+        # Los rasgos de la Guía no llevan Potencial: la Aptitud de área que nombra su
+        # línea «Encuentro» («su Explosión Mental le suma 3») se marca para la cuenta.
+        if imp.get('enc') is not None:
+            sin_area = calcular(c)['enc']
+            falta = imp['enc'] - sin_area
+            if falta > 0:
+                r = next((r for r in c['rasgos'] if r.get('custom') and r['name'].split()[0] in c.get('encuentroTxt', '')), None)
+                if r: r['area'] = falta + (1 if c['estructura'] == 'jefe' else 0)
         f, manual = comprobar(c, imp, attrs, salv, errores)
         if manual: c['manual'] = manual
         if imp.get('moral') is None and 'INT' not in c['debiles'] and tipo == 'bestia': c['moralNoTira'] = True
         c['impreso'] = {'pv': imp['pv'], 'g': imp['g'], 'a': imp['a'], 'vel': imp.get('vel'), 'atk': imp['atk'],
-                        'dano': imp['dano'], 'cd': imp['cd'], 'ini': imp['ini'], 'moral': imp.get('moral'), 'attrs': attrs}
+                        'dano': imp['dano'], 'cd': imp['cd'], 'ini': imp['ini'], 'moral': imp.get('moral'), 'attrs': attrs,
+                        'enc': imp.get('enc', c['na'] + (n_horda(c['miembros']) if c['estructura'] == 'horda' else 0))}
         key = slug(c['nombre'])
         assert key not in BEST, key
         BEST[key] = c
@@ -711,31 +858,34 @@ for e in errores:
     print('  AVISO', e)
 
 # ───────────────────────── Encuentros ─────────────────────────
-# NA del encuentro que corresponde a cada dificultad (Guía, Cap. 2): «la primera
-# opción de cada casilla». Al lado, la tabla de calibrado de un enemigo solo.
+# Dificultad de una criatura sola, o NA de encuentro de cada dificultad (Manual de
+# Monstruos, Cap. 4). La Guía (Cap. 2) da la misma tabla con ejemplos: se comprueba.
+i = find(M, '#Heading2 Calibrar el encuentro')
+rows, _ = rows_from(M, i)
+assert rows[0] == ['Nivel del grupo', 'Fácil', 'Estándar', 'Peligroso', 'Mortal'], rows[0]
 i = find(G, 'ROW: | Nivel grupo | Fácil | Estándar | Peligroso | Mortal')
-rows, _ = rows_from(G, i)
-i = find(G, 'ROW: | Nivel del grupo | NA estándar | NA serio | NA mortal')
-cal, _ = rows_from(G, i)
+guia, _ = rows_from(G, i)
 ENC = {}
-for r, c in zip(rows[1:], cal[1:]):
-    assert r[0] == c[0], (r, c)
-    f, e, p, m = [int(re.match(r'1×NA(\d+)', x).group(1)) for x in r[1:5]]
-    assert '+' in r[4] and f < e < p < m, r
-    ENC[r[0].replace('–', '-')] = {'name': 'Nivel ' + r[0], 'f': f, 'e': e, 'p': p, 'm': m,
-                                   'estandar': c[1], 'serio': c[2], 'mortal': c[3]}
+for r, g in zip(rows[1:], guia[1:]):
+    assert r[0] == g[0], (r, g)
+    f, e, p, m = [int(x.rstrip('+')) for x in r[1:5]]
+    assert [int(re.match(r'1×NA(\d+)', x).group(1)) for x in g[1:5]] == [f, e, p, m], (r, g)
+    assert r[4].endswith('+') and f < e < p < m, r
+    ENC[r[0].replace('–', '-')] = {'name': 'Nivel ' + r[0], 'f': f, 'e': e, 'p': p, 'm': m}
 assert list(ENC) == ['1-2', '3-4', '5-6', '7-8', '9-10'], list(ENC)
-# «Con cinco o seis, súmale 1 a cada columna; con dos o tres, réstale 1.» La Guía
-# no dice nada de un personaje solo: se le resta 2.
-assert find(G, 'Con cinco o seis, súmale 1 a cada columna; con dos o tres, réstale 1')
+# «Con cinco o seis, suma 1 a cada casilla; con dos o tres, resta 1.» Nada dice de un
+# personaje solo: se le resta 2.
+find(M, 'Con cinco o seis, suma 1 a cada casilla; con dos o tres, resta 1')
 GRUPO_AJUSTE = {'1': -2, '2': -1, '3': -1, '4': 0, '5': 1, '6': 1}
-# El cálculo del NA del encuentro va en el código (js/mesa.js → _naDeLineas). Si la
-# Guía cambia la regla, esto avisa.
-for frase in ['una de dos NA menos, como ½; una de cuatro NA menos, como ¼',
-              'con 2 o 3, el NA del encuentro sube 2; con 4 a 7, sube 4; con 8 o más, sube 6',
-              'Un jefe sube 2 por sí solo; una criatura Enorme o Colosal, 1',
-              'Cuatro esbirros cuentan como una criatura de su NA. Una horda usa su NA efectivo']:
-    find(G, frase)
+# El cálculo va en el código (js/amenaza.js → naEnc y js/mesa.js → _naDeLineas;
+# js/asistente.js → varias iguales). Si el Manual cambia la regla, esto avisa.
+for frase in ['ROW: | Es un jefe | +3; +4 desde NA 6', 'ROW: | Es Enorme o Colosal | +1', 'ROW: | Usa Axiomas | +1',
+              'ROW: | Se pasa de su Potencial | +1 por cada 2 puntos',
+              'a 0 o 1 NA, 1; a 2 o 3, ½; a 4, ¼; a 5 o más, no cuenta',
+              'con 1½, +2; con 2, +3; con 3, +4; con 4 o 5, +6; con 6 o 7, +7; con 8 o más, +9',
+              'Cuatro esbirros cuentan como una criatura de su NA, y una horda usa su NA efectivo',
+              'réstale al NA de la casilla: con dos, 3; con tres, 4; con cuatro o cinco, 6; con seis o siete, 7; con ocho o más, 9']:
+    find(M, frase)
 
 # ───────────────────────── Botín ─────────────────────────
 i = find(G, 'ROW: | Nivel del grupo | Riqueza acumulada')
@@ -816,27 +966,31 @@ rows, _ = rows_from(G, i)
 ACC = {slug(r[0]): {'name': r[0], 'attr': r[1], 'txt': r[2]} for r in rows[1:]}
 
 # ───────────────────────── Estados (Manual Básico, Cap. 10) ─────────────────────────
-ESTADOS = {
-    'sangrado': ('Sangrado', 'Ud6', '1d4 Físico por turno. Las curaciones solo restauran la mitad.'),
-    'desgarro': ('Desgarro', 'Ud6', '2 de daño por turno. −1 de Armadura (o de Guardia si no lleva).'),
-    'trauma': ('Trauma', 'Ud4', '1d6 Físico por turno. Desventaja en las tiradas de FUE.'),
-    'envenenado': ('Envenenado', 'Ud8', '1d6 por turno. Desventaja en ataques y habilidades.'),
-    'ignicion': ('Ignición', 'Ud6', '1d10 de Fuego por turno, +1 acumulativo cada turno que el Ud no degrada.'),
-    'ralentizado': ('Ralentizado', 'Ud6', 'Movimiento a la mitad. Sin Paso Táctico gratuito.'),
-    'aturdido': ('Aturdido', 'Ud4', 'Sin Reacciones ni acciones de 3 PA. Ventaja para quien lo ataque.'),
-    'conmocionado': ('Conmocionado', 'Ud6', 'Desventaja en la primera tirada de cada turno. Sus fuentes de Ventaja quedan canceladas.'),
-    'cegado': ('Cegado', 'Ud4', 'Desventaja en sus ataques. Ventaja para quien lo ataque.'),
-    'aterrado': ('Aterrado', 'Ud4', 'Desventaja en todas sus tiradas mientras perciba la fuente. No puede acercarse a ella.'),
-    'paralizado': ('Paralizado', 'Ud4', 'No se mueve ni gasta PA. Ventaja contra él; cuerpo a cuerpo a 5 pies es Crítico.'),
-    'apresado': ('Apresado', '', 'Velocidad 0. Desventaja en sus ataques y Salvaciones de DES. Ventaja para quien lo ataque.'),
-    'derribado': ('Derribado', '', 'En el suelo: levantarse cuesta movimiento. Ventaja cuerpo a cuerpo contra él.'),
-    'encantado': ('Encantado', 'Ud6', 'Ve a la fuente como aliada y no puede atacarla. Recibir daño de ella lo rompe.'),
-    'ensordecido': ('Ensordecido', 'Ud6', 'No oye. Inmune a los efectos basados en el sonido.'),
-    'maldito': ('Maldito', 'Ud8', 'Desventaja en un tipo de tirada, según la fuente.'),
-    'petrificado': ('Petrificado', '', 'Como Paralizado, con Resistencia a todo el daño.'),
-    'desprevenido': ('Desprevenido', '', 'No ha actuado o no ve venir el golpe: pierde el escudo y las Reacciones.'),
-}
-ESTADOS = {k: {'name': n, 'ud': ud, 'txt': t} for k, (n, ud, t) in ESTADOS.items()}
+# ───────────────────────── Estados (Manual Básico, Cap. 10) ─────────────────────────
+# La tabla de estados, las «equivalencias de condiciones clásicas» (Encantado,
+# Ensordecido, Maldito, Petrificado), el Derribado de las maniobras y el
+# Desprevenido del glosario.
+i = find(MB, 'ROW: | Estado | Daño por turno | Ud | Efecto secundario')
+rows, _ = rows_from(MB, i)
+ESTADOS = {}
+for nombre, dano, ud, efecto in rows[1:]:
+    mud = re.match(r'(Ud\d+)$', ud)
+    txt = (f'{dano} por turno. ' if dano not in ('—', '') else '') + efecto
+    if ud.startswith('Ud (según'): txt += ' (Su Ud, el de la fuente.)'
+    ESTADOS[slug(nombre)] = {'name': nombre, 'ud': mud.group(1) if mud else '', 'txt': txt}
+for nombre in ['Encantado', 'Ensordecido', 'Maldito', 'Petrificado']:
+    ln = MB[find(MB, nombre + ': ')]
+    txt = ln[len(nombre) + 2].upper() + ln[len(nombre) + 3:]
+    mud = re.search(r'(Ud\d+) por defecto', txt)
+    ESTADOS[slug(nombre)] = {'name': nombre, 'ud': mud.group(1) if mud else '', 'txt': txt}
+ln = MB[find(MB, 'Mientras está Derribado: ')]
+ESTADOS['derribado'] = {'name': 'Derribado', 'ud': '',
+                        'txt': re.search(r'Mientras está Derribado: ([^.]+\.)', ln).group(1)}
+ln = MB[find(MB, 'Desprevenido — ')]
+ESTADOS['desprevenido'] = {'name': 'Desprevenido', 'ud': '', 'txt': ln[len('Desprevenido — '):]}
+assert {'sangrado', 'desgarro', 'trauma', 'envenenado', 'ignicion', 'ralentizado', 'aturdido', 'conmocionado', 'cegado',
+        'aterrado', 'paralizado', 'apresado', 'derribado', 'encantado', 'ensordecido', 'maldito', 'petrificado',
+        'desprevenido'} == set(ESTADOS), sorted(ESTADOS)
 DANOS = ['Cortante', 'Perforante', 'Contundente', 'Fuego', 'Frío', 'Rayo', 'Ácido', 'Veneno', 'Energía', 'Sónico',
          'Fuerza', 'Psíquico', 'Necrótico', 'Radiante']
 TABLAS['danos'] = {'name': 'Tipos de daño', 'filas': DANOS}

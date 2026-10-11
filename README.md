@@ -1,17 +1,54 @@
-# S&S Director — v1.2
+# S&S Director — v1.3
 
 La app hermana de **S&S Companion** para quien dirige *Stars & Sorcery*: crea
 amenazas, calibra encuentros y genera botín, zonas y facciones. PWA estática:
 sin build, sin dependencias, funciona sin conexión.
 
-## Novedades v1.2 — Manuales del 2-10-2026: atributos y fórmulas
+## Novedades v1.3 — Manuales del 11-10-2026
 
-`CACHE_VERSION` es `ss-director-v13` y `RULES_DATA_VERSION`,
-`v1-monstruos-guia-r6` (entrega de los manuales del 8-10-2026, carpeta
-`OneDrive\S&S\Official`). Desde el 8-10 la moneda es el crédito (cr) en
-lugar de pp: botín, riqueza, costes, precios de rareza, Focos y Módulos. El
-bestiario de la Guía imprime el tamaño y el generador lo comprueba. Las
-reglas de criaturas no cambian.
+`CACHE_VERSION` es `ss-director-v15` y `RULES_DATA_VERSION`,
+`v1-monstruos-guia-r8`. Los manuales se leen de
+`OneDrive\S&S\Official\Stars_and_Sorcery_v1_Paquete_Completo_1`.
+
+- **Daño**: cada NA tiene un ajuste que se suma a cada ataque (NA 1, +1; NA 3,
+  −2…). Con 4 PA o más son **dos Ataques Normales** que se reparten los dados
+  —el primero lleva el impar—, y la ficha enseña una tarjeta para cada uno.
+  Un Arrollador Grande o mayor tiene al menos 4 PA desde NA 5.
+- **PV** ×1,5: (50 + NA × (5 + CON)) × 1,5, hacia abajo.
+- **Dragón**: Telepatía, INT Fuerte además de los dos del Rol, Aliento gratis y
+  Uso de Axiomas obligatorio; Enorme o Colosal. **Dracónido**, tipo nuevo
+  (wyverns, dracos): Aliento pagado, INT y CAR Débiles. **Wyvern** en el
+  bestiario (44 criaturas).
+- **Rasgos de especie**: cada Rasgo puede marcarse «De especie»,
+  «Definitoria» y, en un jefe, «Racial mayor» (en la tarjeta del Rasgo). Uno
+  de especie de combate es gratis si no pasa de Potencial 1, 2 o 3 según el NA;
+  los de narrativa (Resurgir, Pesadillas…), siempre; el Aliento de un dragón,
+  también; y el racial mayor de un jefe. La Aptitud definitoria lleva su
+  línea **«Protección»** (Notas → Señal y contexto).
+- **NA de encuentro** de cada criatura: su NA + 1 por cada 2 de exceso de
+  Potencial + jefe 3 (4 desde NA 6) + Aptitud de daño en área (3 o 2; en un
+  jefe, uno menos) + 1 si es Enorme o Colosal + 1 si usa Axiomas. La revisión
+  final lo dice como el Manual: «Encuentro: cuenta como NA…».
+- **Varias criaturas**: cuenta 1 la que está a 0 o 1 NA de la más fuerte; ½ a
+  2 o 3; ¼ a 4. El NA sube +2 con 1½, +3 con 2, +4 con 3, +6 con 4 o 5, +7 con
+  6 o 7 y +9 con 8 o más.
+- **Tabla de dificultad nueva** (Manual de Monstruos, Cap. 4): para Nivel 1–2,
+  NA 3 · 4 · 5 · 6+; para 3–4, 4 · 5 · 6 · 7+; para 5–6, 8 · 9 · 10 · 11+…
+- **Asistente de diez pasos**, como el Manual: idea, NA (con la tabla de
+  dificultad y «cuántas iguales»), tipo y tamaño, Rol, atributos,
+  estadísticas, la especie, Potencial, el jefe (solo si lo es: racial mayor y
+  objeto mágico) y el cierre (NA de encuentro, señal, contexto, cuándo huye).
+- **Estados** (Mesa → combate): ahora se leen del Manual Básico. Cambian: Aturdido
+  es el más severo (no actúa ni reacciona; crítico cuerpo a cuerpo), Paralizado
+  deja hablar y salvar, y el daño de Sangrado, Desgarro, Trauma y Envenenado
+  tiene tipo.
+- **Roles**: Ataque Masivo ya no cuesta PA (una vez por ronda, al impactar);
+  el Represor tiene Represión (3 PA, 1/ronda).
+- **Bestiario**: las 44 criaturas salen de las fórmulas y su NA de encuentro
+  coincide con su línea «Encuentro». Los objetos de los jefes y Comandantes
+  van sumados a mano, como en la ficha impresa.
+
+## v1.2 — Manuales del 2-10-2026: atributos y fórmulas
 
 El Manual de Monstruos y la Guía han cambiado cómo se construye una criatura:
 ya no se lee una fila de estadísticas, **se calcula como un personaje**.
@@ -19,8 +56,7 @@ ya no se lee una fila de estadísticas, **se calcula como un personaje**.
 - **Atributos**: cada criatura tiene FUE, DES, CON, INT, SAB y CAR, cada uno
   **Fuerte**, **Normal** o **Débil**. El Rol decide los dos Fuertes, el tipo
   sugiere los Débiles y el tamaño toca FUE, DES y CON. Se ven y se editan en
-  Combate → «Atributos y Moral», y tienen paso propio en el asistente, que
-  pasa a **nueve pasos**.
+  Combate → «Atributos y Moral», y tienen paso propio en el asistente.
 - **Fórmulas**: ataque = Competencia + el mayor de FUE o DES · daño por turno
   = dado de daño del NA + ese modificador · Guardia = 10 + Competencia + DES ·
   PV = 50 + NA × (5 + CON) · Salvaciones = modificador, más la Competencia en
@@ -141,23 +177,27 @@ cambiar en el Editor de Reglas):
   Colosal): vale −2 aunque el Rol lo haga Fuerte, pero su Salvación sigue
   sumando la Competencia. Así salen el Enjambre de Ratas y el Titán.
 - **Los Rasgos cuentan en las cifras**: Piel Gruesa suma su Armadura, Evasiva
-  su Guardia, Lenta resta su velocidad.
-- **NA del encuentro**: el +2 del jefe, el +1 del tamaño Enorme o Colosal, el
-  NA efectivo de la horda y el +1 por cada 2 de exceso de Potencial se aplican
-  a la criatura antes de buscar «la más fuerte». Un jefe de NA 3 entra en la
-  cuenta como NA 5.
-- **Criaturas de uno o tres NA menos**: la Guía solo da ½ para dos NA menos y
-  ¼ para cuatro. Las intermedias cuentan a medio camino: ¾ y ⅜.
-- **Menos de cuatro esbirros solos**: la Guía solo dice que cuatro cuentan
-  como una criatura. Si el encuentro no llega a sumar 1, el NA baja: dos
-  esbirros, 2 NA menos; uno, 4 menos.
+  su Guardia, Lenta resta su velocidad (desde el 11-10, la ficha impresa del
+  Manual también).
+- **Rasgo de especie gratuito**: el Manual dice «uno, el que elijas». La app
+  elige el de más Potencial que quepa en el tope de su NA. La Aptitud
+  definitoria cuenta como Rasgo de especie.
+- **Piezas del bestiario que no están en la Biblioteca** (Garras Paralizantes,
+  Toque Paralizante, Mirada Dominante, Hijos de la Noche, Forma de Niebla…):
+  se traen como Rasgos propios, con el Potencial que hace cuadrar su línea
+  «Encuentro». Las de la Guía no gastan Potencial, como siempre, y su Aptitud de
+  área se marca con lo que su línea «Encuentro» le suma.
+- **Uso de Axiomas** cuesta 3 si algún Axioma es de Nivel 4 o más (el bestiario
+  lo trae así; en una amenaza tuya, ajústalo en la pieza).
+- **NA de encuentro**: el jefe, la Aptitud de área, el tamaño, los Axiomas, el
+  NA efectivo de la horda y el exceso de Potencial se aplican a la criatura
+  antes de buscar «la más fuerte». Lo que puede invocar no se suma solo: la
+  Mesa lo recuerda.
+- **Entre 1 y 1½ criaturas equivalentes** el NA no sube (el Manual empieza en
+  1½). **Menos de cuatro esbirros solos**: si no llegan a sumar 1, el NA baja
+  (dos esbirros, 3 menos; uno, 6).
 - **Grupo de un solo personaje**: la Guía no da ajuste; se resta 2 NA a cada
   dificultad y se recuerda el Filo del Protagonista.
-- **Enemigo solo y encuentro no dicen lo mismo**: la tabla de calibrado de la
-  Guía (NA estándar, serio y mortal) y la de encuentros (Fácil a Mortal) no
-  coinciden —para Nivel 1–2, NA 3 es «mortal» en una y «peligroso» en la
-  otra—. El asistente usa la primera para elegir el NA de una criatura, como
-  manda el Manual; la Mesa, la segunda.
 - **Anomalías Cósmicas**: aún no tienen ficha propia.
 
 ## Probar en local
@@ -171,10 +211,11 @@ pelear con la caché: da de baja el worker y borra las cachés, ejecuta
 `python herramientas/verify.py` y abre `_verify.html?v=<algo único>`. Bórralo
 al terminar.
 
-- **Autodiagnóstico**: `?check=1`. Comprueba, entre otras cosas, que las 43
+- **Autodiagnóstico**: `?check=1`. Comprueba, entre otras cosas, que las 44
   criaturas del bestiario salen de las fórmulas —atributos, PV, Guardia,
-  ataque, daño, CD, Iniciativa y Moral, frente a lo impreso— y caben en su
-  Potencial, y que el NA del encuentro da lo que dan los ejemplos de la Guía. Fija antes el
+  Armadura, ataque, daño, CD, Iniciativa, velocidad y Moral, frente a lo
+  impreso—, que su NA de encuentro es el de su línea «Encuentro» y que el NA
+  de varias criaturas da lo que dan los ejemplos de la Guía. Fija antes el
   ancho de la ventana (390×844): con el panel oculto da falsos «texto que se
   sale».
 - **Sube `CACHE_VERSION`** (`sw.js`) en cada cambio, y `RULES_DATA_VERSION`
@@ -199,7 +240,7 @@ al terminar.
 | `js/amenaza.js` | La ficha: cálculo (`calcCr`) y tarjetas |
 | `js/biblioteca.js` | Biblioteca de Rasgos y Aptitudes |
 | `js/mesa.js` | Mesa del Director |
-| `js/asistente.js` | Asistente de nueve pasos |
+| `js/asistente.js` | Asistente de los diez pasos del Manual |
 | `js/editor.js` | Editor de reglas |
 | `js/storage.js` | IndexedDB `ss-director` (claves `ssd_*`) |
 | `js/respaldo.js` · `historial.js` · `plegables.js` · `autocheck.js` | Copias, tiradas, tarjetas plegables, autodiagnóstico |
@@ -213,6 +254,9 @@ dominio.
 ## Pendiente
 
 - Ficha propia para las Anomalías Cósmicas (Manual de Monstruos, Cap. 8).
+- Las plantillas de no-muerte mayor del Manual (Vampiro, Liche y Caballero de
+  la Muerte, Cap. 4) no están en el menú Plantillas: vienen como texto, no en
+  la tabla. El bestiario sí trae al Vampiro Señorial, al Liche y al Caballero.
 - Selector de Axiomas del Catálogo para el Rasgo «Uso de Axiomas» (hoy se
   anotan a mano y la ficha calcula su Nivel máximo, CD y Reserva).
 - Si las dos apps se publican en el mismo dominio: el service worker de

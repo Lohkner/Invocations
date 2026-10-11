@@ -34,7 +34,7 @@ Object.assign(app, {
       na: 1, tipo: 'bestia', tam: 'mediano', rol: '', estructura: 'normal', miembros: 6,
       fuertes: [], debiles: [], manual: {}, ataqueNombre: '', danoTipo: '',
       rasgos: [], moralNoTira: false, pvAct: null,
-      senal: '', contexto: '', habitat: '', quiere: '', pelea: '', botin: '', notas: '',
+      senal: '', contexto: '', proteccion: '', habitat: '', quiere: '', pelea: '', botin: '', notas: '',
       jefe: { fases: '', guarida: '', victoria: '' }, revision: [false, false, false, false],
     };
     this._ponerRasgosDeTipo(cr);
@@ -76,8 +76,8 @@ Object.assign(app, {
     d = (d && typeof d === 'object' && !Array.isArray(d)) ? d : {};
     const txt = v => this._sanitize(typeof v === 'string' ? v : '').slice(0, 6000);
     const cr = { ...base };
-    ['nombre', 'idea', 'ataqueNombre', 'danoTipo', 'senal', 'contexto', 'habitat', 'quiere', 'pelea', 'botin', 'notas',
-     'fuente', 'equipo', 'rolNota', 'salvTxt'].forEach(k => { if (d[k] != null) cr[k] = txt(d[k]); });
+    ['nombre', 'idea', 'ataqueNombre', 'danoTipo', 'senal', 'contexto', 'proteccion', 'habitat', 'quiere', 'pelea', 'botin', 'notas',
+     'fuente', 'equipo', 'rolNota', 'salvTxt', 'encuentroTxt'].forEach(k => { if (d[k] != null) cr[k] = txt(d[k]); });
     cr.nombre = cr.nombre.slice(0, 80);
     cr.retrato = this._retratoOk(d.retrato) ? d.retrato : '';
     const na = parseInt(d.na, 10);
@@ -108,11 +108,11 @@ Object.assign(app, {
     // Las cifras impresas del bestiario antiguo no valen con las fórmulas nuevas;
     // lo que el Director fijó a mano en sus propias amenazas, sí se conserva.
     if (d.manual && typeof d.manual === 'object' && !(antigua && d.fuente)) {
-      ['pv', 'guardia', 'armadura', 'ataque', 'pa', 'vel', 'ini', 'moral'].forEach(k => {
+      ['pv', 'guardia', 'armadura', 'ataque', 'pa', 'vel', 'ini', 'moral', 'cd'].forEach(k => {
         const n = parseInt(d.manual[k], 10);
         if (Number.isFinite(n)) cr.manual[k] = n;
       });
-      if (typeof d.manual.dano === 'string' && this._parseDano(d.manual.dano)) cr.manual.dano = d.manual.dano.replace('−', '-');
+      if (typeof d.manual.dano === 'string' && this._parseDanos(d.manual.dano)) cr.manual.dano = d.manual.dano.replace(/−/g, '-');
     }
     cr.rasgos = (Array.isArray(d.rasgos) ? d.rasgos : []).slice(0, 60).map(r => this._normalizarRasgo(r)).filter(Boolean);
     const j = d.jefe && typeof d.jefe === 'object' ? d.jefe : {};
@@ -139,13 +139,23 @@ Object.assign(app, {
         o.mod = {};
         ['a', 'g', 'vel', 'pa', 'moral'].forEach(k => { const n = parseInt(r.mod[k], 10); if (Number.isFinite(n)) o.mod[k] = n; });
       }
+      const ar = parseInt(r.area, 10);
+      if (Number.isFinite(ar) && ar > 0) o.area = Math.min(3, ar);   // Aptitud de área de la Guía: lo que suma al encuentro
+      if (r.axiomas) o.axiomas = true;
     } else {
       o.id = String(r.id).slice(0, 60);
+      const pz = parseInt(r.peso, 10);
+      if (Number.isFinite(pz)) o.peso = Math.max(-1, Math.min(3, pz));   // Uso de Axiomas de Nivel 4 o más: 3
       if (this.RASGO_ANTES[o.id] && !this._libIdx()[o.id]) o.id = this.RASGO_ANTES[o.id];
       if (r.txt) o.txt = s(r.txt);
     }
     if (r.nota) o.nota = s(r.nota).slice(0, 160);
     if (r.gratis) { o.gratis = true; o.origen = r.origen === 'plantilla' ? 'plantilla' : 'tipo'; }
+    // Rasgos de especie (Cap. 2): la Aptitud definitoria es la más fuerte de ellos;
+    // el racial mayor es la segunda pieza gratuita de un jefe.
+    if (r.especie || r.definitoria || r.racial) o.especie = true;
+    if (r.definitoria) o.definitoria = true;
+    if (r.racial) o.racial = true;
     if (typeof r.udAct === 'string' && (this.UD.includes(r.udAct) || r.udAct === 'agotada')) o.udAct = r.udAct;
     if (r.usada) o.usada = true;
     return o;
@@ -170,8 +180,9 @@ Object.assign(app, {
     const hit = this._libIdx()[r.id];
     if (!hit) return { name: r.id, tipo: 'Rasgo', peso: 0, txt: r.txt || '', coste: '', frec: '', fam: '', mod: null, perdido: true };
     const e = hit.e;
-    return { name: e.name, tipo: e.tipo, peso: e.peso || 0, txt: r.txt || e.txt || '', txtBase: e.txt || '', coste: e.coste || '',
-             frec: e.frec || '', fam: hit.fam, mod: e.mod || null, pide: e.pide || '', multi: !!e.multi };
+    return { name: e.name, tipo: e.tipo, peso: r.peso != null ? r.peso : (e.peso || 0), txt: r.txt || e.txt || '', txtBase: e.txt || '', coste: e.coste || '',
+             frec: e.frec || '', fam: hit.fam, mod: e.mod || null, pide: e.pide || '', multi: !!e.multi,
+             narrativa: !!e.narrativa, area: !!e.area };
   },
 
   /** Rasgos gratuitos del tipo: fuera los del tipo anterior, dentro los nuevos. */
@@ -191,6 +202,11 @@ Object.assign(app, {
     return { n: +m[1], caras: +m[2], bono: m[3] ? parseInt(m[3].replace(/\s/g, ''), 10) : 0 };
   },
   _fmtDano(d) { return `${d.n}d${d.caras}${d.bono > 0 ? '+' + d.bono : d.bono < 0 ? d.bono : ''}`; },
+  /** «3d6+2 y 2d6+2» → [{…}, {…}]; un solo ataque → [{…}]. */
+  _parseDanos(s) {
+    const partes = String(s || '').split(/\s+y\s+/).map(x => this._parseDano(x));
+    return partes.length && partes.length <= 2 && partes.every(Boolean) ? partes : null;
+  },
   _mediaDano(d) { return d.n * (d.caras + 1) / 2 + d.bono; },
 
   /** Tamaño de horda (Manual de Monstruos, Cap. 6): cuánto sube el NA. */
@@ -210,53 +226,74 @@ Object.assign(app, {
     const na = Math.min(15, cr.na + (H ? H.na : 0));
     const B = this.DB.na[na] || this.DB.na[1];
 
-    // Rasgos: qué son y cuál sale gratis por el tipo (Monstruosidad, Mutante)
+    // Rasgos: qué son y cuáles salen gratis (Cap. 2): los de tipo, el de Forma de
+    // la Monstruosidad y el Mutante, los de especie de narrativa, un Rasgo de especie
+    // de combate dentro del tope de su NA (en un dragón, su Aliento) y, en un jefe,
+    // su racial mayor.
     const infos = cr.rasgos.map(r => ({ r, i: this.rasgoInfo(r) }));
     let autoGratis = null;
     if (tipo.gratisFam) {
       autoGratis = infos.find(x => !x.r.gratis && x.i.fam === tipo.gratisFam.fam && x.i.peso > 0 &&
         (tipo.gratisFam.peso == null || x.i.peso === tipo.gratisFam.peso)) || null;
     }
-    const esGratis = x => !!x.r.gratis || x === autoGratis;
+    const tope = na <= 4 ? 1 : na <= 9 ? 2 : 3;
+    let especieLibre = tipo.alientoGratis ? (infos.find(x => x.r.id === 'aliento') || null) : null;
+    if (!especieLibre) especieLibre = infos.filter(x => x.r.especie && !x.r.gratis && !x.r.racial && !x.i.narrativa && x.i.peso > 0 && x.i.peso <= tope)
+      .sort((a, b) => b.i.peso - a.i.peso)[0] || null;
+    const motivoGratis = x => x.r.gratis ? (x.r.origen === 'plantilla' ? 'plantilla' : 'de tipo') : x === autoGratis ? 'de tipo'
+      : x === especieLibre || (x.r.especie && x.i.narrativa) ? 'especie' : (jefe && x.r.racial) ? 'racial mayor' : '';
+    const esGratis = x => !!motivoGratis(x);
     const suma = k => infos.reduce((a, x) => a + ((x.i.mod && Number(x.i.mod[k])) || 0), 0);
 
     // Atributos: Fuerte = PB, Normal y Débil de la fila de su NA. El tamaño
     // suma o resta en FUE, DES y CON, o los deja en Débil («D») sin más.
     const fragil = infos.some(x => x.i.mod && x.i.mod.conDebil);
+    // El dragón tiene además INT Fuerte, con su Salvación (Cap. 2)
+    const fuertes = cr.fuertes.concat(tipo.fuerteExtra && !cr.fuertes.includes(tipo.fuerteExtra) ? [tipo.fuerteExtra] : []);
     const mod = {}, cat = {}, salv = {};
     this.ATTRS.forEach(a => {
       const t = tam[a.toLowerCase()];
-      let c = cr.fuertes.includes(a) ? 'F' : cr.debiles.includes(a) ? 'D' : 'N';
+      let c = fuertes.includes(a) ? 'F' : cr.debiles.includes(a) ? 'D' : 'N';
       if (t === 'D' || (a === 'CON' && fragil)) c = 'D';
       cat[a] = c;
       mod[a] = (c === 'F' ? B.fuerte : c === 'D' ? B.debil : B.normal) + (Number(t) || 0);
-      salv[a] = mod[a] + (cr.fuertes.includes(a) ? B.pb : 0);
+      salv[a] = mod[a] + (fuertes.includes(a) ? B.pb : 0);
     });
     const pega = Math.max(mod.FUE, mod.DES);            // «el mayor de FUE o DES»
 
-    // Las fórmulas (Cap. 1). NA 0: 1–4 PV; esbirro: NA × 2; jefe: el doble.
-    const pvUno = esbirro ? Math.max(1, cr.na * 2) : na === 0 ? 4 : Math.max(1, 50 + na * (5 + mod.CON));
+    // Las fórmulas (Cap. 1). PV: (50 + NA × (5 + CON)) × 1,5 hacia abajo; NA 0: 1–4;
+    // esbirro: NA × 2; jefe: el doble.
+    const pvUno = esbirro ? Math.max(1, cr.na * 2) : na === 0 ? 4 : Math.max(1, Math.floor((50 + na * (5 + mod.CON)) * 3 / 2));
+    // PA: los de su NA y sus Rasgos; un Arrollador Grande o mayor, al menos 4 desde NA 5
+    let pa = B.pa + suma('pa');
+    if (rol.danoDados && ['grande', 'enorme', 'colosal'].includes(cr.tam) && na >= 5) pa = Math.max(pa, 4);
+    // Daño por turno: dado de su NA (+1d6 el Arrollador) + su ajuste + el MOD con que
+    // ataca. Con 4 PA o más son dos Ataques Normales que se reparten los dados (el
+    // primero lleva el impar), cada uno con su ajuste y su MOD.
     const dBase = this._parseDano(B.dano) || { n: 1, caras: 6, bono: 0 };
+    const nDados = dBase.n + (rol.danoDados || 0), bono = (B.ajuste || 0) + pega;
+    const ataques = pa >= 4 ? [Math.ceil(nDados / 2), Math.floor(nDados / 2)] : [nDados];
     const calc = {
       pv: pvUno * (jefe ? 2 : 1),
       guardia: 10 + B.pb + mod.DES + suma('g'),
       armadura: Math.max(0, Math.min(B.a + (rol.a || 0) + suma('a'), na + 3)),
       ataque: B.pb + pega,
-      dano: this._fmtDano({ n: dBase.n + (rol.danoDados || 0), caras: dBase.caras, bono: pega }),
-      pa: B.pa + suma('pa'), vel: Math.max(0, 30 + (rol.vel || 0) + suma('vel')), ini: mod.DES + (rol.ini || 0),
+      dano: ataques.map(n => this._fmtDano({ n, caras: dBase.caras, bono })).join(' y '),
+      pa, vel: Math.max(0, 30 + (rol.vel || 0) + suma('vel')), ini: mod.DES + (rol.ini || 0),
       moral: 10 + na + suma('moral'),
+      cd: 8 + B.pb + Math.floor(na / 2) + Math.max(...(fuertes.length ? fuertes : this.ATTRS).map(a => mod[a])),
     };
 
     // Lo que el Director haya fijado a mano manda sobre las fórmulas
     const M = cr.manual || {};
-    const S = { calc, na, naEf: na, naMiembro: cr.na, B, pb: B.pb, mod, cat, salv, rol, tam, tipo, jefe, horda, esbirro, H, pvUno, infos, autoGratis, esGratis };
-    ['pv', 'guardia', 'armadura', 'ataque', 'dano', 'pa', 'vel', 'ini', 'moral'].forEach(k => {
+    const S = { calc, na, naEf: na, naMiembro: cr.na, B, pb: B.pb, mod, cat, salv, fuertes, rol, tam, tipo, jefe, horda, esbirro, H, pvUno,
+      infos, autoGratis, especieLibre, tope, esGratis, motivoGratis };
+    ['pv', 'guardia', 'armadura', 'ataque', 'dano', 'pa', 'vel', 'ini', 'moral', 'cd'].forEach(k => {
       S[k] = (M[k] != null && M[k] !== '') ? M[k] : calc[k];
     });
     S.aMano = Object.keys(calc).filter(k => M[k] != null && M[k] !== '' && String(M[k]) !== String(calc[k]));
     S.danoBase = B.dano;
-    const fuertes = cr.fuertes.length ? cr.fuertes : this.ATTRS;
-    S.cd = 8 + B.pb + Math.floor(na / 2) + Math.max(...fuertes.map(a => mod[a]));
+    S.danoAtaques = (this._parseDanos(S.dano) || []).map(d => this._fmtDano(d));
     S.noMoral = !!cr.moralNoTira || tipo.noMoral === 'nunca' || esbirro || cat.INT === 'D' ||
       infos.some(x => x.i.mod && x.i.mod.noMoral) || (horda && cr.rasgos.some(r => r.id === 'enjambre'));
 
@@ -269,10 +306,15 @@ Object.assign(app, {
     S.exceso = Math.max(0, S.pesoGastado - S.pesoMax);
     S.nDebs = debs.length;
 
-    // Al calibrar el encuentro (Guía, Cap. 2): la horda usa su NA efectivo; el
-    // jefe sube 2; una criatura Enorme o Colosal, 1; cada 2 de exceso de
-    // Potencial, otro. Cuatro esbirros cuentan como una criatura de su NA.
-    S.naEnc = na + Math.floor(S.exceso / 2) + (jefe ? 2 : 0) + (tam.naEnc || 0);
+    // NA de encuentro (Cap. 4): su NA (la horda, el efectivo) + 1 por cada 2 de
+    // exceso de Potencial + jefe 3 (4 desde NA 6) + su Aptitud de daño en área
+    // (3 si es de Potencial 3, 2 si es de menos; en un jefe, uno menos; solo la
+    // mayor) + 1 si es Enorme o Colosal + 1 si usa Axiomas.
+    let area = 0;
+    infos.forEach(x => { area = Math.max(area, x.i.area ? (x.i.peso >= 3 ? 3 : 2) : (Number(x.r.area) || 0)); });
+    S.area = jefe ? Math.max(0, area - 1) : area;
+    S.axiomas = infos.some(x => x.r.id === 'uso_de_axiomas' || x.r.axiomas);
+    S.naEnc = na + Math.floor(S.exceso / 2) + (jefe ? (na >= 6 ? 4 : 3) : 0) + S.area + (tam.naEnc || 0) + (S.axiomas ? 1 : 0);
     S.cuenta = esbirro ? .25 : 1;
     return S;
   },
@@ -290,7 +332,7 @@ Object.assign(app, {
     if (S.aMano.includes('pv') && c.pv && Math.abs(S.pv - c.pv) / c.pv > .25) av.push(['pv', `PV ${S.pv}: la fórmula da ${c.pv}.`]);
     if (S.aMano.includes('guardia') && Math.abs(S.guardia - c.guardia) >= 3) av.push(['guardia', `Guardia ${S.guardia}: la fórmula da ${c.guardia}.`]);
     if (S.aMano.includes('dano')) {
-      const a = this._parseDano(S.dano), b = this._parseDano(c.dano);
+      const a = (this._parseDanos(S.dano) || [])[0], b = (this._parseDanos(c.dano) || [])[0];
       if (a && b && Math.abs(this._mediaDano(a) - this._mediaDano(b)) / this._mediaDano(b) > .3) av.push(['dano', `Daño ${S.dano}: la fórmula da ${c.dano}.`]);
     }
     return av.filter(([k]) => !solo || solo.includes(k)).map(([, t]) => t);
@@ -511,7 +553,7 @@ Object.assign(app, {
     // Estructura
     v.appendChild(this._campo('Estructura', this._seg([['normal', 'Normal'], ['jefe', 'Jefe'], ['horda', 'Horda']], cr.estructura,
       k => { cr.estructura = k; cr.pvAct = null; repintar(); }, 'Estructura')));
-    if (cr.estructura === 'jefe') v.appendChild(this._info('PV ×2 y +2 de Potencial. Usa al menos una: Acción de Jefe, Turno Doble o un séquito. Sus Aptitudes de Potencial 3 se anuncian una ronda antes. Al calibrar el encuentro sube 2 NA.'));
+    if (cr.estructura === 'jefe') v.appendChild(this._info('PV ×2 y +2 de Potencial, un Rasgo racial mayor gratis y un objeto mágico de la rareza de su NA. Usa al menos una: Acción de Jefe, Turno Doble o un séquito. Sus Aptitudes de Potencial 3 se anuncian; la definitoria, no. Al calibrar el encuentro suma 3 (4 desde NA 6).'));
     if (cr.estructura === 'horda') {
       const inp = document.createElement('input');
       inp.type = 'number'; inp.min = 2; inp.max = 999; inp.value = cr.miembros; inp.inputMode = 'numeric';
@@ -564,9 +606,10 @@ Object.assign(app, {
     const t = [];
     if (S.horda && !S.H.marea) {
       const cuartos = S.pv ? Math.min(4, Math.floor((S.pv - act) / (S.pv / 4))) : 0;
-      const d = this._parseDano(S.dano);
-      if (d && cuartos > 0) t.push(`Ha perdido ${cuartos} cuarto${cuartos > 1 ? 's' : ''} de sus PV: su daño baja a ${this._fmtDano({ ...d, n: Math.max(1, d.n - cuartos) })}.`);
-      if (act <= S.pv / 2) t.push(`A mitad de vida: se divide en dos hordas de NA ${Math.max(0, S.na - 2)}, cada una con la mitad de los PV que le queden.`);
+      const ds = this._parseDanos(S.dano);
+      const dados = ds ? ds.reduce((a, d) => a + d.n, 0) : 0;
+      if (ds && cuartos > 0) t.push(`Ha perdido ${cuartos} cuarto${cuartos > 1 ? 's' : ''} de sus PV: le quedan ${Math.max(1, dados - cuartos)} dados de daño de los ${dados}.`);
+      if (act <= S.pv / 2) t.push(`A mitad de vida: se divide en dos hordas de NA ${Math.max(0, S.na - 2)}, cada una con la mitad de los PV y de los dados de daño que le queden.`);
     }
     if (S.esbirro) t.push('Esbirro: cae con cualquier golpe que le quite sus PV.');
     if (act === 0) t.push('A 0 PV.');
@@ -588,7 +631,7 @@ Object.assign(app, {
     e.append(this.h('span', 'dir-slbl', rotulo), this.h('span', 'dir-sval', valor));
     return e;
   },
-  CIFRAS_N: { pv: 'PV', guardia: 'Guardia', armadura: 'Armadura', ataque: 'Ataque', dano: 'Daño', pa: 'PA', vel: 'Velocidad', ini: 'Iniciativa', moral: 'Moral' },
+  CIFRAS_N: { pv: 'PV', guardia: 'Guardia', armadura: 'Armadura', ataque: 'Ataque', dano: 'Daño', pa: 'PA', vel: 'Velocidad', ini: 'Iniciativa', moral: 'Moral', cd: 'CD' },
   /** «Ajustado a mano: …» y los avisos, solo de las cifras de esa tarjeta. */
   _notasAMano(v, S, claves) {
     const propias = S.aMano.filter(k => claves.includes(k));
@@ -597,7 +640,7 @@ Object.assign(app, {
   },
 
   /* Estadísticas: Velocidad, Alcance, Iniciativa y Moral */
-  CAMPOS_STATS: ['vel', 'ini', 'moral', 'pv', 'pa'],
+  CAMPOS_STATS: ['vel', 'ini', 'moral', 'pv', 'pa', 'cd'],
   _pintarStats(S) {
     const v = this._vista('stats', 'summary'); if (!v) return;
     v.textContent = '';
@@ -663,7 +706,7 @@ Object.assign(app, {
       inp.addEventListener('input', () => {
         const t = inp.value.trim();
         if (t === '') delete cr.manual[k];
-        else if (esDano) { if (this._parseDano(t)) cr.manual[k] = t.replace('−', '-').replace(/\s/g, ''); else return; }
+        else if (esDano) { if (this._parseDanos(t)) cr.manual[k] = t.replace(/−/g, '-').replace(/\s*y\s*/g, ' y ').replace(/(\d)\s+([+-])/g, '$1$2'); else return; }
         else { const num = parseInt(t, 10); if (Number.isFinite(num)) cr.manual[k] = num; else return; }
         if (k === 'pv') cr.pvAct = null;
         this.cambio();
@@ -703,33 +746,43 @@ Object.assign(app, {
   _pintarAtaque(S) {
     const v = this._vista('attack', 'summary'); if (!v) return;
     const cr = this.cr;
-    v.innerHTML = `
-      <div class="atk-card">
+    v.textContent = '';
+    // Con 4 PA o más, dos Ataques Normales: una tarjeta para cada uno
+    const lista = S.danoAtaques.length ? S.danoAtaques : [S.dano];
+    lista.forEach((dano, i) => {
+      const card = this.h('div', 'atk-card');
+      card.innerHTML = `
         <div class="atk-hdr">
           <span class="atk-nm"></span>
           <span class="atk-role-badge"></span>
         </div>
         <div class="atk-btns">
-          <button class="abtn abtn-a" type="button" aria-label="Tirar ataque">
+          <button class="abtn abtn-a" type="button">
             <span class="abtn-icon" aria-hidden="true"><svg class="ico ico-solo"><use href="#i-sword"/></svg></span>
-            <span class="abtn-text"><span class="asub">Atacar</span><span class="aval" id="atk_bonus_1"></span></span>
+            <span class="abtn-text"><span class="asub">Atacar</span><span class="aval"></span></span>
           </button>
           <div class="atk-btn-sep"></div>
-          <button class="abtn abtn-d" type="button" aria-label="Tirar daño">
+          <button class="abtn abtn-d" type="button">
             <span class="abtn-icon" aria-hidden="true"><svg class="ico ico-solo"><use href="#i-d20"/></svg></span>
             <span class="abtn-text"><span class="asub">Daño</span><span class="aval"></span></span>
           </button>
-        </div>
-      </div>`;
-    v.querySelector('.atk-nm').textContent = this._nombreAtaque();
-    const badge = v.querySelector('.atk-role-badge');
-    badge.textContent = cr.danoTipo || 'sin tipo';
-    const [ba, bd] = v.querySelectorAll('.abtn');
-    ba.querySelector('.aval').textContent = this._signo(S.ataque);
-    bd.querySelector('.aval').textContent = S.dano;
-    ba.addEventListener('click', () => this.rollCheck('Ataque: ' + this._nombreAtaque(), S.ataque));
-    bd.addEventListener('click', () => this.rollDice(S.dano, 'Daño: ' + this._nombreAtaque()));
-    v.appendChild(this.h('p', 'dir-nota', `Daño por turno: todo lo que hace en su turno si impacta${S.pa >= 4 ? ', repartido entre dos ataques de 2 PA' : ''}. Daño base de su NA: ${S.danoBase}.`));
+        </div>`;
+      const nombre = this._nombreAtaque() + (lista.length > 1 ? (i ? ' · 2.º' : ' · 1.º') : '');
+      card.querySelector('.atk-nm').textContent = nombre;
+      card.querySelector('.atk-role-badge').textContent = cr.danoTipo || 'sin tipo';
+      const [ba, bd] = card.querySelectorAll('.abtn');
+      ba.querySelector('.aval').textContent = this._signo(S.ataque);
+      bd.querySelector('.aval').textContent = dano;
+      ba.setAttribute('aria-label', 'Tirar ataque: ' + nombre);
+      bd.setAttribute('aria-label', 'Tirar daño: ' + nombre);
+      ba.addEventListener('click', () => this.rollCheck('Ataque: ' + nombre, S.ataque));
+      bd.addEventListener('click', () => this.rollDice(dano, 'Daño: ' + nombre));
+      v.appendChild(card);
+    });
+    v.appendChild(this.h('p', 'dir-nota', (lista.length > 1
+      ? `Con ${S.pa} PA, dos Ataques Normales. Es su tope por turno: no lo supera aunque le sobren PA.`
+      : 'Daño por turno: un Ataque Normal con todos los dados; el PA que sobra es para moverse o una Aptitud de 1 PA.') +
+      ` Un ataque de Reacción o de 1 PA hace la mitad de los dados. Daño base de su NA: ${S.danoBase}.`));
     this._notasAMano(v, S, ['ataque', 'dano']);
   },
   _editar_attack() {
@@ -890,10 +943,10 @@ Object.assign(app, {
         txt: S.rol.habTxt + (cr.rolNota ? '\n' + cr.rolNota : '') }, 'de Rol', S, abiertos.has('rol')));
     }
     // 2 · gratis · 3 · pagados · 4 · debilidades
-    const orden = x => this._esGratisVisible(x, S) ? 0 : (x.i.tipo === 'Debilidad' || x.i.peso < 0) ? 2 : 1;
+    const orden = x => x.r.definitoria ? -1 : this._esGratisVisible(x, S) ? 0 : (x.i.tipo === 'Debilidad' || x.i.peso < 0) ? 2 : 1;
     S.infos.slice().sort((a, b) => orden(a) - orden(b)).forEach(x => {
-      const gratis = this._esGratisVisible(x, S);
-      const etiqueta = gratis ? (x.r.origen === 'plantilla' ? 'plantilla' : 'de tipo') : (x.i.peso < 0 ? '−1' : x.i.custom && !x.i.peso ? '0' : 'Pot. ' + x.i.peso);
+      const motivo = S.motivoGratis(x);
+      const etiqueta = motivo || (x.i.peso < 0 ? '−1' : x.i.custom && !x.i.peso ? '0' : 'Pot. ' + x.i.peso);
       host.appendChild(this._tarjetaRasgo(x.r, x.i, etiqueta, S, abiertos.has(x.r.uid)));
     });
     if (!host.childElementCount) {
@@ -917,7 +970,8 @@ Object.assign(app, {
     dch.appendChild(this.h('span', 'dc-gbadge dir-peso', etiqueta));
     dch.appendChild(this.h('span', 'dca', '▾'));
     const dcb = this.h('div', 'dcb');
-    const tp = this.h('div', 'tc-tipo', this._lineaTipo(i)); tp.dataset.tipo = clave;
+    const marcas = [r.especie && (r.racial ? 'racial mayor' : 'especie'), r.definitoria && 'Aptitud definitoria'].filter(Boolean);
+    const tp = this.h('div', 'tc-tipo', this._lineaTipo(i) + (marcas.length ? ' · ' + marcas.join(' · ') : '')); tp.dataset.tipo = clave;
     dcb.appendChild(tp);
     if (i.perdido) dcb.appendChild(this.h('div', 'js-grade-block grade-off', 'No está en la versión actual de las reglas: se conserva su nombre y el texto guardado.'));
     const desc = this.h('div', 'u-pre-wrap', i.txt || 'Sin descripción.'); desc.style.marginBottom = '6px';
@@ -935,6 +989,27 @@ Object.assign(app, {
       inp.addEventListener('change', () => { r.nota = inp.value.trim(); if (!r.nota) delete r.nota; this.cambio(); });
       inp.addEventListener('click', e => e.stopPropagation());
       dcb.appendChild(this._campo(i.pide || 'Detalle', inp));
+    }
+    // Marcas de especie (Cap. 2 y 3): de especie, Aptitud definitoria y, en un jefe, racial mayor
+    const fila = this.h('div', 'dir-marcas');
+    const marca = (clave, rot, ayuda) => {
+      const b = this.h('button', 'tm-fchip' + (r[clave] ? ' active' : '')); b.type = 'button';
+      b.append(this.h('span', 'tm-fchip-dot'), document.createTextNode(rot));
+      b.setAttribute('aria-pressed', String(!!r[clave]));
+      b.title = ayuda;
+      b.addEventListener('click', e => {
+        e.stopPropagation();
+        if (r[clave]) { delete r[clave]; if (clave === 'especie') { delete r.definitoria; delete r.racial; } }
+        else { r[clave] = true; if (clave !== 'especie') r.especie = true; }
+        this.cambio();
+      });
+      return b;
+    };
+    if (!r.gratis) {
+      fila.append(marca('especie', 'De especie', 'Lo que la hace ser lo que es. Uno de combate es gratis si cabe en el tope de su NA.'),
+        marca('definitoria', 'Definitoria', 'Desde NA 3: la que decide el combate. Escribe su «Protección» en Notas.'));
+      if (S.jefe) fila.appendChild(marca('racial', 'Racial mayor', 'La segunda pieza gratuita de un jefe: de Potencial 3, o 2.'));
+      dcb.appendChild(fila);
     }
     const acc = this.h('div', 'dir-acc');
     if (ud) {
@@ -998,6 +1073,7 @@ Object.assign(app, {
   CAMPOS_SENAL: [
     ['senal', 'La señal', 'senal', 'Lo que el grupo percibe antes de verla: huellas, olor, un silencio, restos.'],
     ['contexto', 'Contexto táctico', '', '¿Qué problema le plantea al grupo? Una o dos frases.'],
+    ['proteccion', 'Protección', '', 'Qué rebaja su Aptitud definitoria: da Ventaja o baja un escalón, nunca la anula.'],
     ['quiere', 'Qué quiere', 'quiere', ''],
     ['pelea', 'Cómo pelea', 'pelea', ''],
     ['habitat', 'Hábitat', 'habitat', ''],
@@ -1128,6 +1204,12 @@ Object.assign(app, {
     if (S.jefe && !ids.includes('accion_de_jefe') && !ids.includes('turno_doble')) av.push('Jefe sin Acción de Jefe ni Turno Doble: dale un séquito.');
     if (S.jefe && S.infos.filter(x => x.i.tipo !== 'Rasgo' || x.i.peso >= 2).length === 0) av.push('Un jefe necesita al menos una mecánica que no sea «más daño».');
     if (S.nDebs > 2) av.push('Las Debilidades devuelven Potencial hasta un máximo de 2.');
+    const def = S.infos.filter(x => x.r.definitoria);
+    if (S.na >= 3 && !def.length && !S.esbirro) av.push('Desde NA 3 necesita una Aptitud definitoria: marca su Rasgo de especie más fuerte.');
+    if (def.length && !(cr.proteccion || '').trim()) av.push('Su Aptitud definitoria necesita una línea «Protección» (Notas).');
+    if (S.jefe && !S.infos.some(x => x.r.racial)) av.push('Un jefe tiene un Rasgo racial mayor gratuito: márcalo en sus Rasgos.');
+    if (S.jefe && !(cr.equipo || '').trim()) av.push('Un jefe lleva un objeto mágico de la rareza de su NA: anótalo en su equipo, con sus bonos sumados a mano.');
+    if (S.naEnc !== S.na) av.push(`Encuentro: cuenta como NA ${S.naEnc} al calcular el encuentro.`);
     this._avisosCurva(S).forEach(a => av.push(a));
     if (av.length) av.forEach(a => host.appendChild(this.h('p', 'dir-aviso', a)));
     else host.appendChild(this.h('p', 'dir-nota dir-ok', 'Dentro de las reglas: Potencial, tipo y fórmulas en orden.'));
@@ -1178,6 +1260,7 @@ Object.assign(app, {
     const cr = this.nuevaCr();
     cr.na = naFijo != null ? naFijo : this._azar([1, 1, 2, 2, 3, 3, 4, 4, 5, 6, 7, 8]);
     cr.tipo = this._azar(this.AZAR_TIPO.filter(k => this.DB.tipos[k]));
+    if (cr.tipo === 'dragon' && this.DB.tipos.draconido && this._d(6) >= 4) cr.tipo = 'draconido';   // «Dragón o dracónido (1–3 / 4–6)»
     cr.rol = this._azar(this.AZAR_ROL.filter(k => !k || this.DB.roles[k]));
     const t6 = this._d(6);
     cr.tam = t6 === 1 ? 'pequeno' : t6 <= 3 ? 'mediano' : t6 === 4 ? 'grande' : t6 === 5 ? 'enorme' : (this._d(6) <= 3 ? 'diminuto' : 'colosal');
@@ -1215,7 +1298,10 @@ Object.assign(app, {
       if (!libres.length) break;
       this._ponerEn(cr, this._azar(libres).id);
     }
-    const forma =this._azar(T.forma.filas), visible = this._azar(T.rasgoVisible.filas.filter(x => x !== 'Tira dos veces'));
+    // La primera pieza que no es Debilidad es su Rasgo de especie; desde NA 3, también su Aptitud definitoria
+    const propia = cr.rasgos.find(r => !r.gratis && this.rasgoInfo(r).peso > 0);
+    if (propia) { propia.especie = true; if (cr.na >= 3) propia.definitoria = true; }
+    const forma = this._azar(T.forma.filas), visible = this._azar(T.rasgoVisible.filas.filter(x => x !== 'Tira dos veces'));
     const mueve = this._azar(T.mueve.filas), ataca = this._azar(T.ataca.filas);
     cr.idea = `Forma ${forma.toLowerCase()}; ${visible.toLowerCase()}. Se mueve ${mueve} y ataca con ${ataca.replace(/^no ataca: /, 'nada: ')}.`;
     cr.ataqueNombre = /no ataca/.test(ataca) ? 'Presa' : ataca.replace(/^(un|una|la|el) /, '').replace(/^./, c => c.toUpperCase());

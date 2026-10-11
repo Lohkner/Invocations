@@ -7,8 +7,8 @@
      · Los elementos que la ficha y la Mesa necesitan existen
      · El bestiario (Manual y Guía) sale de las fórmulas: atributos, PV,
        Guardia, ataque, daño, CD, Iniciativa y Moral impresos
-     · El bestiario cabe en su presupuesto de Potencial
-     · NA del encuentro: los ejemplos de la Guía; jefe +2; cuatro esbirros
+     · El NA de encuentro de cada criatura es el de su línea «Encuentro»
+     · NA del encuentro: los ejemplos de la Guía; jefe +3/+4; cuatro esbirros
      · Dificultad del encuentro por nivel y tamaño del grupo
      · Texto que se sale de su caja · texto por debajo de 12 px
      · Desbordamiento horizontal · tarjetas plegables · consola
@@ -102,22 +102,21 @@
       const gSinRasgos = S.calc.guardia - S.infos.reduce((a, x) => a + ((x.i.mod && x.i.mod.g) || 0), 0);
       const dif = [];
       app.ATTRS.forEach(a => { if (S.mod[a] !== imp.attrs[a]) dif.push(`${a} ${S.mod[a]}/${imp.attrs[a]}`); });
-      [['PV', S.calc.pv, imp.pv], ['Guardia', gSinRasgos, imp.g], ['Ataque', S.calc.ataque, imp.atk], ['Daño', S.calc.dano, imp.dano],
+      [['PV', S.calc.pv, imp.pv], ['Guardia', S.aMano.includes('guardia') ? S.guardia : gSinRasgos, imp.g], ['Ataque', S.aMano.includes('ataque') ? S.ataque : S.calc.ataque, imp.atk], ['Daño', S.calc.dano, imp.dano],
        ['CD', S.cd, imp.cd], ['Iniciativa', S.calc.ini, imp.ini],
-       // Armadura y velocidad: con los ajustes a mano del equipo (Mercenario, Oso…)
-       ['Armadura', S.aMano.includes('armadura') ? S.armadura : S.calc.armadura - S.infos.reduce((a, x) => a + ((x.i.mod && x.i.mod.a) || 0), 0), imp.a],
-       // (lo impreso no lleva lo que mueven los Rasgos: Lenta, Piel Gruesa…)
-       ['Velocidad', S.aMano.includes('vel') ? S.vel : S.calc.vel - S.infos.reduce((a, x) => a + ((x.i.mod && x.i.mod.vel) || 0), 0), imp.vel]].forEach(([k, sale, debe]) => { if (sale !== debe) dif.push(`${k} ${sale}/${debe}`); });
+       // Armadura y velocidad: con lo que suman los Rasgos (Piel Gruesa, Lenta) y el equipo
+       ['Armadura', S.armadura, imp.a], ['Velocidad', S.vel, imp.vel]].forEach(([k, sale, debe]) => { if (sale !== debe) dif.push(`${k} ${sale}/${debe}`); });
       if (imp.moral == null ? !S.noMoral : (S.noMoral || S.calc.moral !== imp.moral)) dif.push(`Moral ${S.noMoral ? '—' : S.calc.moral}/${imp.moral == null ? '—' : imp.moral}`);
       if (dif.length) malos.push(`${c.nombre}: ${dif.join(', ')}`);
-      if (S.exceso && c.fuente === 'Manual de Monstruos') malPeso.push(`${c.nombre}: ${S.pesoGastado}/${S.pesoMax}`);
+      // Su línea «Encuentro» (o su NA, si no la lleva): Potencial, jefe, área, tamaño y Axiomas
+      if (imp.enc != null && S.naEnc !== imp.enc) malPeso.push(`${c.nombre}: NA ${S.naEnc}/${imp.enc} (Potencial ${S.pesoGastado}/${S.pesoMax})`);
     });
     comprobar('El bestiario sale de las fórmulas: atributos, PV, Guardia, ataque, daño, CD', !malos.length,
       malos.slice(0, 3).join(' | ') || `${n} criaturas del Manual y la Guía coinciden con lo impreso`);
-    comprobar('El bestiario del Manual cabe en su Potencial', !malPeso.length,
-      malPeso.slice(0, 4).join(' | ') || 'todas dentro de su presupuesto');
+    comprobar('Su NA de encuentro es el de su línea «Encuentro»: Potencial, jefe, área, tamaño', !malPeso.length,
+      malPeso.slice(0, 4).join(' | ') || `${n} criaturas, con sus Rasgos de especie y su exceso de Potencial`);
 
-    // ── 3 · NA del encuentro (la regla y los ejemplos de la Guía, Cap. 2) ──
+    // ── 3 · NA del encuentro (Manual de Monstruos, Cap. 4, y los ejemplos de la Guía) ──
     const base = app.nuevaCr();
     const lin = (cambios, cuantas) => {
       const S = app.calcCr(app.normalizarCr({ ...base, rasgos: [], ...cambios }));
@@ -125,22 +124,23 @@
     };
     const enc = (...lineas) => app._naDeLineas(lineas).na;
     const E = {
-      'ogro + lobo': [enc(lin({ na: 4 }, 1), lin({ na: 2 }, 1)), 4],
-      'ogro + 2 lobos': [enc(lin({ na: 4 }, 1), lin({ na: 2 }, 2)), 6],
-      '2×NA0': [enc(lin({ na: 0 }, 2)), 2],
-      '4×NA1': [enc(lin({ na: 1 }, 4)), 5],
-      '4×NA3': [enc(lin({ na: 3 }, 4)), 7],
-      '2×NA9': [enc(lin({ na: 9 }, 2)), 11],
-      '8×NA1': [enc(lin({ na: 1 }, 8)), 7],
-      'jefe NA3': [enc(lin({ na: 3, estructura: 'jefe' }, 1)), 5],
+      'ogro + lobo alfa': [enc(lin({ na: 4 }, 1), lin({ na: 2 }, 1)), 6],
+      'ogro + 2 lobos alfa': [enc(lin({ na: 4 }, 1), lin({ na: 2 }, 2)), 7],
+      '2×NA0': [enc(lin({ na: 0 }, 2)), 3],
+      '2×NA1': [enc(lin({ na: 1 }, 2)), 4],
+      '4×NA1': [enc(lin({ na: 1 }, 4)), 7],
+      '4×NA5': [enc(lin({ na: 5 }, 4)), 11],
+      '2×NA9': [enc(lin({ na: 9 }, 2)), 12],
+      '2×NA10': [enc(lin({ na: 10 }, 2)), 13],
+      'jefe NA3': [enc(lin({ na: 3, estructura: 'jefe' }, 1)), 6],
+      'jefe NA6': [enc(lin({ na: 6, estructura: 'jefe' }, 1)), 10],
       'Enorme NA5': [enc(lin({ na: 5, tam: 'enorme' }, 1)), 6],
       '4 esbirros NA2': [enc(lin({ na: 2, rol: 'esbirro' }, 4)), 2],
       'grupo de 6 NA1': [enc(lin({ na: 1, estructura: 'horda', miembros: 6 }, 1)), 3],
-      'banda de 8 NA3': [enc(lin({ na: 3, estructura: 'horda', miembros: 8 }, 1)), 7],
       'NA6 + 6×NA1': [enc(lin({ na: 6 }, 1), lin({ na: 1 }, 6)), 6],
     };
     const malEnc = Object.entries(E).filter(([, [sale, debe]]) => sale !== debe);
-    comprobar('NA del encuentro: 1 · ½ · ¼ cada 2 NA, jefe +2, cuatro esbirros = uno', !malEnc.length,
+    comprobar('NA del encuentro: 1 · ½ · ¼ según la distancia, jefe +3/+4, cuatro esbirros = uno', !malEnc.length,
       malEnc.map(([k, [sale, debe]]) => `${k}: NA ${sale}, debía ser ${debe}`).join(' | ') ||
       Object.entries(E).slice(0, 5).map(([k, [sale]]) => `${k} → NA ${sale}`).join(' · '));
 
@@ -151,8 +151,8 @@
     app.mesa.grupo = { nivel: 9, pjs: 2 }; const p2 = app.umbrales();
     app.mesa.grupo = gPrev;
     comprobar('Dificultad por nivel y tamaño del grupo',
-      p4.f === 2 && p4.e === 3 && p4.p === 4 && p4.m === 5 && p6.p === 5 && p2.p === 9 &&
-      app._dificultad(4, p4).k === 'p' && app._dificultad(5, p4).k === 'm' && app._dificultad(1, p4).k === 't',
+      p4.f === 4 && p4.e === 5 && p4.p === 6 && p4.m === 7 && p6.p === 7 && p2.p === 11 &&
+      app._dificultad(6, p4).k === 'p' && app._dificultad(7, p4).k === 'm' && app._dificultad(3, p4).k === 't',
       `Nv 3 ×4: NA ${p4.f}/${p4.e}/${p4.p}/${p4.m}+ · ×6 Peligroso NA ${p6.p} · Nv 9 ×2 Peligroso NA ${p2.p}`);
 
     // ── 5 · recorrido visual: la ficha y la Mesa ──

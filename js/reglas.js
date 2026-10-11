@@ -13,6 +13,7 @@ const DEFAULT_DB = {
    "normal": 0,
    "debil": -2,
    "dano": "1d6",
+   "ajuste": 0,
    "a": 0,
    "pa": 2,
    "peso": 0,
@@ -25,6 +26,7 @@ const DEFAULT_DB = {
    "normal": 0,
    "debil": -2,
    "dano": "2d6",
+   "ajuste": 1,
    "a": 0,
    "pa": 3,
    "peso": 2,
@@ -37,6 +39,7 @@ const DEFAULT_DB = {
    "normal": 0,
    "debil": -2,
    "dano": "2d6",
+   "ajuste": 3,
    "a": 1,
    "pa": 3,
    "peso": 2
@@ -48,6 +51,7 @@ const DEFAULT_DB = {
    "normal": 0,
    "debil": -2,
    "dano": "3d6",
+   "ajuste": -2,
    "a": 1,
    "pa": 3,
    "peso": 3,
@@ -60,6 +64,7 @@ const DEFAULT_DB = {
    "normal": 1,
    "debil": -2,
    "dano": "3d6",
+   "ajuste": 0,
    "a": 2,
    "pa": 3,
    "peso": 3
@@ -71,6 +76,7 @@ const DEFAULT_DB = {
    "normal": 1,
    "debil": -2,
    "dano": "4d6",
+   "ajuste": 0,
    "a": 2,
    "pa": 3,
    "peso": 4
@@ -82,6 +88,7 @@ const DEFAULT_DB = {
    "normal": 1,
    "debil": -2,
    "dano": "4d6",
+   "ajuste": -3,
    "a": 3,
    "pa": 3,
    "peso": 4
@@ -93,6 +100,7 @@ const DEFAULT_DB = {
    "normal": 1,
    "debil": -2,
    "dano": "5d6",
+   "ajuste": -1,
    "a": 3,
    "pa": 4,
    "peso": 5
@@ -104,6 +112,7 @@ const DEFAULT_DB = {
    "normal": 2,
    "debil": -2,
    "dano": "5d6",
+   "ajuste": 0,
    "a": 4,
    "pa": 4,
    "peso": 5
@@ -115,6 +124,7 @@ const DEFAULT_DB = {
    "normal": 2,
    "debil": -2,
    "dano": "6d6",
+   "ajuste": -2,
    "a": 4,
    "pa": 4,
    "peso": 6
@@ -126,6 +136,7 @@ const DEFAULT_DB = {
    "normal": 2,
    "debil": -2,
    "dano": "6d6",
+   "ajuste": 0,
    "a": 5,
    "pa": 4,
    "peso": 6,
@@ -138,6 +149,7 @@ const DEFAULT_DB = {
    "normal": 2,
    "debil": -2,
    "dano": "7d6",
+   "ajuste": 2,
    "a": 5,
    "pa": 5,
    "peso": 7
@@ -149,6 +161,7 @@ const DEFAULT_DB = {
    "normal": 3,
    "debil": -2,
    "dano": "7d6",
+   "ajuste": 0,
    "a": 6,
    "pa": 5,
    "peso": 7,
@@ -161,6 +174,7 @@ const DEFAULT_DB = {
    "normal": 3,
    "debil": -2,
    "dano": "8d6",
+   "ajuste": 3,
    "a": 6,
    "pa": 5,
    "peso": 8
@@ -172,6 +186,7 @@ const DEFAULT_DB = {
    "normal": 3,
    "debil": -2,
    "dano": "8d6",
+   "ajuste": 7,
    "a": 7,
    "pa": 5,
    "peso": 8
@@ -183,6 +198,7 @@ const DEFAULT_DB = {
    "normal": 3,
    "debil": -2,
    "dano": "9d6",
+   "ajuste": 5,
    "a": 7,
    "pa": 6,
    "peso": 8
@@ -200,9 +216,9 @@ const DEFAULT_DB = {
     "DES"
    ],
    "hab": "Ataque Masivo",
-   "habTipo": "Aptitud",
-   "habCoste": "2 PA",
-   "habTxt": "Aplica un estado de Daño en el Tiempo o Derriba sin tirada.",
+   "habTipo": "Modificador",
+   "habCoste": "1/ronda",
+   "habTxt": "Una vez por ronda, al impactar cuerpo a cuerpo, derriba al objetivo o le aplica el estado de Daño en el Tiempo fijado al crearla.",
    "danoDados": 1
   },
   "hostigador": {
@@ -229,10 +245,10 @@ const DEFAULT_DB = {
     "SAB"
    ],
    "debiles": [],
-   "hab": "Control de Zona",
+   "hab": "Represión",
    "habTipo": "Aptitud",
-   "habCoste": "3 PA",
-   "habTxt": "Aplica un estado en un radio de 10 pies (3 PA); los afectados hacen su Salvación."
+   "habCoste": "3 PA · 1/ronda",
+   "habTxt": "Quien esté a 10 pies hace una Salvación o sufre el estado de Control fijado al crearla (Ud4), nunca Aturdido ni Paralizado: esos quedan para las Aptitudes definitorias."
   },
   "comandante": {
    "name": "Comandante",
@@ -322,13 +338,13 @@ const DEFAULT_DB = {
   },
   "esbirro": {
    "name": "Esbirro",
-   "mod": "Fuertes: a elegir · PV = NA × 2",
+   "mod": "Fuertes: a elegir · PV = NA × 2 (mín. 1)",
    "fuertes": [],
    "debiles": [],
    "hab": "Esbirro",
    "habTipo": "Rasgo",
    "habCoste": "",
-   "habTxt": "Cae con cualquier golpe que le quite sus PV. Sin Rasgos propios salvo los de tipo. No tira Moral: huye cuando cae su líder o la mitad de su grupo. Todos los esbirros de un mismo tipo actúan en la misma Iniciativa.",
+   "habTxt": "Cae con cualquier golpe que le quite sus PV. Sin más Rasgos que los de su tipo y su Rasgo de especie gratuito. No tira Moral: huye cuando cae su líder o la mitad de su grupo. Todos los esbirros de un mismo tipo actúan en la misma Iniciativa.",
    "esbirro": true
   }
  },
@@ -365,7 +381,7 @@ const DEFAULT_DB = {
   },
   "grande": {
    "name": "Grande",
-   "ej": "Ogro, caballo, oso",
+   "ej": "Ogro, caballo, oso, wyvern",
    "fue": 1,
    "des": 0,
    "con": 0,
@@ -375,7 +391,7 @@ const DEFAULT_DB = {
   },
   "enorme": {
    "name": "Enorme",
-   "ej": "Troll viejo, dragón adulto, tanque",
+   "ej": "Troll viejo, dragón joven, tanque",
    "fue": 2,
    "des": -1,
    "con": 1,
@@ -386,7 +402,7 @@ const DEFAULT_DB = {
   },
   "colosal": {
    "name": "Colosal",
-   "ej": "Kraken, titán, nave de desembarco",
+   "ej": "Kraken, titán, dragón adulto, nave de desembarco",
    "fue": 3,
    "des": "D",
    "con": 2,
@@ -429,7 +445,7 @@ const DEFAULT_DB = {
  "tipos": {
   "bestia": {
    "name": "Bestia",
-   "txt": "Olfato Agudo o Visión en la Oscuridad. Con INT Débil no tira Moral: huye cuando la pelea deja de compensar.",
+   "txt": "Olfato Agudo o Visión en la Oscuridad. Huye cuando la pelea deja de compensar; con INT Débil no tira Moral, como toda criatura.",
    "atrDeb": "INT",
    "debiles": [
     "INT"
@@ -496,10 +512,43 @@ const DEFAULT_DB = {
   },
   "dragon": {
    "name": "Dragón",
-   "txt": "Visión en la Oscuridad e Inmunidad a su elemento. Debe tener Aliento (paga su Potencial).",
+   "txt": "Visión en la Oscuridad, Telepatía e Inmunidad a su elemento. Su INT es Fuerte, además de los dos de su Rol, y su Salvación también suma el PB. Debe tener Aliento y Uso de Axiomas: el Aliento es su Rasgo de especie gratuito aunque pase del tope de su NA; Uso de Axiomas paga su Potencial. Es Enorme o Colosal; solo una cría es Grande.",
    "atrDeb": "Ninguno",
    "debiles": [],
    "deb": "Aversión (un nombre, un metal)",
+   "gratis": [
+    {
+     "id": "vision_en_la_oscuridad"
+    },
+    {
+     "id": "telepatia"
+    },
+    {
+     "id": "inmunidad",
+     "nota": "su elemento"
+    }
+   ],
+   "exige": [
+    "aliento",
+    "uso_de_axiomas"
+   ],
+   "fuertesDef": [
+    "FUE",
+    "CON"
+   ],
+   "fuerteExtra": "INT",
+   "alientoGratis": true,
+   "tamMin": "enorme"
+  },
+  "draconido": {
+   "name": "Dracónido",
+   "txt": "Visión en la Oscuridad e Inmunidad a su elemento. Wyverns, dracos y bestias de sangre de dragón: depredadores sin la mente de un dragón. Debe tener Aliento (paga su Potencial). Su tamaño crece con la edad: Mediano de cría, Grande adulto, Enorme el más viejo (plantillas Cría y Anciana).",
+   "atrDeb": "INT, CAR",
+   "debiles": [
+    "INT",
+    "CAR"
+   ],
+   "deb": "Hambre, Crédula",
    "gratis": [
     {
      "id": "vision_en_la_oscuridad"
@@ -513,7 +562,7 @@ const DEFAULT_DB = {
     "aliento"
    ],
    "fuertesDef": [
-    "DES",
+    "FUE",
     "CON"
    ]
   },
@@ -859,14 +908,14 @@ const DEFAULT_DB = {
     "name": "Garras Dobles",
     "tipo": "Rasgo",
     "peso": 1,
-    "txt": "Su Ataque Normal (2 PA) son dos ataques, cada uno con la mitad del daño base."
+    "txt": "Con 3 PA, su Ataque Normal (2 PA) son dos ataques, cada uno con la mitad de los dados de su daño por turno (el primero lleva el impar) más el ajuste y el MOD. Con 4 PA o más no aporta nada: ya ataca dos veces."
    },
    {
     "id": "mordisco_tenaz",
     "name": "Mordisco Tenaz",
     "tipo": "Modificador",
     "peso": 1,
-    "txt": "Al impactar, el objetivo queda Apresado (escapar: Proeza Física contra la CD). Mientras lo retiene, no puede morder a otro."
+    "txt": "Al impactar, Apresa sin gastar PA ni necesitar mano libre: el objetivo hace la Salvación de Apresar (FUE o DES contra la CD) o queda Apresado. Mientras lo retiene, no puede morder a otro."
    },
    {
     "id": "embestida",
@@ -883,7 +932,8 @@ const DEFAULT_DB = {
     "tipo": "Aptitud",
     "peso": 2,
     "txt": "Una sola tirada contra la Guardia de cada criatura a su alcance; cada una impactada recibe el daño base.",
-    "coste": "3 PA"
+    "coste": "3 PA",
+    "area": true
    },
    {
     "id": "aguijon_venenoso",
@@ -897,7 +947,7 @@ const DEFAULT_DB = {
     "name": "Garras Desgarradoras",
     "tipo": "Modificador",
     "peso": 1,
-    "txt": "Si impacta dos veces al mismo objetivo en un turno, o con un Crítico, aplica Sangrado (Ud6)."
+    "txt": "Si impacta superando la Guardia por 5 o más, o con un Crítico, aplica Sangrado (Ud6)."
    },
    {
     "id": "alcance_largo",
@@ -923,7 +973,8 @@ const DEFAULT_DB = {
     "peso": 2,
     "txt": "Área de 15 pies de radio a 60 pies: Salvación DES contra la CD; daño base, la mitad si la supera.",
     "coste": "3 PA",
-    "frec": "Ud6"
+    "frec": "Ud6",
+    "area": true
    },
    {
     "id": "aliento",
@@ -933,7 +984,8 @@ const DEFAULT_DB = {
     "txt": "Cono de 30 pies (60 si es Enorme o mayor) de un tipo de energía elegido al crearla: Salvación DES contra la CD; daño base más 1 dado de ese tipo por cada 3 NA, la mitad si la supera.",
     "coste": "3 PA",
     "frec": "Ud6",
-    "pide": "Tipo de energía"
+    "pide": "Tipo de energía",
+    "area": true
    },
    {
     "id": "punto_debil",
@@ -1127,7 +1179,7 @@ const DEFAULT_DB = {
     "name": "Vuelo",
     "tipo": "Rasgo",
     "peso": 2,
-    "txt": "Vuela a su velocidad. Si queda Derribada o Paralizada en el aire, cae."
+    "txt": "Vuela a su velocidad. Si queda Derribada, Aturdida o Paralizada en el aire, cae."
    },
    {
     "id": "planeo",
@@ -1203,7 +1255,8 @@ const DEFAULT_DB = {
     "peso": 2,
     "txt": "Recorre su velocidad en línea recta atravesando criaturas de menor tamaño: cada una hace Salvación FUE contra la CD o recibe la mitad del daño base y queda Derribada.",
     "coste": "2 PA",
-    "frec": "Ud6"
+    "frec": "Ud6",
+    "area": true
    }
   ],
   "sentidos": [
@@ -1275,7 +1328,8 @@ const DEFAULT_DB = {
     "name": "Mente Colmena",
     "tipo": "Rasgo",
     "peso": 1,
-    "txt": "Lo que percibe un miembro de su especie lo perciben todos los que estén a menos de una milla."
+    "txt": "Lo que percibe un miembro de su especie lo perciben todos los que estén a menos de una milla.",
+    "narrativa": true
    }
   ],
   "control": [
@@ -1284,7 +1338,7 @@ const DEFAULT_DB = {
     "name": "Mirada Paralizante",
     "tipo": "Aptitud",
     "peso": 3,
-    "txt": "Una criatura a 30 pies que la esté mirando: Salvación CON contra la CD o queda Paralizada (Ud4). Quien aparte la vista a propósito ataca con Desventaja, pero no puede ser afectado.",
+    "txt": "Una criatura a 30 pies que la esté mirando: Salvación CON contra la CD o queda Paralizada (Ud4). Quien aparte la vista a propósito ataca con Desventaja, pero tiene Ventaja en esa Salvación.",
     "coste": "2 PA",
     "frec": "Ud6"
    },
@@ -1293,7 +1347,7 @@ const DEFAULT_DB = {
     "name": "Mirada Petrificante",
     "tipo": "Aptitud",
     "peso": 3,
-    "txt": "Una criatura a 30 pies que la mire: Salvación CON contra la CD o queda Ralentizada (Ud4). Si falla otra vez mientras sigue Ralentizada, queda Petrificada.",
+    "txt": "Una criatura a 30 pies que la mire: Salvación CON contra la CD o queda Ralentizada (Ud4). Si falla otra vez mientras sigue Ralentizada, queda Petrificada (Ud4).",
     "coste": "3 PA",
     "frec": "Ud4"
    },
@@ -1311,7 +1365,7 @@ const DEFAULT_DB = {
     "name": "Telaraña",
     "tipo": "Aptitud",
     "peso": 1,
-    "txt": "Área de 10 pies a 30 pies: terreno difícil; quien esté dentro hace Salvación DES contra la CD o queda Apresado.",
+    "txt": "Área de 10 pies a 30 pies: terreno difícil; quien esté dentro hace Salvación DES contra la CD o queda Apresado (escapa con Proeza Física contra esa CD).",
     "coste": "2 PA",
     "frec": "Ud6"
    },
@@ -1319,7 +1373,7 @@ const DEFAULT_DB = {
     "id": "aturdir",
     "name": "Aturdir",
     "tipo": "Modificador",
-    "peso": 2,
+    "peso": 3,
     "txt": "Al impactar, Salvación CON contra la CD o queda Aturdido (Ud4).",
     "frec": "Ud6"
    },
@@ -1339,7 +1393,8 @@ const DEFAULT_DB = {
     "peso": 1,
     "txt": "Radio de 20 pies: Salvación CON contra la CD o queda Ensordecido (Ud6) y recibe la mitad del daño base Sónico.",
     "coste": "2 PA",
-    "frec": "Ud6"
+    "frec": "Ud6",
+    "area": true
    },
    {
     "id": "pisoton",
@@ -1353,10 +1408,9 @@ const DEFAULT_DB = {
    {
     "id": "arrastrar",
     "name": "Arrastrar",
-    "tipo": "Aptitud",
+    "tipo": "Rasgo",
     "peso": 1,
-    "txt": "Se mueve hasta 15 pies llevando consigo a una criatura que tenga Apresada, sin provocar Ataques de Oportunidad.",
-    "coste": "1 PA"
+    "txt": "Arrastra a la criatura que tiene Apresada a su velocidad completa, en lugar de a la mitad, sin provocar Ataques de Oportunidad."
    },
    {
     "id": "aliento_helado",
@@ -1386,7 +1440,7 @@ const DEFAULT_DB = {
     "name": "Lanzar",
     "tipo": "Aptitud",
     "peso": 1,
-    "txt": "Arroja hasta 20 pies a una criatura Apresada de su tamaño o menor: daño base Contundente para ella y para quien reciba el golpe.",
+    "txt": "En lugar de Empujar, arroja hasta 20 pies a una criatura que tenga Apresada, de su tamaño o menor: daño base Contundente para ella y para quien reciba el golpe.",
     "coste": "2 PA"
    },
    {
@@ -1470,7 +1524,8 @@ const DEFAULT_DB = {
     "name": "Imitación",
     "tipo": "Rasgo",
     "peso": 1,
-    "txt": "Imita cualquier voz o sonido que haya oído. Distinguirlo exige Perspicacia contra la CD."
+    "txt": "Imita cualquier voz o sonido que haya oído. Distinguirlo exige Perspicacia contra la CD.",
+    "narrativa": true
    },
    {
     "id": "pesadillas",
@@ -1478,7 +1533,8 @@ const DEFAULT_DB = {
     "tipo": "Aptitud",
     "peso": 1,
     "txt": "Una criatura que duerma a menos de una milla no descansa: su Descanso Largo no reduce la Fatiga y solo recupera la mitad.",
-    "coste": "fuera de combate"
+    "coste": "fuera de combate",
+    "narrativa": true
    },
    {
     "id": "mente_ajena",
@@ -1560,7 +1616,8 @@ const DEFAULT_DB = {
     "tipo": "Rasgo",
     "peso": 2,
     "txt": "Si no se destruye su núcleo (un objeto, un lugar, un nombre), vuelve a formarse en 1d4 días.",
-    "pide": "Su núcleo"
+    "pide": "Su núcleo",
+    "narrativa": true
    },
    {
     "id": "transfusion",
@@ -1614,7 +1671,8 @@ const DEFAULT_DB = {
     "peso": 3,
     "txt": "Radio de 30 pies: hasta tres objetivos reciben el daño base de Rayo (Salvación DES, la mitad); el viento convierte todo el radio en terreno difícil hasta su siguiente turno.",
     "coste": "3 PA",
-    "frec": "Ud6"
+    "frec": "Ud6",
+    "area": true
    },
    {
     "id": "muro_elemental",
@@ -1874,10 +1932,9 @@ const DEFAULT_DB = {
    {
     "id": "esconderse",
     "name": "Esconderse",
-    "tipo": "Aptitud",
+    "tipo": "Rasgo",
     "peso": 1,
-    "txt": "Se oculta aprovechando cualquier cobertura parcial o penumbra, incluso en pleno combate.",
-    "coste": "1 PA"
+    "txt": "Puede ocultarse con solo cobertura parcial o penumbra, aunque la estén mirando, y tiene Ventaja en esa tirada de Sigilo."
    },
    {
     "id": "senuelo",
@@ -1893,7 +1950,8 @@ const DEFAULT_DB = {
     "name": "Silenciosa",
     "tipo": "Rasgo",
     "peso": 0,
-    "txt": "No hace ningún ruido al moverse."
+    "txt": "No hace ningún ruido al moverse.",
+    "narrativa": true
    },
    {
     "id": "huida_en_humo",
@@ -1908,7 +1966,8 @@ const DEFAULT_DB = {
     "name": "Rastro Falso",
     "tipo": "Rasgo",
     "peso": 1,
-    "txt": "Seguir su rastro exige Supervivencia contra la CD + 5."
+    "txt": "Seguir su rastro exige Supervivencia contra la CD + 5.",
+    "narrativa": true
    }
   ],
   "forma": [
@@ -1917,7 +1976,7 @@ const DEFAULT_DB = {
     "name": "Varias Cabezas",
     "tipo": "Rasgo",
     "peso": 2,
-    "txt": "+1 PA por turno. Cada Golpe Crítico contra ella, o cada golpe que le quite NA × 5 PV, le arranca una cabeza y le quita ese PA. Si recibe Fuego esa ronda, no vuelve a crecer; si no, al final de su turno le crecen dos.",
+    "txt": "+1 PA por turno, nunca más, por muchas cabezas que tenga; ese PA puede ser un mordisco más, con la mitad de los dados. Cada Golpe Crítico contra ella, o cada golpe que le quite NA × 5 PV, le arranca una cabeza y le quita ese PA hasta que crezca otra. Si recibe Fuego esa ronda, no vuelve a crecer; si no, al final de su turno le crecen dos.",
     "mod": {
      "pa": 1
     }
@@ -2199,7 +2258,8 @@ const DEFAULT_DB = {
     "name": "Corrupción del Lugar",
     "tipo": "Rasgo",
     "peso": 1,
-    "txt": "En una milla alrededor de su guarida algo va mal —agua envenenada, animales ausentes, sueños compartidos—. Es su señal: el grupo puede notarla antes de entrar."
+    "txt": "En una milla alrededor de su guarida algo va mal —agua envenenada, animales ausentes, sueños compartidos—. Es su señal: el grupo puede notarla antes de entrar.",
+    "narrativa": true
    },
    {
     "id": "ligada_al_lugar",
@@ -2314,7 +2374,7 @@ const DEFAULT_DB = {
   "anciana": {
    "name": "Anciana",
    "naTxt": "+2",
-   "txt": "Estadísticas del nuevo NA. Gana Voluntad de Hierro y un Rasgo de su familia principal. Tamaño +1 categoría si es una bestia.",
+   "txt": "Estadísticas del nuevo NA. Gana Voluntad de Hierro y un Rasgo de su familia principal. Tamaño +1 categoría si es una bestia o un dracónido.",
    "na": 2,
    "gana": [
     "voluntad_de_hierro"
@@ -2337,7 +2397,7 @@ const DEFAULT_DB = {
   "espectral": {
    "name": "Espectral",
    "naTxt": "+1",
-   "txt": "Tipo Espíritu. Gana Incorpóreo. Pierde Apresar y cualquier Rasgo de Forma y anatomía.",
+   "txt": "Tipo Espíritu. Gana Incorpóreo. Pierde los Rasgos que apresan (Mordisco Tenaz, Tentáculos, Constricción…) y cualquier Rasgo de Forma y anatomía.",
    "na": 1,
    "tipo": "espiritu",
    "gana": [
@@ -2378,8 +2438,8 @@ const DEFAULT_DB = {
   },
   "colosal": {
    "name": "Colosal",
-   "naTxt": "+2 o +3",
-   "txt": "Dos categorías de tamaño más. Gana Pisotón y Gigantismo. Pierde Sigilo y cualquier Rasgo de Movilidad salvo Vuelo.",
+   "naTxt": "+2 (+3 si ya era Grande)",
+   "txt": "Dos categorías de tamaño más. Gana Pisotón y Gigantismo. Pierde Camuflaje, Esconderse y cualquier Rasgo de Movilidad salvo Vuelo.",
    "na": 2,
    "tam": 2,
    "gana": [
@@ -2484,7 +2544,7 @@ const DEFAULT_DB = {
    "na": 3,
    "cond": "Al romper el sello del cofre",
    "senal": "olor dulzón",
-   "cons": "Salvación CON o Inconsciente durante 1 minuto."
+   "cons": "Salvación CON o Inconsciente durante 1 minuto, o hasta recibir daño o que alguien lo despierte (1 PA)."
   },
   "cuchillas_pendulares": {
    "name": "Cuchillas pendulares",
@@ -2607,7 +2667,13 @@ const DEFAULT_DB = {
    "tam": "mediano",
    "rol": "esbirro",
    "estructura": "normal",
-   "rasgos": [],
+   "rasgos": [
+    {
+     "id": "formacion",
+     "txt": "+1 a la Guardia por cada guardia adyacente, hasta +3.",
+     "especie": true
+    }
+   ],
    "fuente": "Manual de Monstruos",
    "danoTipo": "Perforante",
    "ataqueNombre": "Lanza",
@@ -2624,7 +2690,7 @@ const DEFAULT_DB = {
     "a": 0,
     "vel": 30,
     "atk": 4,
-    "dano": "2d6+2",
+    "dano": "2d6+3",
     "cd": 12,
     "ini": 0,
     "moral": null,
@@ -2635,7 +2701,8 @@ const DEFAULT_DB = {
      "INT": 0,
      "SAB": 0,
      "CAR": 0
-    }
+    },
+    "enc": 1
    }
   },
   "kobold_trampero": {
@@ -2647,6 +2714,11 @@ const DEFAULT_DB = {
    "estructura": "normal",
    "rasgos": [
     {
+     "id": "retirada_agil",
+     "txt": "No provoca Ataques de Oportunidad al alejarse.",
+     "especie": true
+    },
+    {
      "id": "trampas_de_la_guarida",
      "txt": "Su madriguera tiene 1d4 trampas de NA 1 (Cap. 7) que él sabe esquivar."
     },
@@ -2656,7 +2728,7 @@ const DEFAULT_DB = {
     },
     {
      "id": "esconderse",
-     "txt": "1 PA: se oculta tras cualquier cobertura parcial o en penumbra."
+     "txt": "Se oculta con solo cobertura parcial o penumbra, aunque lo miren, con Ventaja en Sigilo."
     },
     {
      "id": "fotosensible",
@@ -2674,12 +2746,12 @@ const DEFAULT_DB = {
    "senal": "Cascabeles colgados de hilos, piedras apiladas en los cruces.",
    "contexto": "El kobold no pelea: te hace pelear contra su casa. Si el grupo avanza con prisa, las trampas hacen el trabajo; si avanza con cuidado, los kobolds tienen tiempo de rodearlo.",
    "impreso": {
-    "pv": 55,
+    "pv": 82,
     "g": 14,
     "a": 0,
     "vel": 30,
     "atk": 4,
-    "dano": "2d6+2",
+    "dano": "2d6+3",
     "cd": 12,
     "ini": 2,
     "moral": 11,
@@ -2690,7 +2762,8 @@ const DEFAULT_DB = {
      "INT": 0,
      "SAB": 0,
      "CAR": 0
-    }
+    },
+    "enc": 1
    }
   },
   "dron_centinela": {
@@ -2708,6 +2781,11 @@ const DEFAULT_DB = {
     {
      "id": "sistemas_redundantes",
      "gratis": true
+    },
+    {
+     "id": "protocolo_de_amenaza",
+     "txt": "Tras ser atacado por una criatura, tiene +2 al ataque contra ella.",
+     "especie": true
     },
     {
      "id": "vuelo",
@@ -2738,12 +2816,12 @@ const DEFAULT_DB = {
    "senal": "Un zumbido intermitente, luces rojas que barren el pasillo.",
    "contexto": "Uno solo es una molestia. Tres, cubriendo el mismo pasillo desde el techo, obligan al grupo a buscar otra ruta o a asumir que alguien va a caer antes de llegar a la puerta.",
    "impreso": {
-    "pv": 53,
+    "pv": 79,
     "g": 14,
     "a": 0,
     "vel": 30,
     "atk": 4,
-    "dano": "2d6+2",
+    "dano": "2d6+3",
     "cd": 12,
     "ini": 2,
     "moral": null,
@@ -2754,7 +2832,8 @@ const DEFAULT_DB = {
      "INT": 0,
      "SAB": 2,
      "CAR": -2
-    }
+    },
+    "enc": 1
    }
   },
   "cieno_gris": {
@@ -2772,6 +2851,11 @@ const DEFAULT_DB = {
     {
      "id": "sentido_sismico",
      "gratis": true
+    },
+    {
+     "id": "sangre_acida",
+     "txt": "Quien le inflija daño Cortante o Perforante cuerpo a cuerpo recibe 1d6 de Ácido.",
+     "especie": true
     },
     {
      "id": "acido_corrosivo",
@@ -2801,12 +2885,12 @@ const DEFAULT_DB = {
    "senal": "Armas y armaduras corroídas en el suelo, sin dueño.",
    "contexto": "No mata rápido: desarma. Cada golpe que recibe el Audaz le quita Armadura que tardará en recuperar, y el grupo descubre demasiado tarde que las espadas también se corroen.",
    "impreso": {
-    "pv": 64,
+    "pv": 96,
     "g": 12,
     "a": 1,
     "vel": 30,
     "atk": 4,
-    "dano": "2d6+2",
+    "dano": "2d6+5",
     "cd": 13,
     "ini": 0,
     "moral": null,
@@ -2817,7 +2901,8 @@ const DEFAULT_DB = {
      "INT": -2,
      "SAB": 0,
      "CAR": -2
-    }
+    },
+    "enc": 2
    }
   },
   "mercenario_veterano": {
@@ -2829,8 +2914,13 @@ const DEFAULT_DB = {
    "estructura": "normal",
    "rasgos": [
     {
+     "id": "venganza_del_grupo",
+     "txt": "Cuando cae un compañero de su compañía, gana +2 al daño hasta el final del combate.",
+     "especie": true
+    },
+    {
      "id": "bloqueador",
-     "txt": "Una vez por ronda, bloquea con 1d20 + 4 contra el total del ataque."
+     "txt": "Una vez por ronda, bloquea con 1d20 + 6 contra el total del ataque."
     },
     {
      "id": "formacion",
@@ -2845,19 +2935,20 @@ const DEFAULT_DB = {
     "FUE"
    ],
    "debiles": [],
-   "equipo": "cota de malla y escudo (Armadura 4 con el Rol).",
+   "equipo": "cota de malla y escudo (Armadura 3 con el Rol; el escudo da +1 a la Guardia y +2 al Bloqueo).",
    "senal": "Hogueras de campamento ordenadas, un estandarte de compañía.",
    "contexto": "El mercenario no busca ganar: busca que su pagador salga vivo. Pelea en línea, protege al que paga y se rinde en cuanto el contrato deja de compensar (Moral 12).",
    "manual": {
-    "armadura": 4
+    "armadura": 3,
+    "guardia": 13
    },
    "impreso": {
-    "pv": 64,
-    "g": 12,
-    "a": 4,
+    "pv": 96,
+    "g": 13,
+    "a": 3,
     "vel": 20,
     "atk": 4,
-    "dano": "2d6+2",
+    "dano": "2d6+5",
     "cd": 13,
     "ini": 0,
     "moral": 12,
@@ -2868,7 +2959,8 @@ const DEFAULT_DB = {
      "INT": 0,
      "SAB": 0,
      "CAR": 0
-    }
+    },
+    "enc": 2
    }
   },
   "tejedora_del_techo": {
@@ -2884,20 +2976,28 @@ const DEFAULT_DB = {
      "gratis": true
     },
     {
+     "id": "telarana",
+     "txt": "2 PA · Ud6: área de 10 pies a 30 pies, terreno difícil; Salvación DES CD 16 o Apresado.",
+     "especie": true
+    },
+    {
      "id": "trepadora",
      "txt": "Trepa a su velocidad por muros y techos."
     },
     {
-     "id": "telarana",
-     "txt": "2 PA · Ud6: área de 10 pies a 30 pies, terreno difícil; Salvación DES CD 16 o Apresado."
+     "id": "aguijon_venenoso",
+     "txt": "Su mordisco: al impactar, Salvación CON CD 16 o queda Envenenado (Ud8).",
+     "especie": true
     },
     {
      "id": "arrastrar",
-     "txt": "1 PA: se mueve 15 pies llevándose a una criatura Apresada."
+     "txt": "Arrastra a la criatura que tiene Apresada a su velocidad completa, sin provocar Ataques de Oportunidad."
     },
     {
-     "id": "garras_desgarradoras",
-     "txt": "Dos impactos al mismo objetivo en un turno, o un Crítico, aplican Sangrado (Ud6)."
+     "id": "veneno_paralizante",
+     "txt": "Al impactar a una criatura Envenenada, Salvación CON CD 16 o queda Paralizada (Ud4).",
+     "especie": true,
+     "definitoria": true
     },
     {
      "id": "fotosensible",
@@ -2916,15 +3016,17 @@ const DEFAULT_DB = {
     "CAR"
    ],
    "rolNota": "Primer Golpe: su primer impacto contra una criatura Desprevenida suma el daño base otra vez.",
+   "proteccion": "Un antídoto bebido antes, o un Axioma que cure venenos, da Ventaja contra la parálisis. Una antorcha encendida en la mano da Ventaja contra la Telaraña y quema los hilos que toca; con luz brillante, la Tejedora pelea con Desventaja.",
+   "encuentroTxt": "Pasa en 3 su presupuesto de Potencial: cuenta como NA 4 al calcular el encuentro.",
    "senal": "Hilos pegajosos a la altura de la cabeza; ratas envueltas; ningún eco en la galería.",
-   "contexto": "No pelea: elige al último de la fila, lo inmoviliza y se lo lleva. El grupo decide entre perseguirla hacia su terreno o dejar atrás a un compañero.",
+   "contexto": "No pelea: atrapa con la tela al último de la fila, lo muerde hasta paralizarlo y se lo lleva. El grupo decide entre perseguirla hacia su terreno o dejar atrás a un compañero.",
    "impreso": {
-    "pv": 65,
+    "pv": 97,
     "g": 16,
     "a": 1,
     "vel": 30,
     "atk": 7,
-    "dano": "3d6+4",
+    "dano": "3d6+2",
     "cd": 16,
     "ini": 3,
     "moral": null,
@@ -2935,7 +3037,8 @@ const DEFAULT_DB = {
      "INT": -2,
      "SAB": 0,
      "CAR": -2
-    }
+    },
+    "enc": 4
    }
   },
   "sabueso_infernal": {
@@ -2957,8 +3060,15 @@ const DEFAULT_DB = {
      "gratis": true
     },
     {
+     "id": "olor_de_la_sangre",
+     "txt": "Percibe a las criaturas heridas a 120 pies, aunque estén ocultas o sean invisibles.",
+     "especie": true
+    },
+    {
      "id": "aliento",
-     "txt": "3 PA · Ud6: cono de 30 pies, Salvación DES CD 15, 4d6 de Fuego; la mitad si la supera."
+     "txt": "3 PA · Ud6: cono de 30 pies, Salvación DES CD 15, 4d6 de Fuego; la mitad si la supera.",
+     "especie": true,
+     "definitoria": true
     },
     {
      "id": "tactica_de_manada",
@@ -2981,15 +3091,17 @@ const DEFAULT_DB = {
     "INT"
    ],
    "rolNota": "Flanqueo: Ventaja si un aliado está adyacente al mismo objetivo.",
+   "proteccion": "Resistencia al Fuego, o separarse: el Aliento no alcanza a quien está lejos de los demás. La sal consagrada le cierra el paso.",
+   "encuentroTxt": "Su Aliento le suma 3: cuenta como NA 6 al calcular el encuentro.",
    "senal": "Hierba quemada en forma de huellas; un olor a azufre que no se va.",
    "contexto": "Cazan en tríos y abren con el aliento antes de cerrar el cerco. El grupo que se agrupa para defenderse es el que mejor queda para el siguiente aliento.",
    "impreso": {
-    "pv": 59,
+    "pv": 88,
     "g": 16,
     "a": 1,
     "vel": 40,
     "atk": 6,
-    "dano": "3d6+3",
+    "dano": "3d6+1",
     "cd": 15,
     "ini": 3,
     "moral": null,
@@ -3000,7 +3112,8 @@ const DEFAULT_DB = {
      "INT": -2,
      "SAB": 0,
      "CAR": 0
-    }
+    },
+    "enc": 6
    }
   },
   "ghoul": {
@@ -3019,6 +3132,15 @@ const DEFAULT_DB = {
      "id": "inmunidad_a_estados",
      "nota": "Envenenado y Aterrado",
      "gratis": true
+    },
+    {
+     "custom": true,
+     "name": "Garras Paralizantes",
+     "tipo": "Modificador",
+     "peso": 3,
+     "txt": "Al impactar, Salvación CON CD 15 o queda Paralizado (Ud4). Los elfos son inmunes.",
+     "definitoria": true,
+     "especie": true
     },
     {
      "id": "toque_necrotico",
@@ -3053,16 +3175,18 @@ const DEFAULT_DB = {
     "DES",
     "CAR"
    ],
-   "rolNota": "Ataque Masivo (2 PA): Derriba sin tirada.",
+   "rolNota": "Ataque Masivo: derriba al impactar, una vez por ronda.",
+   "proteccion": "Agua bendita bebida antes del combate o un amuleto consagrado: Ventaja en la Salvación. Los elfos son inmunes a la parálisis.",
+   "encuentroTxt": "Sus garras pasan en 2 su presupuesto de Potencial: cuenta como NA 4 al calcular el encuentro.",
    "senal": "Tumbas abiertas desde dentro; huesos partidos a lo largo.",
    "contexto": "Derriba y se ceba. Un personaje en el suelo junto a un ghoul pierde un turno levantándose y sufre dos ataques con Ventaja; el grupo tiene que decidir quién se queda a su lado.",
    "impreso": {
-    "pv": 74,
+    "pv": 111,
     "g": 11,
     "a": 1,
     "vel": 30,
     "atk": 6,
-    "dano": "4d6+3",
+    "dano": "4d6+1",
     "cd": 15,
     "ini": -2,
     "moral": 13,
@@ -3073,7 +3197,8 @@ const DEFAULT_DB = {
      "INT": 0,
      "SAB": 0,
      "CAR": -2
-    }
+    },
+    "enc": 4
    }
   },
   "fuego_fatuo": {
@@ -3089,13 +3214,20 @@ const DEFAULT_DB = {
      "gratis": true
     },
     {
+     "id": "senuelo",
+     "txt": "2 PA · Ud6: crea una luz gemela; el primer ataque que lo impactaría golpea al señuelo y lo disipa.",
+     "especie": true
+    },
+    {
      "id": "vuelo",
      "txt": "Flota a 30 pies.",
      "nota": "30 pies"
     },
     {
      "id": "voz_seductora",
-     "txt": "2 PA · Ud6: una criatura a 30 pies, Salvación SAB CD 15 o Encantada (Ud6); la sigue hacia el pantano."
+     "txt": "2 PA · Ud6: una criatura a 30 pies, Salvación SAB CD 15 o Encantada (Ud6); la sigue hacia el pantano.",
+     "especie": true,
+     "definitoria": true
     },
     {
      "id": "ligada_al_lugar",
@@ -3110,16 +3242,17 @@ const DEFAULT_DB = {
     "SAB"
    ],
    "debiles": [],
-   "rolNota": "Aplica un estado en un radio de 10 pies (3 PA).",
+   "rolNota": "Represión (3 PA): Cegado (Salvación CON, Ud4).",
+   "proteccion": "Atarse con una cuerda o taparse los oídos: Ventaja contra su Voz Seductora, y quien la falla así se queda quieto en lugar de caminar hacia el agua.",
    "senal": "Luces azules entre los juncos; viajeros que juran haber visto un farol.",
    "contexto": "No mata: conduce. La víctima Encantada camina hacia la ciénaga más profunda (Cap. 7), y el grupo tiene que elegir entre perseguir la luz o sacar a su compañero del agua.",
    "impreso": {
-    "pv": 62,
+    "pv": 93,
     "g": 14,
     "a": 1,
     "vel": 30,
     "atk": 4,
-    "dano": "3d6+1",
+    "dano": "3d6-1",
     "cd": 15,
     "ini": 1,
     "moral": 13,
@@ -3130,7 +3263,8 @@ const DEFAULT_DB = {
      "INT": 3,
      "SAB": 3,
      "CAR": 0
-    }
+    },
+    "enc": 3
    }
   },
   "arpia": {
@@ -3147,13 +3281,20 @@ const DEFAULT_DB = {
      "gratis": true
     },
     {
+     "id": "garras_desgarradoras",
+     "txt": "Si impacta superando la Guardia por 5 o más, o con un Crítico, aplica Sangrado (Ud6).",
+     "especie": true
+    },
+    {
      "id": "vuelo",
      "txt": "Vuela a 40 pies.",
      "nota": "40 pies"
     },
     {
      "id": "voz_seductora",
-     "txt": "2 PA · Ud6: una criatura a 30 pies, Salvación SAB CD 15 o Encantada (Ud6)."
+     "txt": "2 PA · Ud6: una criatura a 30 pies, Salvación SAB CD 15 o Encantada (Ud6).",
+     "especie": true,
+     "definitoria": true
     },
     {
      "id": "cobarde",
@@ -3168,15 +3309,17 @@ const DEFAULT_DB = {
     "SAB"
    ],
    "debiles": [],
+   "rolNota": "Represión (3 PA): chillido; Aterrado (Salvación SAB, Ud4).",
+   "proteccion": "Cera en los oídos: Ventaja contra su canto, a cambio de quedar Ensordecido mientras la lleve.",
    "senal": "Un canto hermoso en los acantilados; restos de marineros al pie.",
    "contexto": "Encanta a uno y ataca desde el aire a quien intenta despertarlo. Es frágil y huye pronto, así que la pelea no se gana matándola, sino sacando al encantado del borde.",
    "impreso": {
-    "pv": 65,
+    "pv": 97,
     "g": 13,
     "a": 1,
     "vel": 30,
     "atk": 3,
-    "dano": "3d6",
+    "dano": "3d6-2",
     "cd": 15,
     "ini": 0,
     "moral": 9,
@@ -3187,7 +3330,8 @@ const DEFAULT_DB = {
      "INT": 3,
      "SAB": 3,
      "CAR": 0
-    }
+    },
+    "enc": 3
    }
   },
   "mimico": {
@@ -3204,16 +3348,23 @@ const DEFAULT_DB = {
      "gratis": true
     },
     {
+     "id": "arrastrar",
+     "txt": "Arrastra a la criatura que tiene Apresada a su velocidad completa, sin provocar Ataques de Oportunidad.",
+     "especie": true
+    },
+    {
      "id": "falsa_apariencia",
      "txt": "Inmóvil, es un cofre, una puerta o un taburete."
     },
     {
      "id": "mordisco_tenaz",
-     "txt": "Al impactar, el objetivo queda Apresado (escapar: Proeza Física CD 16)."
+     "txt": "Al impactar, Apresa sin gastar PA: Salvación FUE o DES CD 16 o queda Apresado."
     },
     {
      "id": "emboscadora_nata",
-     "txt": "En la primera ronda, sus ataques contra Desprevenidos suman el daño base otra vez."
+     "txt": "En la primera ronda, sus ataques contra Desprevenidos suman el daño base otra vez.",
+     "especie": true,
+     "definitoria": true
     }
    ],
    "fuente": "Manual de Monstruos",
@@ -3227,10 +3378,11 @@ const DEFAULT_DB = {
     "CAR"
    ],
    "rolNota": "Primer Golpe: su primer impacto contra una criatura Desprevenida suma el daño base otra vez.",
+   "proteccion": "Tantear muebles y cofres con un palo, o Percepción CD 16: descubierto, pierde su Primer Golpe. El alcohol o el fuego aflojan su adhesivo: Ventaja para escapar.",
    "senal": "Un cofre sin polvo en una sala abandonada; marcas de arrastre bajo él.",
    "contexto": "El primer golpe es el peor. Después, el personaje pegado al mímico tiene que elegir entre forcejear y seguir recibiendo ácido o que sus compañeros lo golpeen de cerca y se quemen.",
    "impreso": {
-    "pv": 74,
+    "pv": 111,
     "g": 16,
     "a": 2,
     "vel": 30,
@@ -3246,7 +3398,8 @@ const DEFAULT_DB = {
      "INT": 1,
      "SAB": 1,
      "CAR": -2
-    }
+    },
+    "enc": 4
    }
   },
   "ogro": {
@@ -3262,12 +3415,19 @@ const DEFAULT_DB = {
      "gratis": true
     },
     {
+     "id": "dura_de_matar",
+     "txt": "La primera vez en cada combate que llega a 0 PV, queda en 1 PV.",
+     "especie": true
+    },
+    {
      "id": "golpe_aplastante",
-     "txt": "Al impactar, Salvación FUE CD 17 o Derribado."
+     "txt": "Al impactar, Salvación FUE CD 17 o Derribado.",
+     "especie": true,
+     "definitoria": true
     },
     {
      "id": "lanzar",
-     "txt": "2 PA: arroja a una criatura Apresada hasta 20 pies; 3d6 para ella y para quien reciba el golpe."
+     "txt": "2 PA: en lugar de Empujar, arroja a una criatura que tenga Apresada hasta 20 pies; 3d6 para ella y para quien reciba el golpe."
     },
     {
      "id": "frenesi",
@@ -3289,11 +3449,12 @@ const DEFAULT_DB = {
     "DES",
     "INT"
    ],
-   "rolNota": "Ataque Masivo (2 PA): Derriba sin tirada.",
+   "rolNota": "Ataque Masivo: derriba al impactar, una vez por ronda.",
+   "proteccion": "Un escudo plantado da Ventaja contra su Golpe Aplastante; una finta o un cebo lo sacan de la pelea un turno.",
    "senal": "Árboles tronchados a la altura del pecho; cabras desaparecidas.",
    "contexto": "Pega muchísimo y piensa muy poco. El grupo que lo engaña —una finta, un señuelo, un puente que no aguanta su peso— lo vence sin recibir un solo golpe.",
    "impreso": {
-    "pv": 82,
+    "pv": 123,
     "g": 11,
     "a": 2,
     "vel": 30,
@@ -3309,7 +3470,8 @@ const DEFAULT_DB = {
      "INT": -2,
      "SAB": 1,
      "CAR": 1
-    }
+    },
+    "enc": 4
    }
   },
   "bruja_del_pantano": {
@@ -3325,8 +3487,15 @@ const DEFAULT_DB = {
      "gratis": true
     },
     {
+     "id": "ilusion",
+     "txt": "2 PA · Ud6: crea una imagen convincente de sí misma o de un peligro hasta 60 pies. Descubrir el engaño: Investigación o Perspicacia CD 16.",
+     "especie": true
+    },
+    {
      "id": "maldicion",
-     "txt": "2 PA · Ud6: Salvación SAB CD 16 o Maldito (Ud8), con Desventaja en el tipo de tirada que ella elija."
+     "txt": "2 PA · Ud6: Salvación SAB CD 16 o Maldito (Ud8), con Desventaja en el tipo de tirada que ella elija.",
+     "especie": true,
+     "definitoria": true
     },
     {
      "id": "cambiaformas",
@@ -3351,11 +3520,12 @@ const DEFAULT_DB = {
    "debiles": [
     "FUE"
    ],
-   "rolNota": "Aplica un estado en un radio de 10 pies (3 PA).",
+   "rolNota": "Represión (3 PA): Ralentizado (Salvación FUE, Ud4).",
+   "proteccion": "Hierro frío encima: Ventaja contra su Maldición. Dormir en tierra consagrada aleja sus Pesadillas.",
    "senal": "Muñecos de paja en las puertas; los niños sueñan con una casa sobre patas.",
    "contexto": "Ataca antes de que el grupo sepa que está en guerra: con pesadillas que les quitan el descanso y maldiciones que llegan con la cena. Enfrentarla es encontrarla, y encontrarla es saber quién es.",
    "impreso": {
-    "pv": 80,
+    "pv": 120,
     "g": 14,
     "a": 2,
     "vel": 30,
@@ -3371,7 +3541,8 @@ const DEFAULT_DB = {
      "INT": 3,
      "SAB": 3,
      "CAR": 1
-    }
+    },
+    "enc": 5
    }
   },
   "manticora": {
@@ -3388,13 +3559,20 @@ const DEFAULT_DB = {
      "gratis": true
     },
     {
+     "id": "aguijon_venenoso",
+     "txt": "Al impactar, Salvación CON CD 16 o queda Envenenado (Ud8).",
+     "especie": true
+    },
+    {
      "id": "vuelo",
      "txt": "Vuela a 50 pies.",
      "nota": "50 pies"
     },
     {
      "id": "andanada",
-     "txt": "3 PA · Ud6: radio de 15 pies a 60 pies, Salvación DES CD 16, 4d6; la mitad si la supera."
+     "txt": "3 PA · Ud6: radio de 15 pies a 60 pies, Salvación DES CD 16, 4d6; la mitad si la supera.",
+     "especie": true,
+     "definitoria": true
     }
    ],
    "fuente": "Manual de Monstruos",
@@ -3408,10 +3586,12 @@ const DEFAULT_DB = {
     "CON"
    ],
    "rolNota": "Posición: si no se ha movido, Ventaja en su primer ataque a distancia.",
+   "proteccion": "Cobertura o separarse más de 15 pies: la Andanada no alcanza a todos, y un escudo da Ventaja en esa Salvación.",
+   "encuentroTxt": "Su Andanada le suma 2: cuenta como NA 7 al calcular el encuentro.",
    "senal": "Cadáveres erizados de púas negras; un rugido que parece una risa.",
    "contexto": "Dispara desde donde nadie llega y baja solo cuando alguien se aísla. Obliga al grupo a buscar cobertura en campo abierto, o a encontrar la forma de traerla al suelo.",
    "impreso": {
-    "pv": 65,
+    "pv": 97,
     "g": 16,
     "a": 2,
     "vel": 30,
@@ -3427,7 +3607,8 @@ const DEFAULT_DB = {
      "INT": 1,
      "SAB": 3,
      "CAR": 1
-    }
+    },
+    "enc": 7
    }
   },
   "basilisco": {
@@ -3443,8 +3624,15 @@ const DEFAULT_DB = {
      "gratis": true
     },
     {
+     "id": "aguijon_venenoso",
+     "txt": "Su mordisco: al impactar, Salvación CON CD 16 o queda Envenenado (Ud8).",
+     "especie": true
+    },
+    {
      "id": "mirada_petrificante",
-     "txt": "3 PA · Ud4: una criatura a 30 pies que lo mire, Salvación CON CD 16 o Ralentizada (Ud4); si vuelve a fallar mientras lo está, Petrificada."
+     "txt": "2 PA · Ud6: cada criatura a 30 pies que lo mire hace una Salvación CON CD 16 o queda Ralentizada (Ud4); si ya lo estaba, queda Petrificada, y eso no se degrada con el Ud: dura hasta que un Axioma o un remedio la cure.",
+     "definitoria": true,
+     "especie": true
     },
     {
      "id": "piel_gruesa",
@@ -3461,13 +3649,14 @@ const DEFAULT_DB = {
    "debiles": [
     "CAR"
    ],
-   "rolNota": "Aplica un estado en un radio de 10 pies (3 PA).",
+   "rolNota": "Represión (3 PA): Aterrado (Salvación SAB, Ud4).",
+   "proteccion": "Apartar la mirada cuando la usa: Ventaja en la Salvación. Quien la aparta durante todo el combate ataca con Desventaja. Un espejo pulido le devuelve la mirada: el basilisco hace la misma Salvación.",
    "senal": "Estatuas demasiado realistas, con cara de sorpresa; pájaros de piedra en las ramas.",
    "contexto": "La mirada no mata al primer intento: avisa. El grupo tiene un turno para decidir si pelea con los ojos cerrados (Desventaja) o se arriesga a una segunda mirada.",
    "impreso": {
-    "pv": 80,
+    "pv": 120,
     "g": 14,
-    "a": 2,
+    "a": 4,
     "vel": 30,
     "atk": 4,
     "dano": "4d6+1",
@@ -3481,7 +3670,8 @@ const DEFAULT_DB = {
      "INT": 3,
      "SAB": 3,
      "CAR": -2
-    }
+    },
+    "enc": 5
    }
   },
   "troll": {
@@ -3497,12 +3687,23 @@ const DEFAULT_DB = {
      "gratis": true
     },
     {
-     "id": "regeneracion",
-     "txt": "Recupera 12 PV al inicio de su turno salvo si recibió Fuego o Ácido desde su turno anterior. Solo muere a 0 PV si ese turno recibió Fuego o Ácido."
+     "id": "frenesi",
+     "txt": "1 PA · 1/combate: hasta el final de su siguiente turno, sus ataques tienen Ventaja y los ataques contra él también.",
+     "especie": true
     },
     {
-     "id": "garras_dobles",
-     "txt": "Su Ataque Normal son dos ataques, cada uno con la mitad del daño base."
+     "id": "regeneracion",
+     "txt": "Recupera 12 PV al inicio de su turno salvo si recibió Fuego o Ácido desde su turno anterior. A 0 PV cae, pero si ese turno no recibió Fuego ni Ácido, se levanta al inicio de su siguiente turno con 12 PV. Solo muere de verdad quemado o disuelto.",
+     "especie": true,
+     "definitoria": true
+    },
+    {
+     "custom": true,
+     "name": "Miembros que Siguen",
+     "tipo": "Rasgo",
+     "peso": 1,
+     "txt": "Cuando un solo golpe le quita 20 PV o más, le arranca un miembro que sigue luchando: una criatura de NA 0 (4 PV) que actúa en su turno y ataca con 2d6. Mientras no se queme, el troll puede volver a unírselo con 1 PA.",
+     "especie": true
     },
     {
      "id": "olor_de_la_sangre",
@@ -3524,16 +3725,17 @@ const DEFAULT_DB = {
     "DES",
     "INT"
    ],
-   "rolNota": "Ataque Masivo (2 PA): aplica Sangrado sin tirada.",
+   "rolNota": "Ataque Masivo: Sangrado al impactar, una vez por ronda.",
+   "proteccion": "Fuego o ácido: cortan la Regeneración y lo rematan. Sin ellos, cada vez que cae vuelve a levantarse.",
    "senal": "Huesos de caballo mordidos; un hedor que se huele a una milla.",
    "contexto": "Se puede tumbar muchas veces y se levanta todas. La pelea contra un troll es una pelea por el fuego: quién lo lleva, cuánto queda y cómo aguantar hasta usarlo.",
    "impreso": {
-    "pv": 104,
+    "pv": 156,
     "g": 12,
     "a": 3,
     "vel": 30,
     "atk": 9,
-    "dano": "5d6+5",
+    "dano": "3d6+2 y 2d6+2",
     "cd": 20,
     "ini": -2,
     "moral": null,
@@ -3544,7 +3746,8 @@ const DEFAULT_DB = {
      "INT": -2,
      "SAB": 1,
      "CAR": 1
-    }
+    },
+    "enc": 6
    }
   },
   "espectro": {
@@ -3558,6 +3761,12 @@ const DEFAULT_DB = {
     {
      "id": "telepatia",
      "gratis": true
+    },
+    {
+     "id": "pavor",
+     "txt": "Aura de 30 pies: la primera vez que una criatura entra o empieza su turno dentro, Salvación SAB CD 19 o queda Aterrada mientras siga dentro. Quien la supera es inmune un día.",
+     "especie": true,
+     "definitoria": true
     },
     {
      "id": "incorporeo",
@@ -3591,15 +3800,16 @@ const DEFAULT_DB = {
     "CON"
    ],
    "rolNota": "Flanqueo: Ventaja si un aliado está adyacente al mismo objetivo.",
+   "proteccion": "Luz brillante y armas mágicas. Un símbolo consagrado da Ventaja contra su Pavor.",
    "senal": "Frío en una sola habitación; los espejos se empañan desde dentro.",
    "contexto": "Sale de la pared, toca y vuelve a entrar. No se le puede acorralar, así que el grupo tiene que traer la luz a su terreno o sacarlo del lugar al que está ligado.",
    "impreso": {
-    "pv": 68,
+    "pv": 102,
     "g": 18,
     "a": 3,
     "vel": 40,
     "atk": 8,
-    "dano": "4d6+4",
+    "dano": "4d6+1",
     "cd": 19,
     "ini": 4,
     "moral": 16,
@@ -3610,7 +3820,8 @@ const DEFAULT_DB = {
      "INT": 1,
      "SAB": 1,
      "CAR": 1
-    }
+    },
+    "enc": 6
    }
   },
   "golem_de_arcilla": {
@@ -3629,6 +3840,12 @@ const DEFAULT_DB = {
      "id": "inmunidad_a_estados",
      "nota": "Envenenado y Encantado",
      "gratis": true
+    },
+    {
+     "id": "pisoton",
+     "txt": "2 PA · Ud6: cada criatura a 10 pies, Salvación FUE CD 20 o Derribada; el suelo en ese radio pasa a ser terreno difícil.",
+     "especie": true,
+     "definitoria": true
     },
     {
      "id": "resistencia_sobrenatural",
@@ -3659,16 +3876,17 @@ const DEFAULT_DB = {
     "INT",
     "CAR"
    ],
-   "rolNota": "Ataque Masivo (2 PA): Derriba sin tirada.",
+   "rolNota": "Ataque Masivo: derriba al impactar, una vez por ronda.",
+   "proteccion": "Apartar a su creador: sin él, pierde 1 PA y sus Aptitudes. Quien se mantiene a más de 10 pies no recibe su Pisotón.",
    "senal": "Huellas profundas y exactas, siempre a la misma distancia; runas en una puerta.",
    "contexto": "Casi nada le hace daño y todo lo que toca cae. La verdadera pelea es contra quien lo controla: encontrarlo y apartarlo convierte al gólem en una estatua lenta.",
    "impreso": {
-    "pv": 104,
+    "pv": 156,
     "g": 12,
     "a": 3,
     "vel": 30,
     "atk": 9,
-    "dano": "5d6+5",
+    "dano": "3d6+2 y 2d6+2",
     "cd": 20,
     "ini": -2,
     "moral": null,
@@ -3679,7 +3897,8 @@ const DEFAULT_DB = {
      "INT": -2,
      "SAB": 1,
      "CAR": -2
-    }
+    },
+    "enc": 6
    }
   },
   "cazador_sintetico": {
@@ -3697,6 +3916,12 @@ const DEFAULT_DB = {
     {
      "id": "sistemas_redundantes",
      "gratis": true
+    },
+    {
+     "id": "sobrecarga",
+     "txt": "1 PA · 1/combate: hasta el final de su siguiente turno gana +1 PA y su dado de daño sube un paso. Después queda Conmocionado (Ud4).",
+     "especie": true,
+     "definitoria": true
     },
     {
      "id": "arma_montada",
@@ -3732,15 +3957,16 @@ const DEFAULT_DB = {
     "CAR"
    ],
    "rolNota": "Flanqueo.",
+   "proteccion": "Rayo, y cortarle la línea de visión: su Arma Montada necesita verte. Un pulso electromagnético le quita la Sobrecarga.",
    "senal": "Cámaras destruidas en orden; un objetivo marcado con un punto rojo que nadie más ve.",
    "contexto": "Tiene un nombre en la lista y no se detiene hasta tacharlo. El grupo puede pelear, esconder a su objetivo o descubrir quién lo programó y cambiarle la lista.",
    "impreso": {
-    "pv": 68,
+    "pv": 102,
     "g": 18,
     "a": 3,
     "vel": 40,
     "atk": 8,
-    "dano": "4d6+4",
+    "dano": "4d6+1",
     "cd": 19,
     "ini": 4,
     "moral": null,
@@ -3751,7 +3977,86 @@ const DEFAULT_DB = {
      "INT": 1,
      "SAB": 1,
      "CAR": -2
+    },
+    "enc": 6
+   }
+  },
+  "wyvern": {
+   "nombre": "Wyvern",
+   "na": 6,
+   "tipo": "draconido",
+   "tam": "grande",
+   "rol": "arrollador",
+   "estructura": "normal",
+   "rasgos": [
+    {
+     "id": "vision_en_la_oscuridad",
+     "gratis": true
+    },
+    {
+     "id": "inmunidad",
+     "nota": "Ácido",
+     "gratis": true
+    },
+    {
+     "id": "aguijon_venenoso",
+     "txt": "Al impactar, 4d6 de Veneno (Salvación CON CD 20, la mitad) y, si falla, queda Envenenado (Ud8).",
+     "definitoria": true,
+     "especie": true
+    },
+    {
+     "id": "aliento",
+     "txt": "3 PA · Ud6: cono de 30 pies, Salvación DES CD 20, 6d6 de Ácido; la mitad si la supera. No lo repite en su turno siguiente."
+    },
+    {
+     "id": "vuelo",
+     "txt": "Vuela a 80 pies. Si queda Derribado, Aturdido o Paralizado en el aire, cae."
+    },
+    {
+     "id": "hambre",
+     "txt": "Con una presa caída a la vista, Salvación SAB CD 12 o baja a devorarla ese turno."
     }
+   ],
+   "fuente": "Manual de Monstruos",
+   "danoTipo": "Perforante",
+   "ataqueNombre": "Mordisco y aguijón",
+   "fuertes": [
+    "FUE",
+    "CON"
+   ],
+   "debiles": [
+    "DES",
+    "INT",
+    "CAR"
+   ],
+   "rolNota": "Ataque Masivo: derriba al impactar, una vez por ronda.",
+   "proteccion": "Un antídoto bebido antes da Ventaja contra el aguijón, y quien la supera con Ventaja recibe solo la mitad del veneno sin quedar Envenenado. Cobertura o dispersarse contra el Aliento.",
+   "encuentroTxt": "Su Aliento le suma 3: cuenta como NA 9 al calcular el encuentro.",
+   "notas": "Edad. Una cría es Mediana (plantilla Cría: NA 4); un wyvern viejo, Enorme (plantilla Anciana: NA 8).",
+   "senal": "Ganado arrancado del suelo; huesos con marcas de ácido en lo alto de un risco.",
+   "contexto": "No habla, no negocia y no guarda tesoros: caza. Abre con el aliento desde el aire, baja sobre el que quedó en pie y se lo lleva. Es un dragón sin la mente de un dragón, y por eso se le puede engañar con un cebo.",
+   "manual": {
+    "vel": 20
+   },
+   "impreso": {
+    "pv": 156,
+    "g": 12,
+    "a": 3,
+    "vel": 20,
+    "atk": 9,
+    "dano": "3d6+2 y 2d6+2",
+    "cd": 20,
+    "ini": -2,
+    "moral": null,
+    "attrs": {
+     "FUE": 5,
+     "DES": -2,
+     "CON": 4,
+     "INT": -2,
+     "SAB": 1,
+     "CAR": -2
+    },
+    "enc": 9
    }
   },
   "guardian_de_raiz": {
@@ -3773,12 +4078,19 @@ const DEFAULT_DB = {
      "gratis": true
     },
     {
+     "id": "absorber_vida",
+     "txt": "Sus raíces beben: recupera PV iguales a la mitad del daño que inflige con sus ramas.",
+     "especie": true
+    },
+    {
      "id": "piel_gruesa",
      "txt": "+2 de Armadura."
     },
     {
      "id": "zona_de_control",
-     "txt": "Quien empiece su turno adyacente a él no puede alejarse sin superar Salvación FUE o DES CD 20."
+     "txt": "Quien empiece su turno adyacente a él no puede alejarse sin superar Salvación FUE o DES CD 20.",
+     "especie": true,
+     "definitoria": true
     },
     {
      "id": "tentaculos",
@@ -3814,15 +4126,16 @@ const DEFAULT_DB = {
     "CAR"
    ],
    "rolNota": "Custodia (Reacción).",
+   "proteccion": "Fuego. Quien empieza su turno a más de 10 pies no queda atrapado en su Zona de Control.",
    "senal": "Un claro donde los árboles miran hacia dentro; caminos que se cierran.",
    "contexto": "No persigue: retiene. Mientras el guardián sujeta a dos personajes, lo que protege tiene tiempo de hacer lo que el grupo vino a impedir.",
    "impreso": {
-    "pv": 113,
+    "pv": 169,
     "g": 12,
-    "a": 4,
-    "vel": 20,
+    "a": 6,
+    "vel": 10,
     "atk": 9,
-    "dano": "5d6+5",
+    "dano": "3d6+4 y 2d6+4",
     "cd": 20,
     "ini": -2,
     "moral": 17,
@@ -3833,7 +4146,8 @@ const DEFAULT_DB = {
      "INT": 1,
      "SAB": 1,
      "CAR": -2
-    }
+    },
+    "enc": 7
    }
   },
   "elemental_de_tormenta": {
@@ -3855,13 +4169,20 @@ const DEFAULT_DB = {
      "gratis": true
     },
     {
+     "id": "desplazamiento",
+     "txt": "1 PA · Ud6: se vuelve relámpago y reaparece hasta 30 pies, en un punto que pueda ver.",
+     "especie": true
+    },
+    {
      "id": "vuelo",
      "txt": "Vuela a 60 pies.",
      "nota": "60 pies"
     },
     {
      "id": "tormenta_personal",
-     "txt": "3 PA · Ud6: hasta tres objetivos en 30 pies reciben 5d6 de Rayo (Salvación DES CD 19, la mitad); el viento convierte el radio en terreno difícil."
+     "txt": "3 PA · Ud6: hasta tres objetivos en 30 pies reciben 5d6 de Rayo (Salvación DES CD 19, la mitad); el viento convierte el radio en terreno difícil.",
+     "especie": true,
+     "definitoria": true
     }
    ],
    "fuente": "Manual de Monstruos",
@@ -3874,16 +4195,18 @@ const DEFAULT_DB = {
    "debiles": [
     "CAR"
    ],
-   "rolNota": "Aplica un estado en un radio de 10 pies (3 PA).",
+   "rolNota": "Represión (3 PA): Conmocionado (Salvación CON, Ud4).",
+   "proteccion": "Resistencia al Rayo: Ventaja contra su Tormenta y la mitad de su daño. Una barra de hierro clavada en tierra le impide fundirse con las nubes.",
+   "encuentroTxt": "Su Tormenta Personal le suma 3: cuenta como NA 10 al calcular el encuentro.",
    "senal": "Nubes que se mueven contra el viento; el pelo se eriza.",
    "contexto": "Convierte el campo en un lugar donde nadie avanza. Cada ronda que el grupo pasa bajo ella es una ronda de rayos; la decisión es cubrirse o correr hacia algo que la ancle.",
    "impreso": {
-    "pv": 92,
+    "pv": 138,
     "g": 15,
     "a": 3,
     "vel": 30,
     "atk": 6,
-    "dano": "5d6+2",
+    "dano": "3d6+1 y 2d6+1",
     "cd": 19,
     "ini": 1,
     "moral": 17,
@@ -3894,7 +4217,8 @@ const DEFAULT_DB = {
      "INT": 4,
      "SAB": 4,
      "CAR": -2
-    }
+    },
+    "enc": 10
    }
   },
   "tejedor_del_vacio": {
@@ -3914,12 +4238,19 @@ const DEFAULT_DB = {
      "gratis": true
     },
     {
+     "id": "confundir",
+     "txt": "2 PA · Ud6: radio de 10 pies a 60 pies, Salvación SAB CD 19 o Conmocionado (Ud6); mientras dure, con 1–2 en 1d6 ataca a la criatura más cercana, amiga o enemiga.",
+     "especie": true
+    },
+    {
      "id": "voz_seductora",
      "txt": "2 PA · Ud6: una criatura a 30 pies, Salvación SAB CD 19 o Encantada (Ud6)."
     },
     {
      "id": "dominar",
-     "txt": "3 PA · Ud4: una criatura Encantada, Salvación SAB CD 19 o actúa como él decida."
+     "txt": "3 PA · Ud4: una criatura Encantada, Salvación SAB CD 19 o actúa como él decida.",
+     "especie": true,
+     "definitoria": true
     },
     {
      "id": "leer_mentes",
@@ -3940,16 +4271,17 @@ const DEFAULT_DB = {
    "debiles": [
     "FUE"
    ],
-   "rolNota": "Aplica un estado en un radio de 10 pies (3 PA).",
+   "rolNota": "Represión (3 PA): Conmocionado (Salvación SAB, Ud4).",
+   "proteccion": "Luz brillante, y Voluntad de Hierro o un Axioma de protección mental: Ventaja contra su Voz y su Dominar; quien falla con Ventaja queda solo Encantado.",
    "senal": "Gente que repite frases que no son suyas; dibujos idénticos hechos por desconocidos.",
    "contexto": "Pelea con el grupo contra el grupo. Sabe lo que van a hacer y usa a uno de ellos para impedirlo. La luz y la distancia son las únicas armas que no puede volver en su contra.",
    "impreso": {
-    "pv": 92,
+    "pv": 138,
     "g": 15,
     "a": 3,
     "vel": 30,
     "atk": 5,
-    "dano": "5d6+1",
+    "dano": "3d6 y 2d6",
     "cd": 19,
     "ini": 1,
     "moral": 17,
@@ -3960,7 +4292,8 @@ const DEFAULT_DB = {
      "INT": 4,
      "SAB": 4,
      "CAR": 1
-    }
+    },
+    "enc": 7
    }
   },
   "vampiro_senorial": {
@@ -3981,12 +4314,46 @@ const DEFAULT_DB = {
      "gratis": true
     },
     {
+     "id": "cambiaformas",
+     "txt": "2 PA: adopta la forma de una persona que haya visto, de un lobo o de un murciélago gigante. Descubrirlo exige Perspicacia CD 20.",
+     "especie": true
+    },
+    {
+     "custom": true,
+     "name": "Hijos de la Noche",
+     "tipo": "Aptitud",
+     "peso": 0,
+     "txt": "al final de la ronda siguiente acude un enjambre de murciélagos (horda de NA 4) o 1d4 lobos (NA 2) que obedecen su voz.",
+     "coste": "1 PA",
+     "frec": "1/combate",
+     "especie": true
+    },
+    {
+     "custom": true,
+     "name": "Forma de Niebla",
+     "tipo": "Rasgo",
+     "peso": 0,
+     "txt": "La primera vez que llega a 0 PV no cae: se vuelve niebla (Incorpórea, vuela 20 pies, no ataca) y huye a su ataúd, donde recupera 1 PV por hora. Solo muere a 0 PV dentro de su ataúd, con una estaca en el corazón o bajo la luz del sol.",
+     "especie": true
+    },
+    {
      "id": "absorber_vida",
      "txt": "Recupera PV iguales a la mitad del daño que inflige con su mordisco."
     },
     {
      "id": "voz_seductora",
      "txt": "2 PA · Ud6: una criatura a 30 pies, Salvación SAB CD 20 o Encantada (Ud6)."
+    },
+    {
+     "custom": true,
+     "name": "Mirada Dominante",
+     "tipo": "Aptitud",
+     "peso": 3,
+     "txt": "una criatura Encantada por él hace una Salvación SAB CD 20 o, en su siguiente turno, actúa como él decida (nunca contra sí misma); repite la Salvación al final de cada uno de sus turnos.",
+     "coste": "3 PA",
+     "frec": "Ud4",
+     "definitoria": true,
+     "especie": true
     },
     {
      "id": "curacion_rapida",
@@ -3998,7 +4365,8 @@ const DEFAULT_DB = {
     },
     {
      "id": "aversion",
-     "txt": "No cruza un umbral sin ser invitado; los símbolos sagrados presentados con fe lo frenan."
+     "txt": "No cruza un umbral sin ser invitado ni el agua corriente; los símbolos sagrados presentados con fe lo frenan. Bajo la luz del sol directa recibe 3d6 de Radiante al inicio de su turno y no se cura.",
+     "especie": true
     },
     {
      "id": "vulnerabilidad",
@@ -4015,15 +4383,21 @@ const DEFAULT_DB = {
    ],
    "debiles": [],
    "rolNota": "Aura de Mando: +2 al ataque de sus aliados a 30 pies; un aliado ataca como Reacción.",
+   "equipo": "Anillo de Sangre Antigua (Raro): +1 a la Guardia (ya incluido: Guardia 17) y +1d6 Necrótico a su mordisco. Si cae, es botín.",
+   "proteccion": "Un símbolo sagrado presentado con fe, o un Axioma de protección mental: Ventaja contra su Voz y su Mirada, y quien falla con Ventaja queda solo Encantado. De día, en su ataúd, está indefenso.",
+   "encuentroTxt": "Pasa en 3 su presupuesto de Potencial: cuenta como NA 9 al calcular el encuentro.",
    "senal": "Una familia noble que solo recibe de noche; sirvientes pálidos que no comen.",
    "contexto": "Nunca pelea solo y nunca pelea donde no quiere. Encanta a quien más daño hace, se cura con quien más cerca está y se retira por el techo cuando pierde la ventaja.",
+   "manual": {
+    "guardia": 17
+   },
    "impreso": {
-    "pv": 106,
-    "g": 16,
+    "pv": 159,
+    "g": 17,
     "a": 4,
     "vel": 30,
     "atk": 8,
-    "dano": "5d6+4",
+    "dano": "3d6+4 y 2d6+4",
     "cd": 20,
     "ini": 2,
     "moral": 18,
@@ -4034,7 +4408,8 @@ const DEFAULT_DB = {
      "INT": 2,
      "SAB": 2,
      "CAR": 4
-    }
+    },
+    "enc": 9
    }
   },
   "hidra": {
@@ -4050,8 +4425,15 @@ const DEFAULT_DB = {
      "gratis": true
     },
     {
+     "id": "aguijon_venenoso",
+     "txt": "Sus mordiscos: al impactar, Salvación CON CD 22 o queda Envenenado (Ud8).",
+     "especie": true
+    },
+    {
      "id": "varias_cabezas",
-     "txt": "+1 PA por turno. Cada Crítico o golpe de 40 o más le arranca una cabeza y le quita ese PA; si no recibe Fuego esa ronda, al final de su turno le crecen dos."
+     "txt": "+1 PA por turno (ya incluido): un mordisco más, de 3d6+6. Cada Crítico o golpe de 40 o más le arranca una cabeza y le quita ese PA hasta que crezca otra; si no recibe Fuego esa ronda, al final de su turno le crecen dos.",
+     "especie": true,
+     "definitoria": true
     },
     {
      "id": "anfibia",
@@ -4074,16 +4456,18 @@ const DEFAULT_DB = {
     "INT",
     "CAR"
    ],
-   "rolNota": "Ataque Masivo (2 PA): aplica Sangrado sin tirada.",
+   "rolNota": "Ataque Masivo: Sangrado al impactar, una vez por ronda.",
+   "proteccion": "Fuego tras cada cabeza cortada. Pelear de dos en dos: uno corta, otro quema.",
+   "encuentroTxt": "Su Ataque Barrido le suma 2 y su tamaño, 1: cuenta como NA 11 al calcular el encuentro.",
    "senal": "Un lago donde ya no beben los animales; dientes del tamaño de un puñal en la orilla.",
    "contexto": "Cortarle la cabeza sin fuego la hace más peligrosa. El grupo necesita a alguien que corte y a alguien que queme, y que los dos estén en el mismo sitio a la vez.",
    "impreso": {
-    "pv": 130,
+    "pv": 195,
     "g": 11,
     "a": 4,
     "vel": 30,
     "atk": 10,
-    "dano": "6d6+6",
+    "dano": "3d6+6 y 3d6+6",
     "cd": 22,
     "ini": -3,
     "moral": null,
@@ -4094,7 +4478,8 @@ const DEFAULT_DB = {
      "INT": -2,
      "SAB": 2,
      "CAR": -2
-    }
+    },
+    "enc": 11
    }
   },
   "serafin_ceniciento": {
@@ -4115,13 +4500,20 @@ const DEFAULT_DB = {
      "gratis": true
     },
     {
+     "id": "vision_verdadera",
+     "txt": "Ve a través de ilusiones, invisibilidad y cambios de forma hasta 60 pies.",
+     "especie": true
+    },
+    {
      "id": "vuelo",
      "txt": "Vuela a 60 pies.",
      "nota": "60 pies"
     },
     {
      "id": "cuerpo_igneo",
-     "txt": "Quien lo toque o golpee cuerpo a cuerpo recibe 3d6 de Fuego."
+     "txt": "Quien lo toque o golpee cuerpo a cuerpo recibe 3d6 de Fuego.",
+     "especie": true,
+     "definitoria": true
     },
     {
      "id": "presencia_consagrada",
@@ -4132,7 +4524,10 @@ const DEFAULT_DB = {
      "txt": "Ud6: cuando falla una Salvación, puede superarla."
     },
     {
-     "id": "aversion",
+     "custom": true,
+     "name": "Palabra Atada",
+     "tipo": "Debilidad",
+     "peso": 0,
      "txt": "No puede mentir ni romper un juramento; si se le hace jurar, lo cumple."
     }
    ],
@@ -4145,15 +4540,20 @@ const DEFAULT_DB = {
    ],
    "debiles": [],
    "rolNota": "Aura de Mando.",
+   "equipo": "Espada de la Sentencia (Muy Raro): +2 al ataque (ya incluido: Ataque +13) y +1d8 Radiante. Quien la empuñe no puede mentir.",
+   "proteccion": "Saber qué juró y hacérselo cumplir. Resistencia al Fuego contra su Cuerpo Ígneo.",
    "senal": "Ceniza que cae de un cielo despejado; cánticos en una lengua que todos entienden.",
    "contexto": "Viene a cumplir una sentencia, no a pelear. Se le puede vencer, pero también se le puede hacer jurar: el grupo que entiende qué juró antes de llegar tiene una salida que no pasa por la espada.",
+   "manual": {
+    "ataque": 13
+   },
    "impreso": {
-    "pv": 113,
+    "pv": 169,
     "g": 17,
     "a": 4,
     "vel": 30,
-    "atk": 11,
-    "dano": "6d6+6",
+    "atk": 13,
+    "dano": "3d6+4 y 3d6+4",
     "cd": 23,
     "ini": 2,
     "moral": 19,
@@ -4164,7 +4564,8 @@ const DEFAULT_DB = {
      "INT": 2,
      "SAB": 2,
      "CAR": 5
-    }
+    },
+    "enc": 9
    }
   },
   "liche": {
@@ -4185,16 +4586,46 @@ const DEFAULT_DB = {
      "gratis": true
     },
     {
+     "id": "pavor",
+     "txt": "Aura de 30 pies: la primera vez que una criatura entra o empieza su turno dentro, Salvación SAB CD 25 o queda Aterrada mientras siga dentro. Quien la supera es inmune un día.",
+     "especie": true
+    },
+    {
+     "id": "invocar_aliados",
+     "txt": "3 PA · 1/combate: al final de su turno se levantan 1d4 no-muertos de NA 5, que actúan justo después de él. Se anuncia una ronda antes.",
+     "racial": true,
+     "especie": true
+    },
+    {
+     "custom": true,
+     "name": "Toque Paralizante",
+     "tipo": "Modificador",
+     "peso": 3,
+     "txt": "Su toque obliga además a una Salvación CON CD 25 o queda Paralizado (Ud4).",
+     "especie": true,
+     "definitoria": true
+    },
+    {
+     "id": "resistencia_legendaria",
+     "txt": "Ud6: cuando falla una Salvación, puede superarla igualmente."
+    },
+    {
      "id": "uso_de_axiomas",
-     "txt": "Conoce tres Axiomas de hasta Nivel 5 (Erudición): Relámpago, Muro de Fuerza y Detener Monstruo; CD 23, Reserva 50."
+     "txt": "Conoce seis Axiomas de hasta Nivel 5 (Erudición): Relámpago, Cono de Frío, Muro de Fuerza, Detener Monstruo, Animar Muerto y Puerta Dimensional; CD 25, Reserva 60.",
+     "peso": 3,
+     "especie": true
     },
     {
      "id": "contraaxioma",
      "txt": "Reacción · Ud6: anula un Axioma de Nivel 5 o menos usado a 60 pies."
     },
     {
-     "id": "resurgir",
-     "txt": "Si no se destruye su filacteria, vuelve a formarse en 1d4 días."
+     "custom": true,
+     "name": "Filacteria",
+     "tipo": "Rasgo",
+     "peso": 0,
+     "txt": "Mientras no se destruya su filacteria, vuelve a formarse junto a ella en 1d4 días. Encontrarla y destruirla es la verdadera aventura.",
+     "especie": true
     },
     {
      "id": "accion_de_jefe",
@@ -4220,17 +4651,23 @@ const DEFAULT_DB = {
    "debiles": [
     "FUE"
    ],
-   "rolNota": "Jefe: PV ×2. Aplica un estado en un radio de 10 pies (3 PA).",
+   "rolNota": "Jefe: PV ×2. Represión (3 PA): Aterrado (Salvación SAB, Ud4).",
+   "equipo": "Báculo de la Filacteria (Muy Raro): +2 a la CD de Axioma (ya incluido: CD 25) y +1d8 Necrótico a su toque. Si cae, el báculo es botín.",
+   "proteccion": "Destruir la filacteria antes. Voluntad de Hierro o un Axioma contra la muerte: Ventaja contra su Toque Paralizante y su Pavor.",
+   "encuentroTxt": "Pasa en 2 su presupuesto de Potencial: cuenta como NA 11; como jefe, 15, y por sus Axiomas, 16.",
    "senal": "Una biblioteca prohibida saqueada; un pueblo que dejó de envejecer.",
    "contexto": "Matarlo no es vencerlo. La pelea contra el liche es un paso del camino: el grupo que no sabe dónde está la filacteria solo consigue unos días.",
+   "manual": {
+    "cd": 25
+   },
    "impreso": {
-    "pv": 240,
+    "pv": 360,
     "g": 17,
     "a": 5,
     "vel": 30,
     "atk": 7,
-    "dano": "6d6+2",
-    "cd": 23,
+    "dano": "3d6+2 y 3d6+2",
+    "cd": 25,
     "ini": 2,
     "moral": 20,
     "attrs": {
@@ -4240,14 +4677,15 @@ const DEFAULT_DB = {
      "INT": 5,
      "SAB": 5,
      "CAR": 2
-    }
+    },
+    "enc": 16
    }
   },
   "dragon_rojo_adulto": {
    "nombre": "Dragón Rojo Adulto",
    "na": 10,
    "tipo": "dragon",
-   "tam": "enorme",
+   "tam": "colosal",
    "rol": "arrollador",
    "estructura": "jefe",
    "rasgos": [
@@ -4256,13 +4694,36 @@ const DEFAULT_DB = {
      "gratis": true
     },
     {
+     "id": "telepatia",
+     "gratis": true
+    },
+    {
      "id": "inmunidad",
      "nota": "Fuego",
      "gratis": true
     },
     {
+     "id": "pavor",
+     "txt": "Aura de 30 pies: la primera vez que una criatura entra o empieza su turno dentro, Salvación SAB CD 26 o queda Aterrada mientras siga dentro. Quien la supera es inmune un día.",
+     "especie": true
+    },
+    {
+     "id": "uso_de_axiomas",
+     "txt": "Conoce tres Axiomas de hasta Nivel 5 (Erudición): Muro de Fuego, Sugestión y Puerta Dimensional; CD 26, Reserva 50.",
+     "peso": 3,
+     "especie": true
+    },
+    {
+     "id": "cuerpo_igneo",
+     "txt": "Quien lo toque o lo golpee cuerpo a cuerpo recibe 3d6 de Fuego. Los objetos inflamables a su alcance prenden.",
+     "racial": true,
+     "especie": true
+    },
+    {
      "id": "aliento",
-     "txt": "3 PA · Ud6: cono de 60 pies, Salvación DES CD 25, 9d6 de Fuego; la mitad si la supera. Se anuncia una ronda antes."
+     "txt": "3 PA · Ud6: cono de 60 pies, Salvación DES CD 26, 9d6 de Fuego; la mitad si la supera. No lo repite en su turno siguiente.",
+     "especie": true,
+     "definitoria": true
     },
     {
      "id": "vuelo",
@@ -4284,35 +4745,41 @@ const DEFAULT_DB = {
    ],
    "fuente": "Manual de Monstruos",
    "danoTipo": "Perforante",
-   "ataqueNombre": "Mordisco",
+   "ataqueNombre": "Mordisco y garras",
    "fuertes": [
     "FUE",
     "CON"
    ],
-   "debiles": [
-    "DES"
-   ],
-   "rolNota": "Jefe: PV ×2. Ataque Masivo (2 PA): Derriba sin tirada.",
+   "debiles": [],
+   "rolNota": "Jefe: PV ×2. Ataque Masivo: derriba al impactar, una vez por ronda.",
+   "equipo": "Coraza del Tesoro (Muy Raro): gemas y monedas fundidas en las escamas del pecho; +2 de Armadura (ya incluido: Armadura 7) y +1 a la Guardia (ya incluido: Guardia 14). Arrancarlas del cadáver lleva una hora.",
+   "proteccion": "Resistencia al Fuego: Ventaja contra su Aliento y la mitad de su daño. Voluntad de Hierro contra su Pavor. Nunca pelear en su guarida.",
+   "encuentroTxt": "Pasa en 2 su presupuesto de Potencial: cuenta como NA 11; como jefe, 15; con su Aliento, 17; por su tamaño, 18, y por sus Axiomas, 19.",
    "senal": "Una montaña que humea sin ser volcán; pueblos que pagan un tributo que nadie nombra.",
-   "contexto": "Aliento, vuelo y acciones entre turnos: el dragón no deja al grupo quedarse quieto ni juntarse. Nadie debería pelear contra él sin haber pensado antes cómo bajarlo del cielo.",
+   "contexto": "Aliento, vuelo y acciones entre turnos: el dragón no deja al grupo quedarse quieto ni juntarse. Nadie debería pelear contra él sin haber pensado antes cómo bajarlo del cielo. Es más listo que el grupo: negocia, miente y usa sus Axiomas para que nadie llegue entero a su guarida.",
+   "manual": {
+    "armadura": 7,
+    "guardia": 14
+   },
    "impreso": {
-    "pv": 320,
-    "g": 12,
-    "a": 5,
+    "pv": 510,
+    "g": 14,
+    "a": 7,
     "vel": 30,
-    "atk": 12,
-    "dano": "7d6+7",
-    "cd": 25,
-    "ini": -3,
+    "atk": 13,
+    "dano": "4d6+8 y 3d6+8",
+    "cd": 26,
+    "ini": -2,
     "moral": 20,
     "attrs": {
-     "FUE": 7,
-     "DES": -3,
-     "CON": 6,
-     "INT": 2,
+     "FUE": 8,
+     "DES": -2,
+     "CON": 7,
+     "INT": 5,
      "SAB": 2,
      "CAR": 2
-    }
+    },
+    "enc": 19
    }
   },
   "titan_mecanico": {
@@ -4332,6 +4799,18 @@ const DEFAULT_DB = {
      "gratis": true
     },
     {
+     "id": "sobrecarga",
+     "txt": "1 PA · 1/combate: hasta el final de su siguiente turno gana +1 PA y su dado de daño sube un paso. Después queda Conmocionado (Ud4).",
+     "especie": true
+    },
+    {
+     "id": "tormenta_personal",
+     "txt": "3 PA · Ud6: bobinas de alta tensión. Radio de 30 pies: hasta tres objetivos reciben 8d6 de Rayo (Salvación DES CD 29, la mitad); el viento convierte el radio en terreno difícil hasta su siguiente turno. Se anuncia una ronda antes.",
+     "definitoria": true,
+     "especie": true,
+     "racial": true
+    },
+    {
      "id": "turno_doble",
      "txt": "Tira dos veces la Iniciativa y reparte sus PA entre ambos turnos."
     },
@@ -4349,7 +4828,7 @@ const DEFAULT_DB = {
     },
     {
      "id": "fases",
-     "txt": "Por debajo de la mitad de sus PV, el blindaje cae (−2 de Armadura) y se abre su núcleo (Cap. 5)."
+     "txt": "Por debajo de la mitad de sus PV, el blindaje cae (+1 PA, −2 de Armadura) y se abre su núcleo (Cap. 5)."
     },
     {
      "id": "autodestruccion",
@@ -4372,15 +4851,21 @@ const DEFAULT_DB = {
     "CAR"
    ],
    "rolNota": "Jefe: PV ×2. Custodia (Reacción).",
+   "equipo": "Núcleo del Primer Titán (Legendario): +3 de Armadura (ya incluido: Armadura 10). Único: la primera vez que baja de la mitad de sus PV, su Escudo de Energía se recarga entero. Si cae, el núcleo sigue latiendo.",
+   "proteccion": "Subir hasta el núcleo; Rayo; dispersarse contra su Tormenta.",
+   "encuentroTxt": "Como jefe cuenta como NA 17; con su Tormenta, 19, y por su tamaño, 20.",
    "senal": "El suelo tiembla a intervalos regulares; una ciudad entera evacuada sin explicación.",
    "contexto": "No se puede vencer desde fuera. El grupo tiene que subir, encontrar el núcleo que la fase deja al descubierto y salir antes de que la autodestrucción los alcance.",
+   "manual": {
+    "armadura": 10
+   },
    "impreso": {
-    "pv": 438,
+    "pv": 656,
     "g": 14,
-    "a": 7,
+    "a": 10,
     "vel": 20,
     "atk": 15,
-    "dano": "8d6+9",
+    "dano": "4d6+12 y 4d6+12",
     "cd": 29,
     "ini": -2,
     "moral": null,
@@ -4391,7 +4876,8 @@ const DEFAULT_DB = {
      "INT": 3,
      "SAB": 3,
      "CAR": -2
-    }
+    },
+    "enc": 20
    }
   },
   "colmena_xenomorfa": {
@@ -4407,12 +4893,19 @@ const DEFAULT_DB = {
      "txt": "Mientras viva la reina, no tiran Moral y comparten lo que perciben."
     },
     {
+     "id": "olor_de_la_sangre",
+     "txt": "Perciben a las criaturas heridas a 120 pies, aunque estén ocultas o sean invisibles.",
+     "especie": true
+    },
+    {
      "id": "trepadora",
      "txt": "Trepan a su velocidad por muros y techos."
     },
     {
      "id": "sangre_acida",
-     "txt": "Quien les hace daño Cortante o Perforante cuerpo a cuerpo recibe 1d6 de Ácido."
+     "txt": "Quien les hace daño Cortante o Perforante cuerpo a cuerpo recibe 1d6 de Ácido.",
+     "especie": true,
+     "definitoria": true
     }
    ],
    "fuente": "Manual de Monstruos",
@@ -4426,15 +4919,16 @@ const DEFAULT_DB = {
    "debiles": [
     "CON"
    ],
+   "proteccion": "Armas a distancia o armas que no importe perder, por su Sangre Ácida. Matar a la reina.",
    "senal": "Conductos de ventilación con marcas de ácido; los sensores de movimiento marcan una sola señal muy grande.",
    "contexto": "Parece un enemigo y son ocho. Llegan por el techo, rodean y se separan en dos cuando se les hiere. Matar a la reina es la única forma de que dejen de coordinarse.",
    "impreso": {
-    "pv": 71,
+    "pv": 106,
     "g": 18,
     "a": 3,
     "vel": 40,
     "atk": 8,
-    "dano": "5d6+4",
+    "dano": "3d6+3 y 2d6+3",
     "cd": 19,
     "ini": 4,
     "moral": null,
@@ -4445,7 +4939,8 @@ const DEFAULT_DB = {
      "INT": 1,
      "SAB": 1,
      "CAR": 1
-    }
+    },
+    "enc": 7
    }
   },
   "enjambre_de_nanitos": {
@@ -4470,8 +4965,15 @@ const DEFAULT_DB = {
      "gratis": true
     },
     {
+     "id": "autorreparacion",
+     "txt": "Recupera 3 PV al inicio de su turno, salvo si recibió daño de Rayo desde su turno anterior.",
+     "especie": true
+    },
+    {
      "id": "acido_corrosivo",
-     "txt": "Su ataque añade 1d6 de Ácido y aplica Desgarro (Ud6): se comen la armadura."
+     "txt": "Su ataque añade 1d6 de Ácido y aplica Desgarro (Ud6): se comen la armadura.",
+     "especie": true,
+     "definitoria": true
     }
    ],
    "fuente": "Manual de Monstruos",
@@ -4483,15 +4985,16 @@ const DEFAULT_DB = {
     "INT"
    ],
    "debiles": [],
+   "proteccion": "Rayo o cualquier área. Una puerta estanca lo frena.",
    "senal": "Un brillo metálico en el aire; puertas de acero con agujeros como encaje.",
    "contexto": "No se le puede cortar ni golpear con eficacia. El grupo necesita un área —fuego, un pulso, una descarga— o una puerta que el enjambre no pueda atravesar a tiempo.",
    "impreso": {
-    "pv": 71,
+    "pv": 106,
     "g": 14,
     "a": 1,
     "vel": 30,
     "atk": 4,
-    "dano": "3d6+1",
+    "dano": "3d6-1",
     "cd": 15,
     "ini": 1,
     "moral": null,
@@ -4502,7 +5005,8 @@ const DEFAULT_DB = {
      "INT": 3,
      "SAB": 0,
      "CAR": 0
-    }
+    },
+    "enc": 3
    }
   },
   "lobo": {
@@ -4513,6 +5017,16 @@ const DEFAULT_DB = {
    "rol": "hostigador",
    "estructura": "normal",
    "rasgos": [
+    {
+     "custom": true,
+     "name": "Aullido de Llamada",
+     "tipo": "Aptitud",
+     "peso": 0,
+     "txt": "Al final de la ronda siguiente llegan 1d4 lobos más.",
+     "coste": "1 PA",
+     "frec": "1/combate",
+     "especie": true
+    },
     {
      "custom": true,
      "name": "Caza en Manada",
@@ -4539,14 +5053,14 @@ const DEFAULT_DB = {
     "CON",
     "INT"
    ],
-   "contexto": "Los lobos raramente están solos. El peligro no es el daño individual — es la combinación de Caza en Manada (Ventaja constante) y Derribador (los derribados son atacados con Ventaja por los demás). Un grupo de cinco lobos que tira con Ventaja sobre un personaje Derribado es amenaza seria incluso para un Audaz bien acorazado: son muchos golpes pequeños, y la Armadura los frena bien, pero el Derribo multiplica los impactos hasta que la aritmética se invierte. El Alfa del grupo (NA 2, +2 daño) actúa siempre último y apunta al objetivo ya Derribado. La táctica correcta: evitar el Derribo y eliminar al Alfa primero para desmoralizar a la manada (comprobación de Moral (Puntuación 10) al caer el Alfa).",
+   "contexto": "Los lobos raramente están solos. El peligro no es el daño individual — es la combinación de Caza en Manada (Ventaja constante) y Derribador (los derribados son atacados con Ventaja por los demás). Un grupo de cinco lobos que tira con Ventaja sobre un personaje Derribado es amenaza seria incluso para un Audaz bien acorazado: son muchos golpes pequeños, y la Armadura los frena bien, pero el Derribo multiplica los impactos hasta que la aritmética se invierte. El Alfa del grupo (NA 2, +2 daño) actúa siempre último y apunta al objetivo ya Derribado. La táctica correcta: evitar el Derribo y eliminar al Alfa primero para desmoralizar a la manada (como toda bestia de INT Débil, la manada no tira Moral: se dispersa en cuanto cae el Alfa).",
    "impreso": {
-    "pv": 53,
+    "pv": 79,
     "g": 14,
     "a": 0,
     "vel": 40,
     "atk": 4,
-    "dano": "2d6+2",
+    "dano": "2d6+3",
     "cd": 12,
     "ini": 2,
     "moral": null,
@@ -4557,7 +5071,8 @@ const DEFAULT_DB = {
      "INT": -2,
      "SAB": 0,
      "CAR": 0
-    }
+    },
+    "enc": 1
    }
   },
   "esqueleto": {
@@ -4584,6 +5099,14 @@ const DEFAULT_DB = {
     },
     {
      "custom": true,
+     "name": "Formación",
+     "tipo": "Rasgo",
+     "peso": 0,
+     "txt": "+1 a la Guardia por cada esqueleto adyacente, hasta +3.",
+     "especie": true
+    },
+    {
+     "custom": true,
      "name": "Muerto-Vivo",
      "tipo": "Rasgo",
      "peso": 0,
@@ -4603,12 +5126,12 @@ const DEFAULT_DB = {
    ],
    "contexto": "Los esqueletos son obstáculos de desgaste, no amenazas individuales. Su valor táctico real es dos cosas: la inmunidad al Miedo (no tiran Moral) y la vulnerabilidad al Contundente (que los jugadores tienen que descubrir o deducir). Un DJ que coloca esqueletos armados con mazas y armados con espadas en el mismo pasillo está invitando a una pregunta táctica: ¿cómo atacarlos de forma eficiente? Los jugadores que descubren la vulnerabilidad al Contundente se sienten recompensados. Los que no la descubren aprenden que la información del entorno tiene valor.",
    "impreso": {
-    "pv": 57,
+    "pv": 85,
     "g": 14,
     "a": 0,
     "vel": 30,
     "atk": 4,
-    "dano": "2d6+2",
+    "dano": "2d6+3",
     "cd": 12,
     "ini": 2,
     "moral": null,
@@ -4619,7 +5142,8 @@ const DEFAULT_DB = {
      "INT": -2,
      "SAB": 0,
      "CAR": -2
-    }
+    },
+    "enc": 1
    }
   },
   "zombie": {
@@ -4636,6 +5160,14 @@ const DEFAULT_DB = {
      "tipo": "Rasgo",
      "peso": 0,
      "txt": "Inmune a Veneno, Enfermedad y Miedo"
+    },
+    {
+     "custom": true,
+     "name": "Mordisco Tenaz",
+     "tipo": "Rasgo",
+     "peso": 0,
+     "txt": "Al impactar, Apresa sin gastar PA: Salvación FUE o DES CD 12 o queda Apresado. Mientras lo retiene, no puede morder a otro.",
+     "especie": true
     },
     {
      "custom": true,
@@ -4662,12 +5194,12 @@ const DEFAULT_DB = {
     "vel": 20
    },
    "impreso": {
-    "pv": 57,
+    "pv": 85,
     "g": 10,
     "a": 0,
     "vel": 20,
     "atk": 4,
-    "dano": "3d6+2",
+    "dano": "3d6+3",
     "cd": 12,
     "ini": -2,
     "moral": null,
@@ -4678,7 +5210,8 @@ const DEFAULT_DB = {
      "INT": -2,
      "SAB": 0,
      "CAR": -2
-    }
+    },
+    "enc": 1
    }
   },
   "orco": {
@@ -4691,10 +5224,18 @@ const DEFAULT_DB = {
    "rasgos": [
     {
      "custom": true,
+     "name": "Venganza del Grupo",
+     "tipo": "Rasgo",
+     "peso": 0,
+     "txt": "Cuando cae un orco a la vista, gana +2 al daño hasta el final del combate.",
+     "especie": true
+    },
+    {
+     "custom": true,
      "name": "Agresivo",
      "tipo": "Rasgo",
      "peso": 0,
-     "txt": "Puede moverse su velocidad completa hacia un objetivo como parte de la misma acción que atacar (1 PA de movimiento + 2 PA de ataque = 3 PA, sin coste adicional)."
+     "txt": "Una vez por turno, se mueve hasta su velocidad hacia un enemigo sin gastar PA, si termina adyacente a él."
     },
     {
      "custom": true,
@@ -4714,17 +5255,14 @@ const DEFAULT_DB = {
    "debiles": [
     "DES"
    ],
-   "contexto": "Un orco solo es un encuentro menor. Un grupo de orcos con un Jefe de Tribu (NA 4, Rol Comandante) es una amenaza de diseño: los orcos comunes son Agresivos y Tenaces, el Jefe tiene Aura de Mando que hace que sus Ataques de Oportunidad sean especialmente dolorosos, y eliminar al Jefe cambia la Moral del grupo completo (Puntuación de Moral 12). Funcionan bien con Rol Arrollador (más PV y daño, menos Guardia) o Rol Hostigador (+2 Guardia, flanquea constantemente).",
-   "manual": {
-    "armadura": 2
-   },
+   "contexto": "Un orco solo es un encuentro menor. Un grupo de orcos con un Jefe de Tribu (NA 4, Rol Comandante) es una amenaza de diseño: los orcos comunes son Agresivos y Tenaces, el Jefe tiene Aura de Mando que hace que sus Ataques de Oportunidad sean especialmente dolorosos, y eliminar al Jefe cambia la Moral del grupo completo (Puntuación de Moral 12). Funcionan bien con Rol Arrollador (+1d6 al daño y Ataque Masivo) o Hostigador (+10 pies y Flanqueo).",
    "impreso": {
-    "pv": 64,
+    "pv": 96,
     "g": 10,
-    "a": 2,
+    "a": 1,
     "vel": 30,
     "atk": 4,
-    "dano": "3d6+2",
+    "dano": "3d6+5",
     "cd": 13,
     "ini": -2,
     "moral": 12,
@@ -4735,7 +5273,8 @@ const DEFAULT_DB = {
      "INT": 0,
      "SAB": 0,
      "CAR": 0
-    }
+    },
+    "enc": 2
    }
   },
   "oso_pardo": {
@@ -4755,10 +5294,18 @@ const DEFAULT_DB = {
     },
     {
      "custom": true,
+     "name": "Dura de Matar",
+     "tipo": "Rasgo",
+     "peso": 0,
+     "txt": "La primera vez en cada combate que llega a 0 PV, queda en 1 PV.",
+     "especie": true
+    },
+    {
+     "custom": true,
      "name": "Garras y Mordida",
      "tipo": "Aptitud",
      "peso": 0,
-     "txt": "El oso ataca con las garras y, si impacta, muerde sin tirada adicional: su daño por turno (4d6+4) se reparte entre los dos golpes.",
+     "txt": "El oso ataca con las garras y, si impacta, muerde sin tirada adicional: su daño por turno (4d6+2) se reparte entre los dos golpes: 2d6+2 las garras y 2d6 la mordida.",
      "coste": "3 PA"
     },
     {
@@ -4766,7 +5313,9 @@ const DEFAULT_DB = {
      "name": "Abrazar",
      "tipo": "Reacción",
      "peso": 0,
-     "txt": "Si el ataque de garras inflige 8 o más puntos de daño, el objetivo queda Apresado hasta que el oso decida soltarlo o sea abatido. Un objetivo Apresado no puede moverse y el oso tiene Ventaja en sus ataques contra él."
+     "txt": "Si las garras impactan, el objetivo hace una Salvación FUE o DES CD 16 o queda Apresado; escapa con las reglas normales del estado (Manual Básico, Cap. 10).",
+     "definitoria": true,
+     "especie": true
     }
    ],
    "fuente": "Guía del Director",
@@ -4780,17 +5329,15 @@ const DEFAULT_DB = {
     "DES",
     "INT"
    ],
-   "contexto": "El oso es una amenaza de territorio, no de mazmorra. Aparece porque el grupo entró en su zona, porque hay crías cerca (lo que transforma el encuentro en un dilema moral: matar a un animal que defiende su progenie), o como custodio accidental de algo que el grupo necesita. Mecánicamente, la combinación de Abrazar y Garras-Mordida puede eliminar a un Sagaz en un turno si el oso lo elige como objetivo. La táctica del grupo debe ser romper el Agarre rápidamente antes de que el ciclo de daño se establezca.",
-   "manual": {
-    "vel": 40
-   },
+   "proteccion": "No acercarse a las crías; un escudo plantado o una Fuerza alta dan Ventaja contra su Abrazar.",
+   "contexto": "El oso es una amenaza de territorio, no de mazmorra. Aparece porque el grupo entró en su zona, porque hay crías cerca (lo que transforma el encuentro en un dilema moral: matar a un animal que defiende su progenie), o como custodio accidental de algo que el grupo necesita. Mecánicamente, la combinación de Abrazar y Garras-Mordida puede eliminar a un Sagaz en un turno si el oso lo elige como objetivo. La táctica del grupo debe ser romper la presa rápidamente antes de que el ciclo de daño se establezca.",
    "impreso": {
-    "pv": 74,
+    "pv": 111,
     "g": 11,
     "a": 1,
-    "vel": 40,
+    "vel": 30,
     "atk": 7,
-    "dano": "4d6+4",
+    "dano": "4d6+2",
     "cd": 16,
     "ini": -2,
     "moral": null,
@@ -4801,7 +5348,8 @@ const DEFAULT_DB = {
      "INT": -2,
      "SAB": 0,
      "CAR": 0
-    }
+    },
+    "enc": 3
    }
   },
   "azotamente": {
@@ -4835,20 +5383,46 @@ const DEFAULT_DB = {
     },
     {
      "custom": true,
+     "name": "Leer Mentes",
+     "tipo": "Rasgo",
+     "peso": 0,
+     "txt": "Oye los pensamientos superficiales a 30 pies. Una vez por ronda, pregunta a un jugador qué hará su personaje en su próximo turno.",
+     "especie": true
+    },
+    {
+     "custom": true,
      "name": "Explosión Mental",
      "tipo": "Aptitud",
      "peso": 0,
-     "txt": "Cono de 60 pies. Todos en el cono hacen Salvación INT CD 19. Fallo: 5d6 de daño Psíquico y estado Aturdido. Éxito: la mitad del daño, sin Aturdido. Tras usarla, tira su Ud6 (Manual de Monstruos, Cap. 3).",
+     "txt": "Cono de 60 pies. Todos en el cono hacen Salvación INT CD 19. Fallo: 5d6 de daño Psíquico y Aturdido (Ud4): la mente se apaga. Éxito: la mitad del daño, sin estado. Es su Aptitud definitoria: la usa en cuanto puede. Tras usarla, tira su Ud6 (Manual de Monstruos, Cap. 3).",
      "coste": "3 PA",
-     "frec": "Ud6"
+     "frec": "Ud6",
+     "area": 3
+    },
+    {
+     "custom": true,
+     "name": "Tentáculos",
+     "tipo": "Rasgo",
+     "peso": 0,
+     "txt": "Al impactar a una criatura Paralizada o Aturdida, la apresa sin gastar PA.",
+     "especie": true
     },
     {
      "custom": true,
      "name": "Extracción Cerebral",
      "tipo": "Aptitud",
      "peso": 0,
-     "txt": "Solo contra un objetivo a 0 PV que además esté Aturdido (la Inconsciencia no anula el Aturdido a estos efectos). El objetivo muere instantáneamente y el Azotamente recupera 20 PV. Además, su cuerpo queda siendo un esclavo (zombie) al servicio del Azotamente.",
+     "txt": "Contra una criatura Paralizada o Aturdida que tenga apresada con sus tentáculos: Salvación CON CD 19 o su Flesh cae a 0 —muere— y el Azotamente recupera 20 PV; si la supera, recibe 5d6 de daño Psíquico. El cuerpo queda como esclavo (zombie) al servicio del Azotamente.",
      "coste": "1 PA"
+    },
+    {
+     "custom": true,
+     "name": "Uso de Axiomas",
+     "tipo": "Rasgo",
+     "peso": 0,
+     "txt": "Conoce seis Axiomas de Psiónica de hasta Nivel 4, el doble que otras criaturas: Sondear, Desvío Mental, Paralización, Miedo Profundo, Confusión y Asesino Fantasmal. CD 19, Reserva 35.",
+     "especie": true,
+     "axiomas": true
     }
    ],
    "fuente": "Guía del Director",
@@ -4861,14 +5435,16 @@ const DEFAULT_DB = {
    "debiles": [
     "FUE"
    ],
-   "contexto": "El Azotamente es una amenaza de conocimiento, no de estadísticas brutas. Un grupo que no entiende su ciclo (Explosión Mental → objetivos Aturdidos → Extracción Cerebral) puede perder un personaje de forma permanente. La clave táctica es evitar estar Aturdido cuando un aliado está en 0 PV, o sacar al aliado de 0 PV antes de que el Azotamente pueda gastar el 1 PA de Extracción. Un Sagaz con Axioma de curación en turno de aliado Aturdido (gastando su Reacción si tiene el Talento correspondiente) puede salvar una vida. El Azotamente vuela, lo que complica el posicionamiento del Audaz como anclaje táctico.",
+   "proteccion": "Voluntad de Hierro, un Axioma que proteja la mente o un yelmo de plomo dan Ventaja contra la Explosión Mental y contra sus Axiomas. Separarse: el cono no alcanza a todos.",
+   "encuentroTxt": "Su Explosión Mental le suma 3 y sus Axiomas, 1: cuenta como NA 11 al calcular el encuentro.",
+   "contexto": "El Azotamente es una amenaza de conocimiento, no de estadísticas brutas. Abre con la Explosión Mental desde la sombra, apresa con los tentáculos a quien quedó Aturdido y, en su siguiente turno, le extrae el cerebro. Un grupo que no lo esperaba puede perder a un personaje en dos rondas; uno que trae protección mental, se separa y lo derriba antes de su segundo turno tiene una pelea dura, pero ganable. Vuela, lo que complica que el Audaz lo ancle.",
    "impreso": {
-    "pv": 92,
+    "pv": 138,
     "g": 15,
     "a": 3,
     "vel": 30,
     "atk": 5,
-    "dano": "5d6+1",
+    "dano": "3d6 y 2d6",
     "cd": 19,
     "ini": 1,
     "moral": 17,
@@ -4879,7 +5455,8 @@ const DEFAULT_DB = {
      "INT": 4,
      "SAB": 4,
      "CAR": 1
-    }
+    },
+    "enc": 11
    }
   },
   "gigante_de_la_tormenta": {
@@ -4892,10 +5469,31 @@ const DEFAULT_DB = {
    "rasgos": [
     {
      "custom": true,
-     "name": "Inmune a Rayo, Aturdido y Derribado",
+     "name": "Inmune a Rayo",
      "tipo": "Rasgo",
      "peso": 0,
-     "txt": "Inmune a Rayo, Aturdido y Derribado"
+     "txt": "Inmune a Rayo"
+    },
+    {
+     "custom": true,
+     "name": "Clima Hostil",
+     "tipo": "Rasgo",
+     "peso": 0,
+     "txt": "En 60 pies a su alrededor ruge la tormenta: terreno difícil y visibilidad de 30 pies para todos salvo él.",
+     "especie": true
+    },
+    {
+     "custom": true,
+     "name": "Tormenta Personal",
+     "tipo": "Aptitud",
+     "peso": 0,
+     "txt": "Radio de 30 pies; hasta tres objetivos reciben 5d6 de daño de Rayo (Salvación DES CD 22, la mitad), y el viento convierte el radio en terreno difícil hasta su siguiente turno. Se anuncia una ronda antes.",
+     "coste": "3 PA",
+     "frec": "Ud6",
+     "definitoria": true,
+     "especie": true,
+     "racial": true,
+     "area": 3
     },
     {
      "custom": true,
@@ -4924,18 +5522,20 @@ const DEFAULT_DB = {
    "debiles": [
     "DES"
    ],
-   "contexto": "Con 260 PV, Guardia 11, Armadura 5 y Ataque +10, el Gigante de la Tormenta es un jefe de arco, no un encuentro de pasillo. Su Armadura 5 castiga especialmente a los personajes que atacan muchas veces con dados pequeños.\n\nLo que lo hace interesante no son sus estadísticas — es que puede hablar y tiene motivaciones. Un Gigante que el grupo intenta matar directamente es un combate difícil. Un Gigante al que el grupo descubre que protege un valle de su tribu, y con el que pueden negociar, es un arco de campaña. El Lanzamiento de Rayo obliga al grupo a dispersarse (línea de 90 pies puede atravesar toda la formación). El Aplastamiento sobre el Audaz puede bloquearlo con Bloqueo Enfrentado, pero a un coste de Adrenalina significativo.",
+   "equipo": "Raro: Brazaletes del Trueno. +2 al ataque (ya incluido: Ataque +12) y su mazo suma 1d6 de Rayo. Si cae, son botín.",
+   "proteccion": "Resistencia al Rayo, y no ponerse en fila contra su Lanzamiento. Hablar con él.",
+   "encuentroTxt": "Como jefe cuenta como NA 12; con su Tormenta Personal, 14, y por su tamaño, 15 (Cap. 2).",
+   "contexto": "Con 390 PV, Guardia 11, Armadura 4 y Ataque +12, el Gigante de la Tormenta es un jefe de arco, no un encuentro de pasillo. Su Armadura 4 castiga especialmente a los personajes que atacan muchas veces con dados pequeños.\n\nLo que lo hace interesante no son sus estadísticas — es que puede hablar y tiene motivaciones. Un Gigante que el grupo intenta matar directamente es un combate difícil. Un Gigante al que el grupo descubre que protege un valle de su tribu, y con el que pueden negociar, es un arco de campaña. El Lanzamiento de Rayo obliga al grupo a dispersarse (línea de 90 pies puede atravesar toda la formación). El Aplastamiento sobre el Audaz puede bloquearlo con Bloqueo Enfrentado, pero a un coste de Adrenalina significativo.",
    "manual": {
-    "armadura": 5,
-    "vel": 50
+    "ataque": 12
    },
    "impreso": {
-    "pv": 260,
+    "pv": 390,
     "g": 11,
-    "a": 5,
-    "vel": 50,
-    "atk": 10,
-    "dano": "6d6+6",
+    "a": 4,
+    "vel": 30,
+    "atk": 12,
+    "dano": "3d6+6 y 3d6+6",
     "cd": 22,
     "ini": -3,
     "moral": 18,
@@ -4946,7 +5546,8 @@ const DEFAULT_DB = {
      "INT": 2,
      "SAB": 2,
      "CAR": 2
-    }
+    },
+    "enc": 15
    }
   },
   "licantropo": {
@@ -4973,10 +5574,20 @@ const DEFAULT_DB = {
     },
     {
      "custom": true,
+     "name": "Olor de la Sangre",
+     "tipo": "Rasgo",
+     "peso": 0,
+     "txt": "En las dos formas, percibe a las criaturas heridas a 120 pies, aunque estén ocultas o sean invisibles.",
+     "especie": true
+    },
+    {
+     "custom": true,
      "name": "Maldición de la Luna",
      "tipo": "Reacción",
      "peso": 0,
-     "txt": "Cuando la mordida inflige 8 o más puntos de daño, el objetivo hace Salvación CON CD 16. Fallo: contrae Licantropía incipiente (síntomas en la próxima luna llena)."
+     "txt": "Cuando la mordida inflige 8 o más puntos de daño, el objetivo hace Salvación CON CD 16. Fallo: contrae Licantropía incipiente (síntomas en la próxima luna llena).",
+     "definitoria": true,
+     "especie": true
     }
    ],
    "fuente": "Guía del Director",
@@ -4989,9 +5600,11 @@ const DEFAULT_DB = {
    "debiles": [
     "CON"
    ],
+   "notas": "Forma humana (NA 2). PV 84 · Guardia 14 · Armadura 1 · Velocidad 40 pies · Iniciativa +2 · Ataque +4 · Daño 2d6+5 (arma) · CD 13 · Moral 12. Sin Regeneración, sin inmunidad y sin Maldición de la Luna. Cambiar de forma cuesta 2 PA; los PV perdidos se conservan.",
+   "proteccion": "Plata o daño mágico para atravesar su inmunidad; acónito bebido antes da Ventaja contra la Maldición de la Luna.",
    "contexto": "El hombre lobo es el encuentro que funciona mejor cuando el grupo lo conoce como persona antes de saber que es lo que es. Mecánicamente, la combinación de Regeneración (8 PV por turno) e Inmunidad a daño no mágico sin plata obliga al grupo a tener la herramienta correcta o gestionar el combate de forma inusual: el daño de Axiomas y el daño mágico sí aplican, lo que convierte al Sagaz en el combatiente más efectivo por primera y probablemente única vez en el arco. La Maldición de la Luna es la presión de campaña real: la cuestión no es si el grupo puede matar al hombre lobo, sino si quiere hacerlo, si puede curarlo, y qué pasa si un miembro del grupo contrajo la Maldición.",
    "impreso": {
-    "pv": 62,
+    "pv": 93,
     "g": 16,
     "a": 2,
     "vel": 40,
@@ -5007,7 +5620,8 @@ const DEFAULT_DB = {
      "INT": 1,
      "SAB": 1,
      "CAR": 1
-    }
+    },
+    "enc": 4
    }
   },
   "caballero_de_la_muerte": {
@@ -5034,6 +5648,14 @@ const DEFAULT_DB = {
     },
     {
      "custom": true,
+     "name": "Pavor",
+     "tipo": "Aura",
+     "peso": 0,
+     "txt": "Radio de 30 pies: la primera vez que una criatura entra o empieza su turno dentro, Salvación SAB CD 22 o queda Aterrada mientras siga dentro. Quien la supera es inmune un día.",
+     "especie": true
+    },
+    {
+     "custom": true,
      "name": "Aura de Conquista",
      "tipo": "Aura",
      "peso": 0,
@@ -5044,9 +5666,10 @@ const DEFAULT_DB = {
      "name": "Llamada Infernal",
      "tipo": "Aptitud",
      "peso": 0,
-     "txt": "Convoca 2d4 no-muertos de NA 1 en espacios adyacentes vacíos.",
+     "txt": "Se alzan 1d4 guerreros esqueleto de NA 4, con armadura y espada, en espacios vacíos a su lado; actúan justo después de él.",
      "coste": "3 PA",
-     "frec": "Ud6"
+     "frec": "1/combate",
+     "especie": true
     },
     {
      "custom": true,
@@ -5054,6 +5677,34 @@ const DEFAULT_DB = {
      "tipo": "Reacción",
      "peso": 0,
      "txt": "Cuando el Caballero impacta a un objetivo, ese objetivo queda Marcado. El Caballero tiene Ventaja en todos los ataques contra objetivos Marcados y puede teletransportarse (2 PA) a un espacio adyacente a cualquier objetivo Marcado en su línea de visión."
+    },
+    {
+     "custom": true,
+     "name": "Orbe Infernal",
+     "tipo": "Aptitud",
+     "peso": 0,
+     "txt": "Esfera de 15 pies de radio a 60 pies; Salvación DES CD 22, 6d6 de Fuego y Necrótico, la mitad si la supera. No la repite en su turno siguiente.",
+     "coste": "3 PA",
+     "frec": "Ud6",
+     "definitoria": true,
+     "especie": true,
+     "area": 2
+    },
+    {
+     "custom": true,
+     "name": "Señor de la Tumba",
+     "tipo": "Aura",
+     "peso": 0,
+     "txt": "Radio de 30 pies: los no-muertos aliados tienen +2 al ataque y no tiran Moral.",
+     "especie": true
+    },
+    {
+     "custom": true,
+     "name": "Juramento Roto",
+     "tipo": "Rasgo",
+     "peso": 0,
+     "txt": "Si cae sin haber sido redimido, se alza de nuevo en su tumba al cabo de 1d4 días.",
+     "especie": true
     }
    ],
    "fuente": "Guía del Director",
@@ -5064,17 +5715,20 @@ const DEFAULT_DB = {
     "FUE"
    ],
    "debiles": [],
-   "contexto": "El Caballero de la Muerte (Guardia 17, Armadura 6, 113 PV, Ataque +10) es un desafío de diseño de encuentro. Con Guardia 17, un Audaz de Nivel 9 con PB +4 y FUE +3 impacta con 10 o más en 1d20 —alrededor del 55 %— pero su Armadura 6 se come buena parte de cada golpe. Contra él, el Esfuerzo volcado en daño y las armas Penetrantes rinden mucho más que acumular ataques pequeños. La Llamada Infernal genera presión de área que obliga al grupo a dividir la atención. La Marca Espectral convierte la movilidad del Caballero en una amenaza adicional: puede teletransportarse al Sagaz al fondo de la sala si lo Marcó en el primer turno.\n\nPero lo más poderoso del Caballero de la Muerte como elemento de diseño es su historia: fue un héroe. Tiene un nombre, una tumba, una razón por la que no está en paz. El grupo que descubre esa historia puede tener una vía alternativa: no destruirlo, sino redimirlo o liberarlo. Si lo intenta y falla, el combate es más tenso porque las apuestas eran mayores.",
+   "equipo": "Muy Raro: Placas Negras, el +2 de Armadura de su ficha. Si cae, son botín: una armadura de placas que susurra el juramento que él rompió.",
+   "proteccion": "Un símbolo consagrado o Voluntad de Hierro dan Ventaja contra su Pavor y su Aura de Conquista; separarse contra el Orbe.",
+   "encuentroTxt": "Su Orbe le suma 2: cuenta como NA 11 al calcular el encuentro (Cap. 2). Sus guerreros quedan a más de cuatro NA de él y no cuentan.",
+   "contexto": "El Caballero de la Muerte (Guardia 17, Armadura 6, 169 PV, Ataque +10) es un desafío de diseño de encuentro. Con Guardia 17, un Audaz de Nivel 9 con PB +4 y FUE +3 impacta con 10 o más en 1d20 —alrededor del 55 %— pero su Armadura 6 se come buena parte de cada golpe. Contra él, el Esfuerzo volcado en daño y las armas Penetrantes rinden mucho más que acumular ataques pequeños. La Llamada Infernal genera presión de área que obliga al grupo a dividir la atención. La Marca Espectral convierte la movilidad del Caballero en una amenaza adicional: puede teletransportarse al Sagaz al fondo de la sala si lo Marcó en el primer turno.\n\nPero lo más poderoso del Caballero de la Muerte como elemento de diseño es su historia: fue un héroe. Tiene un nombre, una tumba, una razón por la que no está en paz. El grupo que descubre esa historia puede tener una vía alternativa: no destruirlo, sino redimirlo o liberarlo. Si lo intenta y falla, el combate es más tenso porque las apuestas eran mayores.",
    "manual": {
     "armadura": 6
    },
    "impreso": {
-    "pv": 113,
+    "pv": 169,
     "g": 17,
     "a": 6,
     "vel": 30,
     "atk": 10,
-    "dano": "6d6+5",
+    "dano": "3d6+3 y 3d6+3",
     "cd": 22,
     "ini": 2,
     "moral": 19,
@@ -5085,7 +5739,8 @@ const DEFAULT_DB = {
      "INT": 2,
      "SAB": 2,
      "CAR": 5
-    }
+    },
+    "enc": 11
    }
   },
   "jefe_de_tribu": {
@@ -5098,10 +5753,21 @@ const DEFAULT_DB = {
    "rasgos": [
     {
      "custom": true,
+     "name": "Voz de Mando",
+     "tipo": "Aptitud",
+     "peso": 0,
+     "txt": "Hasta tres aliados que lo oigan se mueven de inmediato la mitad de su velocidad sin provocar Ataques de Oportunidad.",
+     "coste": "1 PA",
+     "especie": true
+    },
+    {
+     "custom": true,
      "name": "Aura de Mando",
      "tipo": "Aura",
      "peso": 0,
-     "txt": "Radio de 30 pies: los aliados dentro del aura ganan +2 al ataque. Una vez por ronda, como Reacción, ordena a un aliado del aura que ataque."
+     "txt": "Radio de 30 pies: los aliados dentro del aura ganan +2 al ataque. Una vez por ronda, como Reacción, ordena a un aliado del aura que ataque.",
+     "definitoria": true,
+     "especie": true
     },
     {
      "custom": true,
@@ -5119,13 +5785,18 @@ const DEFAULT_DB = {
     "FUE"
    ],
    "debiles": [],
+   "equipo": "Infrecuente: Hacha del Clan, +1 al ataque (ya incluido: Ataque +7). Quien la lleve después habla por el clan, le guste o no.",
+   "proteccion": "Llegar hasta él en el primer turno: abatirlo apaga el Aura y rompe la Moral de la banda.",
    "contexto": "El Jefe no está para ganar el duelo: está para que su banda pelee mejor. Se queda un paso por detrás de la primera línea y dirige el ataque hacia quien quede expuesto. Abatirlo apaga el Aura y obliga a toda la banda a tirar Moral; por eso un grupo listo gasta su primer turno en llegar hasta él, y un Jefe listo lo sabe.",
+   "manual": {
+    "ataque": 7
+   },
    "impreso": {
-    "pv": 74,
+    "pv": 111,
     "g": 14,
     "a": 2,
     "vel": 30,
-    "atk": 6,
+    "atk": 7,
     "dano": "3d6+3",
     "cd": 16,
     "ini": 1,
@@ -5137,7 +5808,8 @@ const DEFAULT_DB = {
      "INT": 1,
      "SAB": 1,
      "CAR": 3
-    }
+    },
+    "enc": 4
    }
   },
   "acolito_de_la_ceniza": {
@@ -5148,6 +5820,14 @@ const DEFAULT_DB = {
    "rol": "soporte",
    "estructura": "normal",
    "rasgos": [
+    {
+     "custom": true,
+     "name": "Presencia Consagrada",
+     "tipo": "Aura",
+     "peso": 0,
+     "txt": "Radio de 30 pies: sus aliados tienen +1 a las Salvaciones, y las criaturas sagradas atacan con Desventaja.",
+     "especie": true
+    },
     {
      "custom": true,
      "name": "Bálsamo de Ceniza",
@@ -5161,7 +5841,9 @@ const DEFAULT_DB = {
      "name": "Tras la Línea",
      "tipo": "Rasgo",
      "peso": 0,
-     "txt": "Mientras un aliado esté entre él y el atacante, los ataques a distancia contra el Acólito se hacen con Desventaja."
+     "txt": "Mientras un aliado esté entre él y el atacante, los ataques a distancia contra el Acólito se hacen con Desventaja.",
+     "definitoria": true,
+     "especie": true
     }
    ],
    "fuente": "Guía del Director",
@@ -5174,14 +5856,15 @@ const DEFAULT_DB = {
    "debiles": [
     "CON"
    ],
+   "proteccion": "Rodear la primera línea o atacar desde arriba: sin aliados delante pierde Tras la Línea.",
    "contexto": "El Acólito no pega: sostiene a los suyos. Su trabajo es que nadie llegue hasta él. Colócalo detrás de dos Arrolladores y deja que cure cada ronda: el grupo aprende enseguida que el enemigo que no ataca es el que más importa.",
    "impreso": {
-    "pv": 59,
+    "pv": 88,
     "g": 13,
     "a": 1,
     "vel": 30,
     "atk": 3,
-    "dano": "3d6",
+    "dano": "3d6-2",
     "cd": 15,
     "ini": 0,
     "moral": 13,
@@ -5192,7 +5875,8 @@ const DEFAULT_DB = {
      "INT": 0,
      "SAB": 3,
      "CAR": 3
-    }
+    },
+    "enc": 3
    }
   },
   "batidor": {
@@ -5203,6 +5887,14 @@ const DEFAULT_DB = {
    "rol": "explorador",
    "estructura": "normal",
    "rasgos": [
+    {
+     "custom": true,
+     "name": "Retirada Ágil",
+     "tipo": "Rasgo",
+     "peso": 0,
+     "txt": "No provoca Ataques de Oportunidad al alejarse.",
+     "especie": true
+    },
     {
      "custom": true,
      "name": "Primero en Llegar",
@@ -5227,14 +5919,14 @@ const DEFAULT_DB = {
     "SAB"
    ],
    "debiles": [],
-   "contexto": "El Batidor casi nunca es el combate: es lo que decide si hay combate. Ponlo antes del encuentro principal y deja que los jugadores decidan si lo persiguen (p. 41), lo dejan ir o lo esperan en una emboscada.",
+   "contexto": "El Batidor casi nunca es el combate: es lo que decide si hay combate. Ponlo antes del encuentro principal y deja que los jugadores decidan si lo persiguen (p. 42), lo dejan ir o lo esperan en una emboscada.",
    "impreso": {
-    "pv": 60,
+    "pv": 90,
     "g": 14,
     "a": 1,
     "vel": 45,
     "atk": 4,
-    "dano": "2d6+2",
+    "dano": "2d6+5",
     "cd": 13,
     "ini": 6,
     "moral": 12,
@@ -5245,7 +5937,8 @@ const DEFAULT_DB = {
      "INT": 0,
      "SAB": 2,
      "CAR": 0
-    }
+    },
+    "enc": 2
    }
   },
   "enjambre_de_ratas": {
@@ -5272,10 +5965,25 @@ const DEFAULT_DB = {
     },
     {
      "custom": true,
+     "name": "Resistencia",
+     "tipo": "Rasgo",
+     "peso": 0,
+     "txt": "Resistencia al daño de ataques contra un solo objetivo"
+    },
+    {
+     "custom": true,
+     "name": "Olor de la Sangre",
+     "tipo": "Rasgo",
+     "peso": 0,
+     "txt": "Percibe a las criaturas heridas a 120 pies, aunque estén ocultas o sean invisibles.",
+     "especie": true
+    },
+    {
+     "custom": true,
      "name": "Horda",
      "tipo": "Rasgo",
      "peso": 0,
-     "txt": "Actúa como una sola criatura con un solo turno. Recibe el doble de daño de área. A la mitad de sus PV se divide en dos enjambres de NA 1 que actúan por separado."
+     "txt": "Actúa como una sola criatura con un solo turno. Recibe el doble de daño de área. Cada cuarta parte de PV que pierde, su daño baja un dado. A la mitad de sus PV se divide en dos enjambres de NA 1 que actúan por separado, con la mitad de los PV y de los dados de daño que le queden cada uno."
     },
     {
      "custom": true,
@@ -5298,17 +6006,15 @@ const DEFAULT_DB = {
     "INT",
     "CAR"
    ],
+   "proteccion": "Fuego o cualquier área; ropa gruesa y un antídoto dan Ventaja contra el Mordisco Sucio.",
    "contexto": "El enjambre enseña el valor del área: una antorcha o un Axioma bien colocado vale más que tres espadas. En un pasillo estrecho es un obstáculo; en una bodega con víveres, es un Ud de Raciones perdido si nadie lo espanta a tiempo.",
-   "manual": {
-    "vel": 30
-   },
    "impreso": {
-    "pv": 56,
+    "pv": 84,
     "g": 17,
     "a": 1,
-    "vel": 30,
+    "vel": 40,
     "atk": 7,
-    "dano": "3d6+4",
+    "dano": "3d6+2",
     "cd": 16,
     "ini": 4,
     "moral": null,
@@ -5319,7 +6025,8 @@ const DEFAULT_DB = {
      "INT": -2,
      "SAB": 0,
      "CAR": -2
-    }
+    },
+    "enc": 3
    }
   }
  },
@@ -5726,7 +6433,7 @@ const DEFAULT_DB = {
     "Encuentro — Aparece una amenaza. Tira Reacción (2d10) para la actitud inicial. No necesariamente hostil.",
     "Indicio — Huellas, ruidos, olor, rastro visual. Avisa de peligro sin desencadenarlo.",
     "Recurso — Tira el Ud del recurso más relevante en ese momento.",
-    "Entorno — Cambio climático, trampa ambiental, fluctuación de la Fuente.",
+    "Entorno — Cambio climático, trampa ambiental, fluctuación del poder.",
     "Luz — Tira el Ud de la fuente de luz activa del grupo.",
     "Calma — El tiempo transcurre sin incidentes. El grupo avanza."
    ]
@@ -5830,53 +6537,38 @@ const DEFAULT_DB = {
  "encuentros": {
   "1-2": {
    "name": "Nivel 1–2",
-   "f": 1,
-   "e": 2,
-   "p": 3,
-   "m": 4,
-   "estandar": "1",
-   "serio": "2",
-   "mortal": "3+"
+   "f": 3,
+   "e": 4,
+   "p": 5,
+   "m": 6
   },
   "3-4": {
    "name": "Nivel 3–4",
-   "f": 2,
-   "e": 3,
-   "p": 4,
-   "m": 5,
-   "estandar": "2–3",
-   "serio": "4",
-   "mortal": "5+"
-  },
-  "5-6": {
-   "name": "Nivel 5–6",
    "f": 4,
    "e": 5,
    "p": 6,
-   "m": 7,
-   "estandar": "4–5",
-   "serio": "6",
-   "mortal": "7+"
+   "m": 7
   },
-  "7-8": {
-   "name": "Nivel 7–8",
-   "f": 6,
-   "e": 7,
-   "p": 8,
-   "m": 9,
-   "estandar": "6–7",
-   "serio": "8",
-   "mortal": "9+"
-  },
-  "9-10": {
-   "name": "Nivel 9–10",
+  "5-6": {
+   "name": "Nivel 5–6",
    "f": 8,
    "e": 9,
    "p": 10,
-   "m": 11,
-   "estandar": "8–9",
-   "serio": "10",
-   "mortal": "11+"
+   "m": 11
+  },
+  "7-8": {
+   "name": "Nivel 7–8",
+   "f": 9,
+   "e": 10,
+   "p": 11,
+   "m": 12
+  },
+  "9-10": {
+   "name": "Nivel 9–10",
+   "f": 10,
+   "e": 11,
+   "p": 12,
+   "m": 13
   }
  },
  "grupoAjuste": {
@@ -5988,7 +6680,7 @@ const DEFAULT_DB = {
   "entrenamiento_especializado": {
    "name": "Entrenamiento especializado",
    "coste": "300 cr × Nivel",
-   "txt": "Equivale a 1 PD extra entre sesiones (no más de 1 vez por sesión). No puede gastarse en Vigor ni en Reserva."
+   "txt": "Equivale a 1 PD extra entre sesiones (no más de 1 vez por Nivel). No puede gastarse en Vigor ni en Reserva."
   },
   "curacion_avanzada": {
    "name": "Curación avanzada",
@@ -6033,7 +6725,7 @@ const DEFAULT_DB = {
    "nivel": "Nivel 3–5. Mejoras significativas sin romper el balance.",
    "props": 1,
    "atk": "+1",
-   "def": "+1",
+   "def": "+1 / +1",
    "cd": "—",
    "dano": "+1d4",
    "precio": "400–1.200 cr"
@@ -6046,7 +6738,7 @@ const DEFAULT_DB = {
    "nivel": "Nivel 6–8. Objetos con mecánicas propias, no solo bonos.",
    "props": 2,
    "atk": "+2",
-   "def": "+2",
+   "def": "+2 / +2",
    "cd": "+1",
    "dano": "+1d6",
    "precio": "3.000–8.000 cr"
@@ -6059,7 +6751,7 @@ const DEFAULT_DB = {
    "nivel": "Nivel 9–10. Cambios cualitativos en cómo el personaje opera.",
    "props": 3,
    "atk": "+3",
-   "def": "+3",
+   "def": "+2 / +3",
    "cd": "+2",
    "dano": "+1d8",
    "precio": "15.000–30.000 cr"
@@ -6072,7 +6764,7 @@ const DEFAULT_DB = {
    "nivel": "Solo en juego épico. Objetos que alteran el mundo, no solo al personaje.",
    "props": 4,
    "atk": "+3 y único",
-   "def": "+3 y único",
+   "def": "+2 / +3 y único",
    "cd": "+3",
    "dano": "+1d10",
    "precio": "no comprable"
@@ -6097,7 +6789,7 @@ const DEFAULT_DB = {
    "d20": "1–2",
    "min": 1,
    "max": 2,
-   "txt": "+1, +2 o +3 al ataque (según rareza).",
+   "txt": "+1 (Infrecuente), +2 (Raro) o +3 (Muy Raro o Legendario) al ataque.",
    "bono": "atk"
   },
   "bono_defensivo": {
@@ -6105,7 +6797,7 @@ const DEFAULT_DB = {
    "d20": "3–4",
    "min": 3,
    "max": 4,
-   "txt": "+1 o +2 a la Guardia, o +1 o +2 de Armadura, mientras se lleva. Qué eje toca lo decide lo que el objeto hace en la ficción: un campo de fuerza, una capa que desvía o un escudo bien equilibrado suben la Guardia; una pieza que endurece el cuerpo o refuerza el blindaje sube la Armadura. Un mismo objeto puede tocar los dos ejes a la vez, pero entonces cada bono se cuenta por separado. El límite de +2 es el del bono sostenido: un objeto que solo se activa una ronda, o contra un único ataque, puede llegar más alto: hasta +3 o +4 si dura una sola ronda, y hasta +5 si solo afecta a un único ataque.",
+   "txt": "+1 a la Guardia (+2 si es Muy Raro o Legendario), o +1, +2 o +3 de Armadura con la escala del ataque, mientras se lleva. Qué eje toca lo decide lo que el objeto hace en la ficción: un campo de fuerza, una capa que desvía o un escudo bien equilibrado suben la Guardia; una pieza que endurece el cuerpo o refuerza el blindaje sube la Armadura. Un mismo objeto puede tocar los dos ejes a la vez, pero entonces cada bono se cuenta por separado. El límite de +2 en Guardia es el del bono sostenido: un objeto que solo se activa una ronda, o contra un único ataque, puede llegar más alto: hasta +3 o +4 si dura una sola ronda, y hasta +5 si solo afecta a un único ataque.",
    "bono": "def"
   },
   "dano_elemental": {
@@ -6113,7 +6805,7 @@ const DEFAULT_DB = {
    "d20": "5–6",
    "min": 5,
    "max": 6,
-   "txt": "Añade 1d4, 1d6 o 1d8 de daño del tipo elegido.",
+   "txt": "Añade 1d4 (Infrecuente), 1d6 (Raro) o 1d8 (Muy Raro o Legendario) de daño del tipo elegido.",
    "bono": "dano"
   },
   "propulsion_tactica": {
@@ -6321,7 +7013,7 @@ const DEFAULT_DB = {
  "etiquetas": {
   "1": {
    "name": "Cicatriz Mágica",
-   "txt": "Una Fuente desbordada estalló aquí. La tierra está marcada. Algo mutó, algo aún sangra.",
+   "txt": "Un poder desbordado estalló aquí. La tierra está marcada. Algo mutó, algo aún sangra.",
    "enemigo": "Carroñero que extrae de la cicatriz cualquier cosa que resuene, al precio que sea.",
    "aliado": "Investigadora de una orden erudita que estudia la anomalía y necesita escolta.",
    "complicacion": "El área distorsiona tu Fuente: cada Axioma usado aquí tiene un 20 % de probabilidades (1–4 en 1d20) de ver alterado su alcance o su efecto.",
@@ -6495,7 +7187,7 @@ const DEFAULT_DB = {
    "txt": "Las leyes físicas aquí son… sugerencias. Algo más antiguo que el mundo local dejó una marca.",
    "enemigo": "El Investigador sin escrúpulos que experimenta con personas para entender la anomalía.",
    "aliado": "El Nativo — alguien nacido en la zona, adaptado a sus reglas, que las entiende instintivamente.",
-   "complicacion": "Los Axiomas se comportan de forma impredecible; tu Fuente puede amplificarse o bloquearse sin previo aviso.",
+   "complicacion": "Los Axiomas se comportan de forma impredecible; tu poder puede amplificarse o bloquearse sin previo aviso.",
    "objeto": "El Artefacto de Origen — lo que causó la anomalía; activo, antiguo, y aún funcionando.",
    "lugar": "El Centro Quieto — el único punto de la zona donde todo es completamente normal. Nadie sabe por qué."
   }
@@ -6583,92 +7275,92 @@ const DEFAULT_DB = {
   "sangrado": {
    "name": "Sangrado",
    "ud": "Ud6",
-   "txt": "1d4 Físico por turno. Las curaciones solo restauran la mitad."
+   "txt": "1d4 Cortante por turno. Las curaciones recibidas solo restauran la mitad de sus PV."
   },
   "desgarro": {
    "name": "Desgarro",
    "ud": "Ud6",
-   "txt": "2 de daño por turno. −1 de Armadura (o de Guardia si no lleva)."
+   "txt": "2 Cortante (fijo) por turno. −1 de Armadura del afectado mientras dure (mínimo 0). Si no lleva armadura, en su lugar −1 a su Guardia."
   },
   "trauma": {
    "name": "Trauma",
    "ud": "Ud4",
-   "txt": "1d6 Físico por turno. Desventaja en las tiradas de FUE."
+   "txt": "1d6 Contundente por turno. Desventaja en todas las tiradas que usen FUE."
   },
   "envenenado": {
    "name": "Envenenado",
    "ud": "Ud8",
-   "txt": "1d6 por turno. Desventaja en ataques y habilidades."
+   "txt": "1d6 Veneno por turno. Desventaja en tiradas de ataque y de habilidad mientras dure. Si un efecto lo impone sin daño ni Ud, aplica solo la Desventaja durante lo que ese efecto indique."
   },
   "ignicion": {
    "name": "Ignición",
    "ud": "Ud6",
-   "txt": "1d10 de Fuego por turno, +1 acumulativo cada turno que el Ud no degrada."
+   "txt": "1d10 Fuego por turno. Se tira aparte: con 1–2 termina. Cada turno que sigue activa: +1 daño acumulativo (turno 3: 1d10+2; turno 5: 1d10+4)."
   },
   "ralentizado": {
    "name": "Ralentizado",
    "ud": "Ud6",
-   "txt": "Movimiento a la mitad. Sin Paso Táctico gratuito."
+   "txt": "Movimiento reducido a la mitad. Sin Paso Táctico gratuito."
   },
   "aturdido": {
    "name": "Aturdido",
    "ud": "Ud4",
-   "txt": "Sin Reacciones ni acciones de 3 PA. Ventaja para quien lo ataque."
+   "txt": "No puede moverse, gastar PA, hablar ni usar Reacciones, y falla las Salvaciones de FUE y DES. Los ataques contra él tienen Ventaja, y todo impacto cuerpo a cuerpo desde 5 pies es Golpe Crítico automático. (El estado de control más severo del sistema.)"
   },
   "conmocionado": {
    "name": "Conmocionado",
    "ud": "Ud6",
-   "txt": "Desventaja en la primera tirada de cada turno. Sus fuentes de Ventaja quedan canceladas."
+   "txt": "Desventaja en la primera tirada de ataque, habilidad o Salvación de cada turno, sea el suyo o el de otro. Las fuentes de Ventaja del afectado quedan canceladas mientras dure."
   },
   "cegado": {
    "name": "Cegado",
    "ud": "Ud4",
-   "txt": "Desventaja en sus ataques. Ventaja para quien lo ataque."
+   "txt": "Desventaja en todos los ataques propios. Ventaja para todos los que ataquen al afectado. Falla tiradas que dependan de la vista."
   },
   "aterrado": {
    "name": "Aterrado",
-   "ud": "Ud4",
-   "txt": "Desventaja en todas sus tiradas mientras perciba la fuente. No puede acercarse a ella."
+   "ud": "",
+   "txt": "Desventaja en todas sus tiradas mientras perciba la fuente de su miedo. No puede acercarse voluntariamente a ella ni tomar acciones cuyo único fin sea aproximarse. (Su Ud, el de la fuente.)"
   },
   "paralizado": {
    "name": "Paralizado",
    "ud": "Ud4",
-   "txt": "No se mueve ni gasta PA. Ventaja contra él; cuerpo a cuerpo a 5 pies es Crítico."
+   "txt": "No puede moverse ni hacer nada físico (atacar, maniobrar, usar objetos) ni usar Reacciones; sí puede hablar, hacer Salvaciones y usar Trucos y Axiomas que no exijan moverse. Los ataques contra él tienen Ventaja."
   },
   "apresado": {
    "name": "Apresado",
    "ud": "",
-   "txt": "Velocidad 0. Desventaja en sus ataques y Salvaciones de DES. Ventaja para quien lo ataque."
+   "txt": "Velocidad 0; Desventaja en sus ataques y en sus Salvaciones de DES; quien lo ataque tiene Ventaja. Termina si el captor queda Aturdido, Paralizado o Inconsciente, si suelta la presa o si el apresado escapa (1 PA, Proeza Física vs. CD 8 + PB + ½ Nivel + MOD FUE del captor, o la tirada que indique el efecto)."
+  },
+  "encantado": {
+   "name": "Encantado",
+   "ud": "",
+   "txt": "El afectado percibe a la fuente como un aliado de confianza y no puede atacarla; recibir daño de la fuente o de sus aliados rompe el efecto. Se resuelve con Salvación SAB. No es un estado de Aflicción: dura lo que el efecto indique, no se degrada con Ud."
+  },
+  "ensordecido": {
+   "name": "Ensordecido",
+   "ud": "",
+   "txt": "No oye. Desventaja en Percepción auditiva, falla automática en las tiradas que dependan del oído e inmunidad a los efectos basados en el sonido. Dura lo que el efecto indique."
+  },
+  "maldito": {
+   "name": "Maldito",
+   "ud": "",
+   "txt": "Desventaja en un tipo de tirada, determinado por la fuente que lo impuso; por defecto, las Salvaciones. Si la fuente le asigna un Ud, cuenta para el Ud de Aflicción como los demás estados, pero ningún efecto que retire estados ordinarios lo elimina: hace falta un Axioma o un procedimiento específico contra maldiciones. No lo confundas con las maldiciones de campaña de la Guía del Director, que no tienen Ud y no caducan."
+  },
+  "petrificado": {
+   "name": "Petrificado",
+   "ud": "Ud4",
+   "txt": "Como Aturdido, y además Resistencia a todo el daño e inmunidad a Veneno y Enfermedad mientras dure. Ud4 por defecto. Solo lo imponen efectos poderosos, y siempre con Salvación."
   },
   "derribado": {
    "name": "Derribado",
    "ud": "",
-   "txt": "En el suelo: levantarse cuesta movimiento. Ventaja cuerpo a cuerpo contra él."
-  },
-  "encantado": {
-   "name": "Encantado",
-   "ud": "Ud6",
-   "txt": "Ve a la fuente como aliada y no puede atacarla. Recibir daño de ella lo rompe."
-  },
-  "ensordecido": {
-   "name": "Ensordecido",
-   "ud": "Ud6",
-   "txt": "No oye. Inmune a los efectos basados en el sonido."
-  },
-  "maldito": {
-   "name": "Maldito",
-   "ud": "Ud8",
-   "txt": "Desventaja en un tipo de tirada, según la fuente."
-  },
-  "petrificado": {
-   "name": "Petrificado",
-   "ud": "",
-   "txt": "Como Paralizado, con Resistencia a todo el daño."
+   "txt": "Desventaja en todos sus ataques y Salvaciones de DES; los aliados adyacentes atacan con Ventaja; levantarse cuesta 1 PA."
   },
   "desprevenido": {
    "name": "Desprevenido",
    "ud": "",
-   "txt": "No ha actuado o no ve venir el golpe: pierde el escudo y las Reacciones."
+   "txt": "Quien recibe un ataque sin haber podido prepararse (sorpresa, sueño, atacante oculto). Su Guardia pierde el PB y el escudo, no el atributo ni la Armadura. En una sorpresa dura hasta el final de su primer turno; frente a un atacante oculto, solo su primer ataque."
   }
  }
 };
