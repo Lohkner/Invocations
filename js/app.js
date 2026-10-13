@@ -29,7 +29,7 @@ Object.assign(app, {
     personal: { card: 'card_personal', campos: ['nombre', 'idea', 'retrato'] },
     identity: { card: 'card_identity', campos: ['na', 'tipo', 'tam', 'rol', 'estructura', 'miembros', 'rasgos', 'fuertes', 'debiles', 'moralNoTira', 'pvAct'] },
     stats:    { card: 'fold_stats',    campos: ['manual', 'pvAct'] },
-    defensa:  { card: 'fold_defensa',  campos: ['manual'] },
+    defensa:  { card: 'fold_defensa',  campos: ['manual', 'resisteTodo'] },
     attack:   { card: 'fold_ataques',  campos: ['ataqueNombre', 'danoTipo', 'manual'] },
     saves:    { card: 'fold_salv',     campos: ['fuertes', 'debiles', 'moralNoTira', 'pvAct'] },
     senal:    { card: 'fold_senal',    campos: ['senal', 'contexto', 'habitat', 'quiere', 'pelea', 'botin'] },

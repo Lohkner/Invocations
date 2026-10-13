@@ -103,6 +103,7 @@ Object.assign(app, {
     }
     cr.debiles = Array.isArray(d.debiles) ? lista(d.debiles).filter(a => !cr.fuertes.includes(a)) : this._debilesDe(cr, cr.fuertes);
     cr.moralNoTira = !!d.moralNoTira;
+    cr.resisteTodo = !!d.resisteTodo;
     cr.pvAct = !antigua && Number.isFinite(parseInt(d.pvAct, 10)) ? Math.max(0, parseInt(d.pvAct, 10)) : null;
     cr.manual = {};
     // Las cifras impresas del bestiario antiguo no valen con las fórmulas nuevas;
@@ -257,7 +258,8 @@ Object.assign(app, {
       if (t === 'D' || (a === 'CON' && fragil)) c = 'D';
       cat[a] = c;
       mod[a] = (c === 'F' ? B.fuerte : c === 'D' ? B.debil : B.normal) + (Number(t) || 0);
-      salv[a] = mod[a] + (fuertes.includes(a) ? B.pb : 0);
+      // Salvación: en sus Fuertes, MOD + PB; en las demás, MOD + ½ NA (12-10-2026)
+      salv[a] = mod[a] + (fuertes.includes(a) ? B.pb : Math.floor(na / 2));
     });
     const pega = Math.max(mod.FUE, mod.DES);            // «el mayor de FUE o DES»
 
@@ -314,7 +316,8 @@ Object.assign(app, {
     infos.forEach(x => { area = Math.max(area, x.i.area ? (x.i.peso >= 3 ? 3 : 2) : (Number(x.r.area) || 0)); });
     S.area = jefe ? Math.max(0, area - 1) : area;
     S.axiomas = infos.some(x => x.r.id === 'uso_de_axiomas' || x.r.axiomas);
-    S.naEnc = na + Math.floor(S.exceso / 2) + (jefe ? (na >= 6 ? 4 : 3) : 0) + S.area + (tam.naEnc || 0) + (S.axiomas ? 1 : 0);
+    // +1 si resiste casi todo el daño del grupo y el grupo no tiene cómo evitarlo (lo decide el Director)
+    S.naEnc = na + Math.floor(S.exceso / 2) + (jefe ? (na >= 6 ? 4 : 3) : 0) + S.area + (tam.naEnc || 0) + (S.axiomas ? 1 : 0) + (cr.resisteTodo ? 1 : 0);
     S.cuenta = esbirro ? .25 : 1;
     return S;
   },
@@ -608,8 +611,8 @@ Object.assign(app, {
       const cuartos = S.pv ? Math.min(4, Math.floor((S.pv - act) / (S.pv / 4))) : 0;
       const ds = this._parseDanos(S.dano);
       const dados = ds ? ds.reduce((a, d) => a + d.n, 0) : 0;
-      if (ds && cuartos > 0) t.push(`Ha perdido ${cuartos} cuarto${cuartos > 1 ? 's' : ''} de sus PV: le quedan ${Math.max(1, dados - cuartos)} dados de daño de los ${dados}.`);
-      if (act <= S.pv / 2) t.push(`A mitad de vida: se divide en dos hordas de NA ${Math.max(0, S.na - 2)}, cada una con la mitad de los PV y de los dados de daño que le queden.`);
+      if (ds && cuartos > 0) t.push(`Ha perdido ${cuartos} cuarto${cuartos > 1 ? 's' : ''} de sus PV: le quedan ${Math.max(1, dados - cuartos)} dados de daño de los ${dados} (nunca menos de uno).`);
+      if (act <= S.pv / 2) t.push(`A mitad de vida: se divide en dos hordas de NA ${Math.max(0, S.na - 2)}, cada una con la mitad de los PV que le queden y la mitad de sus dados de daño, redondeando hacia arriba.`);
     }
     if (S.esbirro) t.push('Esbirro: cae con cualquier golpe que le quite sus PV.');
     if (act === 0) t.push('A 0 PV.');
@@ -738,7 +741,18 @@ Object.assign(app, {
     v.textContent = '';
     v.appendChild(this.h('p', 'wiz-hint', 'Guardia = 10 + Competencia + DES; Armadura, la de su NA más Rasgos y equipo. Desprevenida, su Guardia pierde la Competencia. Vacío vuelve a la fórmula.'));
     this._editorManual(v, this.CAMPOS_DEFENSA, () => this._editar_defensa());
-    v.appendChild(this._pieEdicion('defensa'));
+    // Encuentro +1 si resiste casi todo el daño del grupo y el grupo no tiene cómo evitarlo (Cap. 4)
+    const cr = this.cr;
+    const fila = this.h('div', 'set-row dir-fila-toggle');
+    const txt = this.h('div', 'set-row-txt');
+    txt.append(this.h('span', 'set-lbl', 'Resiste casi todo su daño'),
+      this.h('span', 'set-hint', 'Enjambre, Incorpórea… y este grupo no tiene cómo evitarlo: +1 a su NA de encuentro.'));
+    const tg = this.h('button', 'toggle-btn'); tg.type = 'button';
+    tg.setAttribute('aria-pressed', String(!!cr.resisteTodo));
+    tg.setAttribute('aria-label', 'Resiste casi todo el daño del grupo');
+    tg.addEventListener('click', () => { cr.resisteTodo = !cr.resisteTodo; this.cambio(); this._editar_defensa(); });
+    fila.append(txt, tg);
+    v.append(fila, this._pieEdicion('defensa'));
   },
 
   /* ── Combate: ataque ──────────────────────────────────────────── */
@@ -819,7 +833,7 @@ Object.assign(app, {
       grid.appendChild(box);
     });
     v.appendChild(grid);
-    v.appendChild(this.h('p', 'dir-nota', `Salvaciones fuertes: ${cr.fuertes.map(a => a + ' ' + this._signo(S.salv[a])).join(' · ') || '—'}. En las demás tira el modificador. Toca un atributo para tirar su Salvación.`));
+    v.appendChild(this.h('p', 'dir-nota', `Salvaciones fuertes: ${S.fuertes.map(a => a + ' ' + this._signo(S.salv[a])).join(' · ') || '—'}. En las demás, el modificador + ${Math.floor(S.na / 2)} (½ NA). Toca un atributo para tirar su Salvación.`));
     const g = this.h('div', 'dir-stats dir-stats-1');
     g.appendChild(S.noMoral ? this._stat('Moral', 'no tira') : this._stat('Moral', String(S.moral), () => this.tirarMoral(S.moral), 'Tirar Moral'));
     v.appendChild(g);

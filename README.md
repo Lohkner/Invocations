@@ -4,9 +4,22 @@ La app hermana de **S&S Companion** para quien dirige *Stars & Sorcery*: crea
 amenazas, calibra encuentros y genera botín, zonas y facciones. PWA estática:
 sin build, sin dependencias, funciona sin conexión.
 
+## Novedades v1.3.1 — Manuales del 12-10-2026
+
+`CACHE_VERSION` es `ss-director-v16` y `RULES_DATA_VERSION`,
+`v1-monstruos-guia-r9`.
+
+- **Salvaciones**: las que no son Fuertes suman ahora la mitad de su NA
+  (MOD + ½ NA). Las Fuertes siguen siendo MOD + PB.
+- **NA de encuentro +1** si la criatura resiste casi todo el daño del grupo
+  (Enjambre, Incorpórea…) y ese grupo no tiene cómo evitarlo. Depende del
+  grupo, así que es un interruptor en Combate → Defensa (al editar).
+- **Hordas**: al dividirse, cada mitad lleva la mitad de sus dados redondeando
+  hacia arriba, y al perder PV nunca baja de un dado.
+
 ## Novedades v1.3 — Manuales del 11-10-2026
 
-`CACHE_VERSION` es `ss-director-v15` y `RULES_DATA_VERSION`,
+Al publicarse, `CACHE_VERSION` era `ss-director-v15` y `RULES_DATA_VERSION`,
 `v1-monstruos-guia-r8`. Los manuales se leen de
 `OneDrive\S&S\Official\Stars_and_Sorcery_v1_Paquete_Completo_1`.
 

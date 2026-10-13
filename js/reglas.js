@@ -5983,7 +5983,7 @@ const DEFAULT_DB = {
      "name": "Horda",
      "tipo": "Rasgo",
      "peso": 0,
-     "txt": "Actúa como una sola criatura con un solo turno. Recibe el doble de daño de área. Cada cuarta parte de PV que pierde, su daño baja un dado. A la mitad de sus PV se divide en dos enjambres de NA 1 que actúan por separado, con la mitad de los PV y de los dados de daño que le queden cada uno."
+     "txt": "Actúa como una sola criatura con un solo turno. Recibe el doble de daño de área. Cada cuarta parte de PV que pierde, su daño baja un dado, hasta un mínimo de uno. A la mitad de sus PV se divide en dos enjambres de NA 1 que actúan por separado, cada uno con la mitad de los PV que le queden y la mitad de sus dados, redondeando hacia arriba."
     },
     {
      "custom": true,
