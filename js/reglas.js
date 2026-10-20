@@ -6537,17 +6537,17 @@ const DEFAULT_DB = {
  "encuentros": {
   "1-2": {
    "name": "Nivel 1–2",
+   "f": 2,
+   "e": 3,
+   "p": 4,
+   "m": 5
+  },
+  "3-4": {
+   "name": "Nivel 3–4",
    "f": 3,
    "e": 4,
    "p": 5,
    "m": 6
-  },
-  "3-4": {
-   "name": "Nivel 3–4",
-   "f": 4,
-   "e": 5,
-   "p": 6,
-   "m": 7
   },
   "5-6": {
    "name": "Nivel 5–6",
@@ -6594,7 +6594,7 @@ const DEFAULT_DB = {
    "sesion": "100–200 cr",
    "sesMin": 100,
    "sesMax": 200,
-   "objetos": "1 Común, posible Infrecuente"
+   "objetos": "1–2 Comunes"
   },
   "3": {
    "name": "Nivel 3",
@@ -6610,7 +6610,7 @@ const DEFAULT_DB = {
    "sesion": "200–400 cr",
    "sesMin": 200,
    "sesMax": 400,
-   "objetos": "1 Infrecuente + posible Raro"
+   "objetos": "1–2 Infrecuentes"
   },
   "5": {
    "name": "Nivel 5",
@@ -6626,7 +6626,7 @@ const DEFAULT_DB = {
    "sesion": "500–1.000 cr",
    "sesMin": 500,
    "sesMax": 1000,
-   "objetos": "1–2 Raros, posible Muy Raro"
+   "objetos": "1–2 Raros"
   },
   "7": {
    "name": "Nivel 7",
@@ -6650,7 +6650,7 @@ const DEFAULT_DB = {
    "sesion": "2.000–4.000 cr",
    "sesMin": 2000,
    "sesMax": 4000,
-   "objetos": "1 Muy Raro, posible Legendario"
+   "objetos": "1–2 Muy Raros o 1 Legendario"
   },
   "10": {
    "name": "Nivel 10",
@@ -6722,7 +6722,7 @@ const DEFAULT_DB = {
    "d6": "3–4",
    "na": "3–5",
    "sintonia": "Sí (1 slot)",
-   "nivel": "Nivel 3–5. Mejoras significativas sin romper el balance.",
+   "nivel": "Nivel 3–4. Mejoras significativas sin romper el balance.",
    "props": 1,
    "atk": "+1",
    "def": "+1 / +1",
@@ -6735,7 +6735,7 @@ const DEFAULT_DB = {
    "d6": "5",
    "na": "6–8",
    "sintonia": "Sí (1 slot)",
-   "nivel": "Nivel 6–8. Objetos con mecánicas propias, no solo bonos.",
+   "nivel": "Nivel 5–6. Objetos con mecánicas propias, no solo bonos.",
    "props": 2,
    "atk": "+2",
    "def": "+2 / +2",
@@ -6748,7 +6748,7 @@ const DEFAULT_DB = {
    "d6": "6",
    "na": "9–11",
    "sintonia": "Sí (1 slot)",
-   "nivel": "Nivel 9–10. Cambios cualitativos en cómo el personaje opera.",
+   "nivel": "Nivel 7–8. Cambios cualitativos en cómo el personaje opera.",
    "props": 3,
    "atk": "+3",
    "def": "+2 / +3",
@@ -6760,8 +6760,8 @@ const DEFAULT_DB = {
    "name": "Legendario",
    "d6": "7",
    "na": "12+",
-   "sintonia": "Sí (requiere Nivel 7+)",
-   "nivel": "Solo en juego épico. Objetos que alteran el mundo, no solo al personaje.",
+   "sintonia": "Sí (requiere Nivel 9+)",
+   "nivel": "Nivel 9–10, en juego épico. Objetos que alteran el mundo, no solo al personaje.",
    "props": 4,
    "atk": "+3 y único",
    "def": "+2 / +3 y único",
@@ -6773,7 +6773,7 @@ const DEFAULT_DB = {
    "name": "Artefacto Único",
    "d6": "8",
    "na": "Escala Cósmica",
-   "sintonia": "Sí (requiere Nivel 9+)",
+   "sintonia": "Sí (requiere Nivel 10)",
    "nivel": "Objetos con voluntad propia y agenda.",
    "props": 5,
    "atk": "+3 y único",

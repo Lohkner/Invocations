@@ -127,7 +127,9 @@ Object.assign(app, {
   umbrales() {
     const g = this.mesa.grupo;
     const f = this._filaEncuentro(g.nivel);
-    const d = Number(this.DB.grupoAjuste[g.pjs]) || 0;
+    // Con jugadores que empiezan, la tabla baja un escalón: su Estándar les pesa
+    // como un Peligroso (Manual de Monstruos, Cap. 4; entrega del 18-10-2026).
+    const d = (Number(this.DB.grupoAjuste[g.pjs]) || 0) - (g.novatos ? 1 : 0);
     return { f: f.f + d, e: f.e + d, p: f.p + d, m: f.m + d, fila: f, ajuste: d };
   },
 
@@ -140,6 +142,16 @@ Object.assign(app, {
       this._campo('Nivel', this._paso(g.nivel, 1, 10, n => { g.nivel = n; this.mesaCambio(); }, 'el nivel del grupo')),
       this._campo('Personajes', this._paso(g.pjs, 1, 6, n => { g.pjs = n; this.mesaCambio(); }, 'el número de personajes')));
     host.appendChild(fila);
+    const nov = this.h('div', 'set-row dir-fila-toggle');
+    const txt = this.h('div', 'set-row-txt');
+    txt.append(this.h('span', 'set-lbl', 'Jugadores que empiezan'),
+      this.h('span', 'set-hint', 'La tabla supone jugadores que conocen sus fichas y usan el Esfuerzo; si empiezan, −1 NA en cada dificultad.'));
+    const tg = this.h('button', 'toggle-btn'); tg.type = 'button';
+    tg.setAttribute('aria-pressed', String(!!g.novatos));
+    tg.setAttribute('aria-label', 'Jugadores que empiezan');
+    tg.addEventListener('click', () => { g.novatos = !g.novatos; this.mesaCambio(); });
+    nov.append(txt, tg);
+    host.appendChild(nov);
     if (g.pjs === 3 || g.pjs >= 5) host.appendChild(this.h('p', 'dir-nota',
       `La tabla es para cuatro personajes: con ${g.pjs}, ${g.pjs > 4 ? '+1' : '−1'} NA en cada dificultad.`));
     if (g.pjs <= 2) host.appendChild(this.h('p', 'dir-aviso', g.pjs === 1

@@ -4,9 +4,32 @@ La app hermana de **S&S Companion** para quien dirige *Stars & Sorcery*: crea
 amenazas, calibra encuentros y genera botín, zonas y facciones. PWA estática:
 sin build, sin dependencias, funciona sin conexión.
 
+## Novedades v1.3.3 — Manuales del 19-10-2026
+
+`CACHE_VERSION` es `ss-director-v18` y `RULES_DATA_VERSION`,
+`v1-monstruos-guia-r11`.
+
+- **Tabla de dificultad**: bajan los Niveles 1–2 (NA 2 · 3 · 4 · 5+) y 3–4
+  (NA 3 · 4 · 5 · 6+). El resto no cambia.
+- **Rarezas**: el nivel apropiado de cada rareza y su NA equivalente cambian
+  (Infrecuente, Nivel 3–4; Raro, 5–6; Muy Raro, 7–8; Legendario, 9–10), y los
+  objetos esperados por nivel de la riqueza también. Salen solos de la Guía.
+- El asistente describe cada dificultad con las cifras nuevas del Manual
+  (cuántas veces cae alguien, cuándo puede morir).
+
+## Novedades v1.3.2 — Manuales del 18-10-2026
+
+Al publicarse, `CACHE_VERSION` era `ss-director-v17` y `RULES_DATA_VERSION`,
+`v1-monstruos-guia-r10`. Los manuales vuelven a leerse de `OneDrive\S&S\Official`.
+
+- **Jugadores que empiezan** (Mesa → El grupo): la tabla de dificultad supone
+  jugadores que conocen sus fichas y usan el Esfuerzo; con jugadores que
+  empiezan baja un escalón (su Estándar les pesa como un Peligroso). El
+  interruptor resta 1 NA a cada dificultad.
+
 ## Novedades v1.3.1 — Manuales del 12-10-2026
 
-`CACHE_VERSION` es `ss-director-v16` y `RULES_DATA_VERSION`,
+Al publicarse, `CACHE_VERSION` era `ss-director-v16` y `RULES_DATA_VERSION`,
 `v1-monstruos-guia-r9`.
 
 - **Salvaciones**: las que no son Fuertes suman ahora la mitad de su NA
@@ -21,7 +44,7 @@ sin build, sin dependencias, funciona sin conexión.
 
 Al publicarse, `CACHE_VERSION` era `ss-director-v15` y `RULES_DATA_VERSION`,
 `v1-monstruos-guia-r8`. Los manuales se leen de
-`OneDrive\S&S\Official\Stars_and_Sorcery_v1_Paquete_Completo_1`.
+`OneDrive\S&S\Official\Stars_and_Sorcery_v1_Paquete_Completo_1` (hasta el 12-10).
 
 - **Daño**: cada NA tiene un ajuste que se suma a cada ataque (NA 1, +1; NA 3,
   −2…). Con 4 PA o más son **dos Ataques Normales** que se reparten los dados

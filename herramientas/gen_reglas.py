@@ -18,8 +18,7 @@ como [t_pasivo].
 import re, json, sys, os, unicodedata, zipfile, html, shutil, tempfile
 sys.stdout.reconfigure(encoding='utf-8')
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-FUENTE = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.expanduser('~'), 'OneDrive', 'S&S', 'Official',
-                                                           'Stars_and_Sorcery_v1_Paquete_Completo_1')
+FUENTE = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.expanduser('~'), 'OneDrive', 'S&S', 'Official')
 OUT = os.path.join(RAIZ, 'js', 'reglas.js')
 
 
@@ -877,6 +876,7 @@ assert list(ENC) == ['1-2', '3-4', '5-6', '7-8', '9-10'], list(ENC)
 # «Con cinco o seis, suma 1 a cada casilla; con dos o tres, resta 1.» Nada dice de un
 # personaje solo: se le resta 2.
 find(M, 'Con cinco o seis, suma 1 a cada casilla; con dos o tres, resta 1')
+find(M, 'con jugadores que empiezan, baja un escalón')
 GRUPO_AJUSTE = {'1': -2, '2': -1, '3': -1, '4': 0, '5': 1, '6': 1}
 # El cálculo va en el código (js/amenaza.js → naEnc y js/mesa.js → _naDeLineas;
 # js/asistente.js → varias iguales). Si el Manual cambia la regla, esto avisa.

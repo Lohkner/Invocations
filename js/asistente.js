@@ -68,8 +68,8 @@
       app._campo('Cuántas iguales', app._paso(iguales, 1, 8, n => { iguales = n; pintar(); }, 'cuántas criaturas iguales', iguales >= 8 ? '8+' : String(iguales))));
     b.appendChild(fila);
     const U = app.umbrales(), resta = RESTA(iguales);
-    [['Fácil', U.f, ''], ['Estándar', U.e, 'El grupo pierde en torno a una séptima parte de sus PV.'],
-     ['Peligroso', U.p, 'Pierde entre un cuarto y un tercio; alguien puede caer.'], ['Mortal', U.m, 'Casi la mitad o más; puede caer cualquiera.']].forEach(([n, casilla, t]) => {
+    [['Fácil', U.f, ''], ['Estándar', U.e, 'Pierde en torno a una séptima parte de sus PV; alguien cae en uno de cada cinco a diez combates.'],
+     ['Peligroso', U.p, 'Pierde entre un cuarto y un tercio; alguien cae a menudo y la muerte ya es posible.'], ['Mortal', U.m, 'Casi la mitad o más; puede caer el grupo entero, y en uno de cada diez muere alguien.']].forEach(([n, casilla, t]) => {
       const na = Math.max(0, casilla - resta);
       b.appendChild(app.tarjetaOpcion(n, 'NA ' + na + (n === 'Mortal' ? '+' : ''), t, resta ? `Casilla NA ${casilla}, menos ${resta} por ser ${iguales >= 8 ? 'ocho o más' : iguales}` : '',
         cr().na === na, () => { cr().na = Math.min(15, na); cr().pvAct = null; pintar(); }));

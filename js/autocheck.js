@@ -151,8 +151,8 @@
     app.mesa.grupo = { nivel: 9, pjs: 2 }; const p2 = app.umbrales();
     app.mesa.grupo = gPrev;
     comprobar('Dificultad por nivel y tamaño del grupo',
-      p4.f === 4 && p4.e === 5 && p4.p === 6 && p4.m === 7 && p6.p === 7 && p2.p === 11 &&
-      app._dificultad(6, p4).k === 'p' && app._dificultad(7, p4).k === 'm' && app._dificultad(3, p4).k === 't',
+      p4.f === 3 && p4.e === 4 && p4.p === 5 && p4.m === 6 && p6.p === 6 && p2.p === 11 &&
+      app._dificultad(5, p4).k === 'p' && app._dificultad(6, p4).k === 'm' && app._dificultad(2, p4).k === 't',
       `Nv 3 ×4: NA ${p4.f}/${p4.e}/${p4.p}/${p4.m}+ · ×6 Peligroso NA ${p6.p} · Nv 9 ×2 Peligroso NA ${p2.p}`);
 
     // ── 5 · recorrido visual: la ficha y la Mesa ──
