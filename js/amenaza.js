@@ -614,8 +614,8 @@ Object.assign(app, {
       if (ds && cuartos > 0) t.push(`Ha perdido ${cuartos} cuarto${cuartos > 1 ? 's' : ''} de sus PV: le quedan ${Math.max(1, dados - cuartos)} dados de daño de los ${dados} (nunca menos de uno).`);
       if (act <= S.pv / 2) t.push(`A mitad de vida: se divide en dos hordas de NA ${Math.max(0, S.na - 2)}, cada una con la mitad de los PV que le queden y la mitad de sus dados de daño, redondeando hacia arriba.`);
     }
-    if (S.esbirro) t.push('Esbirro: cae con cualquier golpe que le quite sus PV.');
-    if (act === 0) t.push('A 0 PV.');
+    if (S.esbirro) t.push(`Esbirro: a 0 PV queda derrotado (muerto, inconsciente, huido o rendido, a elección de quien lo derribó); no se desangra. Refriega: quien sea de Nivel ${S.na} o más tira cada turno en que ataca su Dado de Refriega (Audaz 1d8, Versátil 1d6, Sagaz 1d4) como daño a un esbirro a su alcance, sin tirada ni Armadura.`);
+    if (act === 0) t.push(S.esbirro ? 'A 0 PV: derrotado.' : 'A 0 PV.');
     else if (!S.esbirro && act <= S.pv / 2) t.push('Por debajo de la mitad: comprueba la Moral' + (cr.rasgos.some(r => r.id === 'fases') ? ' y cambia de Fase' : '') + '.');
     el.textContent = t.join(' ');
     el.hidden = !t.length;

@@ -4,6 +4,23 @@ La app hermana de **S&S Companion** para quien dirige *Stars & Sorcery*: crea
 amenazas, calibra encuentros y genera botín, zonas y facciones. PWA estática:
 sin build, sin dependencias, funciona sin conexión.
 
+## Novedades v1.3.4 — Manuales del 20-10-2026
+
+`CACHE_VERSION` es `ss-director-v20` y `RULES_DATA_VERSION`,
+`v1-monstruos-guia-r13` (entrega de las 23:15).
+
+- **Raciones y munición se cuentan una a una** (ya no llevan Ud): cambian el
+  resultado «Recurso» de las complicaciones (pierde 1 Ración o 1d4
+  proyectiles) y el contexto del enjambre (1d6 Raciones perdidas). Salen solos
+  de la Guía.
+
+- **Esbirros**: la nota de PV de un esbirro dice ahora que a 0 PV queda
+  derrotado (sin desangrarse) y resume la Refriega: quien sea de su Nivel o
+  más tira su Dado de Refriega (Audaz 1d8, Versátil 1d6, Sagaz 1d4) cada turno
+  en que ataca, sin tirada ni Armadura.
+- Bestiario, fórmulas, NA del encuentro y tablas de la Guía no cambian. El
+  Apéndice D nuevo de la Guía (hexágonos sin preparar) aún no está en la app.
+
 ## Novedades v1.3.3 — Manuales del 19-10-2026
 
 `CACHE_VERSION` es `ss-director-v18` y `RULES_DATA_VERSION`,
@@ -161,6 +178,8 @@ Fuentes: *Manual de Monstruos v1* y *Guía del Director v1*, con apoyo del
     tamaño, Rol y estructura (normal, jefe u horda) · PV en mesa ·
     Estadísticas (Velocidad, Alcance, Iniciativa y Moral).
   - **Combate**: atributos, Salvaciones y Moral · ataque y daño con dado ·
+    (la Moral sale en las dos a propósito: en Combate se configura, en
+    Estadísticas se resume) ·
     Defensa (Guardia, Armadura y Guardia Desprevenida, que pierde la
     Competencia). Todo sale de las fórmulas del Manual; al editar cada tarjeta,
     el valor de la fórmula va al lado del tuyo, con «Volver a las fórmulas».

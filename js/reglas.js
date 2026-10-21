@@ -6007,7 +6007,7 @@ const DEFAULT_DB = {
     "CAR"
    ],
    "proteccion": "Fuego o cualquier área; ropa gruesa y un antídoto dan Ventaja contra el Mordisco Sucio.",
-   "contexto": "El enjambre enseña el valor del área: una antorcha o un Axioma bien colocado vale más que tres espadas. En un pasillo estrecho es un obstáculo; en una bodega con víveres, es un Ud de Raciones perdido si nadie lo espanta a tiempo.",
+   "contexto": "El enjambre enseña el valor del área: una antorcha o un Axioma bien colocado vale más que tres espadas. En un pasillo estrecho es un obstáculo; en una bodega con víveres, son 1d6 Raciones perdidas si nadie lo espanta a tiempo.",
    "impreso": {
     "pv": 84,
     "g": 17,
@@ -6432,7 +6432,7 @@ const DEFAULT_DB = {
    "filas": [
     "Encuentro — Aparece una amenaza. Tira Reacción (2d10) para la actitud inicial. No necesariamente hostil.",
     "Indicio — Huellas, ruidos, olor, rastro visual. Avisa de peligro sin desencadenarlo.",
-    "Recurso — Tira el Ud del recurso más relevante en ese momento.",
+    "Recurso — Pierde 1 Ración o 1d4 proyectiles si son lo que más importa (se mojan, se estropean, se caen); si no, tira el Ud del recurso más relevante (agua, luz, herramientas).",
     "Entorno — Cambio climático, trampa ambiental, fluctuación del poder.",
     "Luz — Tira el Ud de la fuente de luz activa del grupo.",
     "Calma — El tiempo transcurre sin incidentes. El grupo avanza."
