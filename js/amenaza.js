@@ -42,26 +42,31 @@ Object.assign(app, {
     return cr;
   },
 
-  /** Los atributos que dan el Rol y el tipo (Cap. 1 y 2): el Rol decide los dos
-      Fuertes —si no los fija, los más propios de su tipo— y suma su Débil a los
-      que sugiere el tipo. Si chocan, manda el Rol. */
+  /** Los atributos que dan el tipo y el Rol (Cap. 1 y 2, 23-10-2026): el tipo
+      decide los dos Fuertes; la clave del Rol es siempre Fuerte y, si el tipo no
+      la tiene, sustituye al Fuerte que menos encaja con su táctica (la app
+      conserva el que pide el Rol, `afin`). El dragón no sustituye: su clave se
+      suma como cuarto Fuerte en calcCr. Los Débiles del Rol se suman a los del
+      tipo, salvo si caen sobre un Fuerte. */
   _atributosDe(cr) {
     const rol = this.DB.roles[cr.rol] || {}, tipo = this.DB.tipos[cr.tipo] || {};
-    const fuertes = ((rol.fuertes || []).length === 2 ? rol.fuertes : (tipo.fuertesDef || ['FUE', 'CON'])).slice(0, 2);
+    const fuertes = (tipo.fuertesDef || ['FUE', 'CON']).slice(0, 2);
+    const clave = rol.clave || [];
+    if (!tipo.fuerteExtra && clave.length && !clave.some(a => fuertes.includes(a))) {
+      const afin = rol.afin || [];
+      const i = fuertes.findIndex(a => !afin.includes(a));
+      fuertes[i >= 0 ? i : 1] = clave[0];
+    }
     return { fuertes, debiles: this._debilesDe(cr, fuertes) };
   },
   _debilesDe(cr, fuertes) {
     const rol = this.DB.roles[cr.rol] || {}, tipo = this.DB.tipos[cr.tipo] || {};
     return [...new Set([...(rol.debiles || []), ...(tipo.debiles || [])])].filter(a => !fuertes.includes(a));
   },
-  /** Tras cambiar de Rol o de tipo. Los Fuertes elegidos a mano se respetan
-      mientras el Rol no fije los suyos. */
-  _reponerAtributos(cr, tipoAntes) {
-    const def = this._atributosDe(cr);
-    const rolFija = (this.DB.roles[cr.rol]?.fuertes || []).length === 2;
-    const eranDeTipo = tipoAntes && String(cr.fuertes) === String((this.DB.tipos[tipoAntes]?.fuertesDef || []).slice(0, 2));
-    if (rolFija || cr.fuertes.length < 2 || eranDeTipo) cr.fuertes = def.fuertes;
-    cr.debiles = this._debilesDe(cr, cr.fuertes);
+  /** Tras cambiar de Rol o de tipo: los dos deciden los Fuertes, así que se
+      vuelven a poner los suyos (luego se pueden cambiar a mano). */
+  _reponerAtributos(cr) {
+    Object.assign(cr, this._atributosDe(cr));
   },
 
   /** Deja cualquier amenaza —guardada, importada o del bestiario— con
@@ -90,16 +95,15 @@ Object.assign(app, {
     const m = parseInt(d.miembros, 10);
     cr.miembros = Number.isFinite(m) ? Math.max(2, Math.min(999, m)) : 6;
     // Atributos. Las amenazas de antes (v1) solo guardaban sus dos Salvaciones
-    // fuertes: valen como Fuertes si su Rol no fija los suyos.
+    // fuertes: valen como Fuertes; si no hay, los de su tipo y su Rol.
     const lista = l => Array.isArray(l) ? [...new Set(l.filter(a => this.ATTRS.includes(a)))] : [];
     // Solo las guardadas con las reglas anteriores llevan v: 1; las del
     // bestiario de fábrica no llevan versión y sus ajustes a mano valen.
     const antigua = parseInt(d.v, 10) === 1;
     cr.fuertes = lista(d.fuertes).slice(0, 2);
     if (cr.fuertes.length < 2) {
-      const delRol = this.DB.roles[cr.rol]?.fuertes || [];
       const salv = lista(d.salv).slice(0, 2);
-      cr.fuertes = delRol.length === 2 ? delRol.slice() : salv.length === 2 ? salv : this._atributosDe(cr).fuertes;
+      cr.fuertes = salv.length === 2 ? salv : this._atributosDe(cr).fuertes;
     }
     cr.debiles = Array.isArray(d.debiles) ? lista(d.debiles).filter(a => !cr.fuertes.includes(a)) : this._debilesDe(cr, cr.fuertes);
     cr.moralNoTira = !!d.moralNoTira;
@@ -249,8 +253,10 @@ Object.assign(app, {
     // Atributos: Fuerte = PB, Normal y Débil de la fila de su NA. El tamaño
     // suma o resta en FUE, DES y CON, o los deja en Débil («D») sin más.
     const fragil = infos.some(x => x.i.mod && x.i.mod.conDebil);
-    // El dragón tiene además INT Fuerte, con su Salvación (Cap. 2)
+    // El dragón tiene además INT Fuerte, con su Salvación, y la clave de su Rol
+    // se suma como cuarto Fuerte si no es uno de ellos (Cap. 2)
     const fuertes = cr.fuertes.concat(tipo.fuerteExtra && !cr.fuertes.includes(tipo.fuerteExtra) ? [tipo.fuerteExtra] : []);
+    if (tipo.fuerteExtra && (rol.clave || []).length && !rol.clave.some(a => fuertes.includes(a))) fuertes.push(rol.clave[0]);
     const mod = {}, cat = {}, salv = {};
     this.ATTRS.forEach(a => {
       const t = tam[a.toLowerCase()];
@@ -263,9 +269,9 @@ Object.assign(app, {
     });
     const pega = Math.max(mod.FUE, mod.DES);            // «el mayor de FUE o DES»
 
-    // Las fórmulas (Cap. 1). PV: (50 + NA × (5 + CON)) × 1,5 hacia abajo; NA 0: 1–4;
+    // Las fórmulas (Cap. 1). PV: (20 + NA × (8 + CON)) × 1,5 hacia abajo; NA 0: 1–4;
     // esbirro: NA × 2; jefe: el doble.
-    const pvUno = esbirro ? Math.max(1, cr.na * 2) : na === 0 ? 4 : Math.max(1, Math.floor((50 + na * (5 + mod.CON)) * 3 / 2));
+    const pvUno = esbirro ? Math.max(1, cr.na * 2) : na === 0 ? 4 : Math.max(1, Math.floor((20 + na * (8 + mod.CON)) * 3 / 2));
     // PA: los de su NA y sus Rasgos; un Arrollador Grande o mayor, al menos 4 desde NA 5
     let pa = B.pa + suma('pa');
     if (rol.danoDados && ['grande', 'enorme', 'colosal'].includes(cr.tam) && na >= 5) pa = Math.max(pa, 4);
@@ -520,17 +526,16 @@ Object.assign(app, {
     // Tipo
     const tipos = Object.entries(this.DB.tipos).map(([k, t]) => [k, t.name]);
     v.appendChild(this._campo('Tipo', this._select(tipos, cr.tipo, k => {
-      const antes = cr.tipo;
       cr.tipo = k;
       this._ponerRasgosDeTipo(cr);
-      this._reponerAtributos(cr, antes);
+      this._reponerAtributos(cr);
       const t = this.DB.tipos[k];
       if (t.tamMin && this.ORDEN_TAM.indexOf(cr.tam) < this.ORDEN_TAM.indexOf(t.tamMin)) cr.tam = t.tamMin;
       cr.pvAct = null;
       repintar();
     }, 'Tipo de criatura'), 'Rasgos gratuitos y atributos Débiles'));
     const t = this.DB.tipos[cr.tipo] || {};
-    v.appendChild(this._info(`${t.txt || 'Sin Rasgos de tipo.'}\nAtributos Débiles: ${t.atrDeb || '—'} · Debilidad coherente: ${t.deb || '—'}`));
+    v.appendChild(this._info(`${t.txt || 'Sin Rasgos de tipo.'}\nFuertes: ${t.fuertesTxt || '—'} · Débiles: ${t.atrDeb || '—'} · Debilidad coherente: ${t.deb || '—'}`));
     (t.elige || []).forEach(grupo => {
       const actual = cr.rasgos.find(r => r.gratis && r.origen === 'tipo' && grupo.includes(r.id));
       const ops = grupo.map(id => [id, this._libIdx()[id]?.e.name || id]);
@@ -549,9 +554,9 @@ Object.assign(app, {
 
     // Rol
     const roles = [['', 'Sin Rol']].concat(Object.entries(this.DB.roles).map(([k, x]) => [k, x.name]));
-    v.appendChild(this._campo('Rol', this._select(roles, cr.rol, k => { cr.rol = k; this._reponerAtributos(cr); cr.pvAct = null; repintar(); }, 'Rol'), 'decide sus dos atributos Fuertes'));
+    v.appendChild(this._campo('Rol', this._select(roles, cr.rol, k => { cr.rol = k; this._reponerAtributos(cr); cr.pvAct = null; repintar(); }, 'Rol'), 'su atributo clave es siempre Fuerte'));
     const r = this.DB.roles[cr.rol];
-    v.appendChild(this._info(r ? `${r.mod}\n${r.hab}: ${r.habTxt}` : 'Sin Rol: sus dos atributos Fuertes los eliges tú, en Combate → Atributos.'));
+    v.appendChild(this._info(r ? `${r.mod}\n${r.hab}: ${r.habTxt}` : 'Sin Rol: se queda con los Fuertes de su tipo y no recibe ajuste ni habilidad de Rol.'));
 
     // Estructura
     v.appendChild(this._campo('Estructura', this._seg([['normal', 'Normal'], ['jefe', 'Jefe'], ['horda', 'Horda']], cr.estructura,
@@ -874,7 +879,7 @@ Object.assign(app, {
     const def = this._atributosDe(cr);
     if (String(def.fuertes) !== String(cr.fuertes) || String(def.debiles.slice().sort()) !== String(cr.debiles.slice().sort())) {
       const b = this.h('button', 'btn btn-g dir-ancho'); b.type = 'button';
-      b.innerHTML = this._ico('i-rot-l') + 'Los de su Rol y su tipo';
+      b.innerHTML = this._ico('i-rot-l') + 'Los de su tipo y su Rol';
       b.addEventListener('click', () => { Object.assign(cr, this._atributosDe(cr)); cr.pvAct = null; alCambiar(); });
       host.appendChild(b);
     }
@@ -884,7 +889,7 @@ Object.assign(app, {
     const v = this._vista('saves', 'edit');
     v.textContent = '';
     const S = this.calcCr(cr);
-    v.appendChild(this.h('p', 'wiz-hint', `El Rol decide los dos Fuertes (${this._signo(S.B.fuerte)}) y el tipo sugiere los Débiles (${this._signo(S.B.debil)}); el resto son Normales (${this._signo(S.B.normal)}). Su tipo sugiere: ${S.tipo.atrDeb || '—'}.`));
+    v.appendChild(this.h('p', 'wiz-hint', `Fuerte ${this._signo(S.B.fuerte)} · Normal ${this._signo(S.B.normal)} · Débil ${this._signo(S.B.debil)}. Su tipo da como Fuertes ${S.tipo.fuertesTxt || '—'} y sugiere como Débiles ${S.tipo.atrDeb || '—'}; la clave del Rol siempre es Fuerte.`));
     this._editorAtributos(v, () => { this.cambio(); this._editar_saves(); });
     const forzada = S.tipo.noMoral === 'nunca' || S.esbirro || S.cat.INT === 'D';
     const fila = this.h('div', 'set-row dir-fila-toggle');
@@ -1241,13 +1246,13 @@ Object.assign(app, {
   },
   aplicarPlantilla(k) {
     const p = this.DB.plantillas[k]; if (!p) return;
-    const cr = this.cr, tipoAntes = cr.tipo;
+    const cr = this.cr;
     cr.na = Math.max(0, Math.min(15, cr.na + (parseInt(p.na, 10) || 0)));
     if (p.tam) cr.tam = this.ORDEN_TAM[Math.max(0, Math.min(5, this.ORDEN_TAM.indexOf(cr.tam) + p.tam))];
     if (p.rol && this.DB.roles[p.rol]) cr.rol = p.rol;
     if (p.horda) { cr.estructura = 'horda'; cr.tam = 'diminuto'; }
     if (p.tipo && this.DB.tipos[p.tipo]) { cr.tipo = p.tipo; this._ponerRasgosDeTipo(cr); }
-    if (p.rol || p.tipo) this._reponerAtributos(cr, tipoAntes);
+    if (p.rol || p.tipo) this._reponerAtributos(cr);
     const idx = this._libIdx();
     (p.pierdeFam || []).forEach(f => { cr.rasgos = cr.rasgos.filter(r => r.gratis || idx[r.id]?.fam !== f); });
     if (p.pierdeMayor) {

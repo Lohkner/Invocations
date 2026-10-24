@@ -1,8 +1,29 @@
-# S&S Director — v1.3
+# S&S Director — v1.4
 
 La app hermana de **S&S Companion** para quien dirige *Stars & Sorcery*: crea
 amenazas, calibra encuentros y genera botín, zonas y facciones. PWA estática:
 sin build, sin dependencias, funciona sin conexión.
+
+## Novedades v1.4 — Manuales del 23-10-2026
+
+`CACHE_VERSION` es `ss-director-v21` y `RULES_DATA_VERSION`,
+`v1-monstruos-guia-r14`.
+
+- **El tipo decide los dos atributos Fuertes** (sus Salvaciones buenas). El
+  Rol ya no los fija: aporta su **atributo clave**, que siempre es Fuerte y,
+  si el tipo no lo tiene, sustituye a uno de los suyos. El dragón tiene tres
+  Fuertes y su clave se suma como cuarto. El Represor puede tomar CAR como
+  clave y el Artillero, FUE. Las fichas de tipo y de Rol, el asistente y el
+  editor de atributos lo explican así.
+- **PV = (20 + NA × (8 + MOD CON)) × 1,5**: las criaturas tienen menos PV en
+  los NA bajos (el ogro pasa de 123 a 96).
+- **Tabla de dificultad nueva**: Nivel 1–2: 4 · 5 · 6 · 7+; 3–4: 4 · 5 · 7 ·
+  8+; 5–6: 6 · 7 · 8 · 10+; 7–8: 6 · 8 · 9 · 11+; 9–10: 8 · 10 · 12 · 14+.
+- **Construcción rápida y Valores listos por NA** (Manual de Monstruos,
+  Cap. 4): la app ya calcula todo, así que no los muestra, pero el generador
+  comprueba que sus fórmulas dan las 32 filas de la tabla del Manual.
+- Las amenazas que ya tenías guardan sus Fuertes; si cambias su tipo o su Rol,
+  se ponen los nuevos.
 
 ## Novedades v1.3.4 — Manuales del 20-10-2026
 
@@ -226,10 +247,15 @@ cambiar en el Editor de Reglas):
   disyuntiva («DES o INT», «e INT si no tiene mente»). La app pone uno por
   defecto (el Gigante, INT) y deja cambiarlos; el bestiario trae los de cada
   criatura tal como están impresos.
-- **Sin Rol y Esbirro**: sus dos Fuertes son libres. De entrada se ponen los
-  más propios de su tipo (una bestia, DES y CON) y se cambian en la ficha.
+- **Qué Fuerte sustituye la clave del Rol**: el Manual dice «el que menos
+  encaje con su táctica». La app conserva el que pedía el Rol hasta el
+  20-10-2026 (un Arrollador, FUE y CON; un Hostigador, DES y FUE…) y cambia el
+  otro: un no-muerto Arrollador queda FUE y CON. Se cambia en la ficha.
+- **Tipos con Fuertes a elegir**: el elemental pone CON y FUE (tierra y agua;
+  aire y fuego, DES), el extraplanar CAR y SAB, el humanoide FUE y CON y el
+  mutante CON y SAB. Sin Rol y el Esbirro se quedan con los de su tipo.
 - **Tamaño que deja un atributo en Débil** (FUE del Diminuto, DES del
-  Colosal): vale −2 aunque el Rol lo haga Fuerte, pero su Salvación sigue
+  Colosal): vale −2 aunque sea Fuerte, pero su Salvación sigue
   sumando la Competencia. Así salen el Enjambre de Ratas y el Titán.
 - **Los Rasgos cuentan en las cifras**: Piel Gruesa suma su Armadura, Evasiva
   su Guardia, Lenta resta su velocidad (desde el 11-10, la ficha impresa del

@@ -207,8 +207,12 @@ const DEFAULT_DB = {
  "roles": {
   "arrollador": {
    "name": "Arrollador",
-   "mod": "Fuertes: FUE, CON · Débil: DES · +1d6 al daño",
-   "fuertes": [
+   "mod": "Clave: FUE · Débil: DES · +1d6 al daño",
+   "clave": [
+    "FUE"
+   ],
+   "claveAlt": [],
+   "afin": [
     "FUE",
     "CON"
    ],
@@ -223,8 +227,12 @@ const DEFAULT_DB = {
   },
   "hostigador": {
    "name": "Hostigador",
-   "mod": "Fuertes: DES, FUE · Débil: CON · +10 pies",
-   "fuertes": [
+   "mod": "Clave: DES · Débil: CON · +10 pies",
+   "clave": [
+    "DES"
+   ],
+   "claveAlt": [],
+   "afin": [
     "DES",
     "FUE"
    ],
@@ -239,8 +247,15 @@ const DEFAULT_DB = {
   },
   "represor": {
    "name": "Represor",
-   "mod": "Fuertes: INT, SAB",
-   "fuertes": [
+   "mod": "Clave: INT o SAB (o CAR)",
+   "clave": [
+    "INT",
+    "SAB"
+   ],
+   "claveAlt": [
+    "CAR"
+   ],
+   "afin": [
     "INT",
     "SAB"
    ],
@@ -252,8 +267,12 @@ const DEFAULT_DB = {
   },
   "comandante": {
    "name": "Comandante",
-   "mod": "Fuertes: CAR, FUE",
-   "fuertes": [
+   "mod": "Clave: CAR",
+   "clave": [
+    "CAR"
+   ],
+   "claveAlt": [],
+   "afin": [
     "CAR",
     "FUE"
    ],
@@ -265,8 +284,12 @@ const DEFAULT_DB = {
   },
   "soporte": {
    "name": "Soporte",
-   "mod": "Fuertes: SAB, CAR · Débil: CON",
-   "fuertes": [
+   "mod": "Clave: SAB · Débil: CON",
+   "clave": [
+    "SAB"
+   ],
+   "claveAlt": [],
+   "afin": [
     "SAB",
     "CAR"
    ],
@@ -280,8 +303,12 @@ const DEFAULT_DB = {
   },
   "explorador": {
    "name": "Explorador",
-   "mod": "Fuertes: DES, SAB · +15 pies · Iniciativa +4",
-   "fuertes": [
+   "mod": "Clave: DES · +15 pies · Iniciativa +4",
+   "clave": [
+    "DES"
+   ],
+   "claveAlt": [],
+   "afin": [
     "DES",
     "SAB"
    ],
@@ -295,8 +322,14 @@ const DEFAULT_DB = {
   },
   "artillero": {
    "name": "Artillero",
-   "mod": "Fuertes: DES, SAB · Débil: CON",
-   "fuertes": [
+   "mod": "Clave: DES (o FUE) · Débil: CON",
+   "clave": [
+    "DES"
+   ],
+   "claveAlt": [
+    "FUE"
+   ],
+   "afin": [
     "DES",
     "SAB"
    ],
@@ -310,8 +343,12 @@ const DEFAULT_DB = {
   },
   "acechador": {
    "name": "Acechador",
-   "mod": "Fuertes: DES, FUE",
-   "fuertes": [
+   "mod": "Clave: DES",
+   "clave": [
+    "DES"
+   ],
+   "claveAlt": [],
+   "afin": [
     "DES",
     "FUE"
    ],
@@ -323,8 +360,12 @@ const DEFAULT_DB = {
   },
   "guardian": {
    "name": "Guardián",
-   "mod": "Fuertes: CON, FUE · +1 Armadura · −10 pies",
-   "fuertes": [
+   "mod": "Clave: CON · +1 Armadura · −10 pies",
+   "clave": [
+    "CON"
+   ],
+   "claveAlt": [],
+   "afin": [
     "CON",
     "FUE"
    ],
@@ -338,8 +379,10 @@ const DEFAULT_DB = {
   },
   "esbirro": {
    "name": "Esbirro",
-   "mod": "Fuertes: a elegir · PV = NA × 2 (mín. 1)",
-   "fuertes": [],
+   "mod": "Clave: los Fuertes del tipo · PV = NA × 2 (mín. 1)",
+   "clave": [],
+   "claveAlt": [],
+   "afin": [],
    "debiles": [],
    "hab": "Esbirro",
    "habTipo": "Rasgo",
@@ -446,6 +489,7 @@ const DEFAULT_DB = {
   "bestia": {
    "name": "Bestia",
    "txt": "Olfato Agudo o Visión en la Oscuridad. Huye cuando la pelea deja de compensar; con INT Débil no tira Moral, como toda criatura.",
+   "fuertesTxt": "DES, CON",
    "atrDeb": "INT",
    "debiles": [
     "INT"
@@ -465,6 +509,7 @@ const DEFAULT_DB = {
   "humanoide": {
    "name": "Humanoide",
    "txt": "Ninguno. Puede llevar equipo del Manual Básico: su armadura sustituye a la Armadura base si es mayor.",
+   "fuertesTxt": "Dos, según su oficio",
    "atrDeb": "Ninguno, o el que pida su oficio",
    "debiles": [],
    "deb": "Mando Único, Cobarde",
@@ -477,6 +522,7 @@ const DEFAULT_DB = {
   "gigante": {
    "name": "Gigante",
    "txt": "Gigantismo. Tamaño Grande o mayor.",
+   "fuertesTxt": "FUE, CON",
    "atrDeb": "DES o INT",
    "debiles": [
     "INT"
@@ -496,6 +542,7 @@ const DEFAULT_DB = {
   "monstruosidad": {
    "name": "Monstruosidad",
    "txt": "Un Rasgo de Forma y anatomía de Potencial 1.",
+   "fuertesTxt": "FUE, CON",
    "atrDeb": "CAR",
    "debiles": [
     "CAR"
@@ -512,7 +559,8 @@ const DEFAULT_DB = {
   },
   "dragon": {
    "name": "Dragón",
-   "txt": "Visión en la Oscuridad, Telepatía e Inmunidad a su elemento. Su INT es Fuerte, además de los dos de su Rol, y su Salvación también suma el PB. Debe tener Aliento y Uso de Axiomas: el Aliento es su Rasgo de especie gratuito aunque pase del tope de su NA; Uso de Axiomas paga su Potencial. Es Enorme o Colosal; solo una cría es Grande.",
+   "txt": "Visión en la Oscuridad, Telepatía e Inmunidad a su elemento. Tiene tres Fuertes, y su clave de Rol no sustituye a ninguno: se suma como cuarto si no es uno de ellos. Debe tener Aliento y Uso de Axiomas: el Aliento es su Rasgo de especie gratuito aunque pase del tope de su NA; Uso de Axiomas paga su Potencial. Es Enorme o Colosal; solo una cría es Grande.",
+   "fuertesTxt": "FUE, CON, INT",
    "atrDeb": "Ninguno",
    "debiles": [],
    "deb": "Aversión (un nombre, un metal)",
@@ -543,6 +591,7 @@ const DEFAULT_DB = {
   "draconido": {
    "name": "Dracónido",
    "txt": "Visión en la Oscuridad e Inmunidad a su elemento. Wyverns, dracos y bestias de sangre de dragón: depredadores sin la mente de un dragón. Debe tener Aliento (paga su Potencial). Su tamaño crece con la edad: Mediano de cría, Grande adulto, Enorme el más viejo (plantillas Cría y Anciana).",
+   "fuertesTxt": "FUE, CON",
    "atrDeb": "INT, CAR",
    "debiles": [
     "INT",
@@ -569,6 +618,7 @@ const DEFAULT_DB = {
   "no_muerto": {
    "name": "No-muerto",
    "txt": "Vigor Inagotable e Inmunidad a Estados (Envenenado y Aterrado). No respira.",
+   "fuertesTxt": "CON, SAB",
    "atrDeb": "CAR, e INT si no tiene mente",
    "debiles": [
     "CAR"
@@ -591,6 +641,7 @@ const DEFAULT_DB = {
   "espiritu": {
    "name": "Espíritu",
    "txt": "Telepatía. Suele tener Incorpóreo (paga su Potencial).",
+   "fuertesTxt": "SAB, CAR",
    "atrDeb": "FUE",
    "debiles": [
     "FUE"
@@ -602,13 +653,14 @@ const DEFAULT_DB = {
     }
    ],
    "fuertesDef": [
-    "DES",
-    "SAB"
+    "SAB",
+    "CAR"
    ]
   },
   "constructo": {
    "name": "Constructo",
    "txt": "Vigor Inagotable e Inmunidad a Estados (Envenenado y Encantado). No tira Moral.",
+   "fuertesTxt": "FUE, CON",
    "atrDeb": "INT, CAR",
    "debiles": [
     "INT",
@@ -633,6 +685,7 @@ const DEFAULT_DB = {
   "maquina": {
    "name": "Máquina",
    "txt": "Vigor Inagotable y Sistemas Redundantes. No tira Moral.",
+   "fuertesTxt": "CON, INT",
    "atrDeb": "CAR",
    "debiles": [
     "CAR"
@@ -655,6 +708,7 @@ const DEFAULT_DB = {
   "elemental": {
    "name": "Elemental",
    "txt": "Inmunidad a su elemento y Fundirse con el Elemento.",
+   "fuertesTxt": "CON y FUE (tierra, agua) o DES (aire, fuego)",
    "atrDeb": "INT",
    "debiles": [
     "INT"
@@ -671,12 +725,13 @@ const DEFAULT_DB = {
    ],
    "fuertesDef": [
     "CON",
-    "DES"
+    "FUE"
    ]
   },
   "extraplanar": {
    "name": "Extraplanar",
    "txt": "Telepatía y Resistencia a dos tipos de energía.",
+   "fuertesTxt": "CAR y uno a elegir",
    "atrDeb": "Ninguno",
    "debiles": [],
    "deb": "Aversión, Nombre Verdadero",
@@ -690,13 +745,14 @@ const DEFAULT_DB = {
     }
    ],
    "fuertesDef": [
-    "SAB",
-    "CAR"
+    "CAR",
+    "SAB"
    ]
   },
   "feerico": {
    "name": "Feérico",
    "txt": "Voluntad de Hierro. Debe tener Aversión (hierro frío) como debilidad.",
+   "fuertesTxt": "DES, CAR",
    "atrDeb": "FUE",
    "debiles": [
     "FUE"
@@ -718,6 +774,7 @@ const DEFAULT_DB = {
   "aberracion": {
    "name": "Aberración",
    "txt": "Mente Ajena y Visión en la Oscuridad.",
+   "fuertesTxt": "CON, SAB",
    "atrDeb": "FUE",
    "debiles": [
     "FUE"
@@ -732,13 +789,14 @@ const DEFAULT_DB = {
     }
    ],
    "fuertesDef": [
-    "INT",
+    "CON",
     "SAB"
    ]
   },
   "planta_u_hongo": {
    "name": "Planta u hongo",
    "txt": "Inmunidad a Estados (Cegado y Ensordecido) y Camuflaje en su entorno.",
+   "fuertesTxt": "FUE, CON",
    "atrDeb": "DES, INT",
    "debiles": [
     "DES",
@@ -762,6 +820,7 @@ const DEFAULT_DB = {
   "cieno": {
    "name": "Cieno",
    "txt": "Forma Amorfa y Sentido Sísmico. Ciego más allá de 60 pies.",
+   "fuertesTxt": "FUE, CON",
    "atrDeb": "INT, CAR",
    "debiles": [
     "INT",
@@ -784,6 +843,7 @@ const DEFAULT_DB = {
   "mutante": {
    "name": "Mutante",
    "txt": "Un Rasgo de Forma y anatomía y una Debilidad, ambos aleatorios (Cap. 9).",
+   "fuertesTxt": "CON y uno al azar",
    "atrDeb": "Uno al azar",
    "debiles": [],
    "deb": "La que salga en la tabla",
@@ -2746,7 +2806,7 @@ const DEFAULT_DB = {
    "senal": "Cascabeles colgados de hilos, piedras apiladas en los cruces.",
    "contexto": "El kobold no pelea: te hace pelear contra su casa. Si el grupo avanza con prisa, las trampas hacen el trabajo; si avanza con cuidado, los kobolds tienen tiempo de rodearlo.",
    "impreso": {
-    "pv": 82,
+    "pv": 42,
     "g": 14,
     "a": 0,
     "vel": 30,
@@ -2816,7 +2876,7 @@ const DEFAULT_DB = {
    "senal": "Un zumbido intermitente, luces rojas que barren el pasillo.",
    "contexto": "Uno solo es una molestia. Tres, cubriendo el mismo pasillo desde el techo, obligan al grupo a buscar otra ruta o a asumir que alguien va a caer antes de llegar a la puerta.",
    "impreso": {
-    "pv": 79,
+    "pv": 39,
     "g": 14,
     "a": 0,
     "vel": 30,
@@ -2885,7 +2945,7 @@ const DEFAULT_DB = {
    "senal": "Armas y armaduras corroídas en el suelo, sin dueño.",
    "contexto": "No mata rápido: desarma. Cada golpe que recibe el Audaz le quita Armadura que tardará en recuperar, y el grupo descubre demasiado tarde que las espadas también se corroen.",
    "impreso": {
-    "pv": 96,
+    "pv": 60,
     "g": 12,
     "a": 1,
     "vel": 30,
@@ -2943,7 +3003,7 @@ const DEFAULT_DB = {
     "guardia": 13
    },
    "impreso": {
-    "pv": 96,
+    "pv": 60,
     "g": 13,
     "a": 3,
     "vel": 20,
@@ -3021,7 +3081,7 @@ const DEFAULT_DB = {
    "senal": "Hilos pegajosos a la altura de la cabeza; ratas envueltas; ningún eco en la galería.",
    "contexto": "No pelea: atrapa con la tela al último de la fila, lo muerde hasta paralizarlo y se lo lleva. El grupo decide entre perseguirla hacia su terreno o dejar atrás a un compañero.",
    "impreso": {
-    "pv": 97,
+    "pv": 66,
     "g": 16,
     "a": 1,
     "vel": 30,
@@ -3096,7 +3156,7 @@ const DEFAULT_DB = {
    "senal": "Hierba quemada en forma de huellas; un olor a azufre que no se va.",
    "contexto": "Cazan en tríos y abren con el aliento antes de cerrar el cerco. El grupo que se agrupa para defenderse es el que mejor queda para el siguiente aliento.",
    "impreso": {
-    "pv": 88,
+    "pv": 57,
     "g": 16,
     "a": 1,
     "vel": 40,
@@ -3181,7 +3241,7 @@ const DEFAULT_DB = {
    "senal": "Tumbas abiertas desde dentro; huesos partidos a lo largo.",
    "contexto": "Derriba y se ceba. Un personaje en el suelo junto a un ghoul pierde un turno levantándose y sufre dos ataques con Ventaja; el grupo tiene que decidir quién se queda a su lado.",
    "impreso": {
-    "pv": 111,
+    "pv": 79,
     "g": 11,
     "a": 1,
     "vel": 30,
@@ -3247,7 +3307,7 @@ const DEFAULT_DB = {
    "senal": "Luces azules entre los juncos; viajeros que juran haber visto un farol.",
    "contexto": "No mata: conduce. La víctima Encantada camina hacia la ciénaga más profunda (Cap. 7), y el grupo tiene que elegir entre perseguir la luz o sacar a su compañero del agua.",
    "impreso": {
-    "pv": 93,
+    "pv": 61,
     "g": 14,
     "a": 1,
     "vel": 30,
@@ -3314,7 +3374,7 @@ const DEFAULT_DB = {
    "senal": "Un canto hermoso en los acantilados; restos de marineros al pie.",
    "contexto": "Encanta a uno y ataca desde el aire a quien intenta despertarlo. Es frágil y huye pronto, así que la pelea no se gana matándola, sino sacando al encantado del borde.",
    "impreso": {
-    "pv": 97,
+    "pv": 66,
     "g": 13,
     "a": 1,
     "vel": 30,
@@ -3382,7 +3442,7 @@ const DEFAULT_DB = {
    "senal": "Un cofre sin polvo en una sala abandonada; marcas de arrastre bajo él.",
    "contexto": "El primer golpe es el peor. Después, el personaje pegado al mímico tiene que elegir entre forcejear y seguir recibiendo ácido o que sus compañeros lo golpeen de cerca y se quemen.",
    "impreso": {
-    "pv": 111,
+    "pv": 84,
     "g": 16,
     "a": 2,
     "vel": 30,
@@ -3454,7 +3514,7 @@ const DEFAULT_DB = {
    "senal": "Árboles tronchados a la altura del pecho; cabras desaparecidas.",
    "contexto": "Pega muchísimo y piensa muy poco. El grupo que lo engaña —una finta, un señuelo, un puente que no aguanta su peso— lo vence sin recibir un solo golpe.",
    "impreso": {
-    "pv": 123,
+    "pv": 96,
     "g": 11,
     "a": 2,
     "vel": 30,
@@ -3525,7 +3585,7 @@ const DEFAULT_DB = {
    "senal": "Muñecos de paja en las puertas; los niños sueñan con una casa sobre patas.",
    "contexto": "Ataca antes de que el grupo sepa que está en guerra: con pesadillas que les quitan el descanso y maldiciones que llegan con la cena. Enfrentarla es encontrarla, y encontrarla es saber quién es.",
    "impreso": {
-    "pv": 120,
+    "pv": 97,
     "g": 14,
     "a": 2,
     "vel": 30,
@@ -3591,7 +3651,7 @@ const DEFAULT_DB = {
    "senal": "Cadáveres erizados de púas negras; un rugido que parece una risa.",
    "contexto": "Dispara desde donde nadie llega y baja solo cuando alguien se aísla. Obliga al grupo a buscar cobertura en campo abierto, o a encontrar la forma de traerla al suelo.",
    "impreso": {
-    "pv": 97,
+    "pv": 75,
     "g": 16,
     "a": 2,
     "vel": 30,
@@ -3654,7 +3714,7 @@ const DEFAULT_DB = {
    "senal": "Estatuas demasiado realistas, con cara de sorpresa; pájaros de piedra en las ramas.",
    "contexto": "La mirada no mata al primer intento: avisa. El grupo tiene un turno para decidir si pelea con los ojos cerrados (Desventaja) o se arriesga a una segunda mirada.",
    "impreso": {
-    "pv": 120,
+    "pv": 97,
     "g": 14,
     "a": 4,
     "vel": 30,
@@ -3730,7 +3790,7 @@ const DEFAULT_DB = {
    "senal": "Huesos de caballo mordidos; un hedor que se huele a una milla.",
    "contexto": "Se puede tumbar muchas veces y se levanta todas. La pelea contra un troll es una pelea por el fuego: quién lo lleva, cuánto queda y cómo aguantar hasta usarlo.",
    "impreso": {
-    "pv": 156,
+    "pv": 138,
     "g": 12,
     "a": 3,
     "vel": 30,
@@ -3804,7 +3864,7 @@ const DEFAULT_DB = {
    "senal": "Frío en una sola habitación; los espejos se empañan desde dentro.",
    "contexto": "Sale de la pared, toca y vuelve a entrar. No se le puede acorralar, así que el grupo tiene que traer la luz a su terreno o sacarlo del lugar al que está ligado.",
    "impreso": {
-    "pv": 102,
+    "pv": 84,
     "g": 18,
     "a": 3,
     "vel": 40,
@@ -3881,7 +3941,7 @@ const DEFAULT_DB = {
    "senal": "Huellas profundas y exactas, siempre a la misma distancia; runas en una puerta.",
    "contexto": "Casi nada le hace daño y todo lo que toca cae. La verdadera pelea es contra quien lo controla: encontrarlo y apartarlo convierte al gólem en una estatua lenta.",
    "impreso": {
-    "pv": 156,
+    "pv": 138,
     "g": 12,
     "a": 3,
     "vel": 30,
@@ -3961,7 +4021,7 @@ const DEFAULT_DB = {
    "senal": "Cámaras destruidas en orden; un objetivo marcado con un punto rojo que nadie más ve.",
    "contexto": "Tiene un nombre en la lista y no se detiene hasta tacharlo. El grupo puede pelear, esconder a su objetivo o descubrir quién lo programó y cambiarle la lista.",
    "impreso": {
-    "pv": 102,
+    "pv": 84,
     "g": 18,
     "a": 3,
     "vel": 40,
@@ -4039,7 +4099,7 @@ const DEFAULT_DB = {
     "vel": 20
    },
    "impreso": {
-    "pv": 156,
+    "pv": 138,
     "g": 12,
     "a": 3,
     "vel": 20,
@@ -4130,7 +4190,7 @@ const DEFAULT_DB = {
    "senal": "Un claro donde los árboles miran hacia dentro; caminos que se cierran.",
    "contexto": "No persigue: retiene. Mientras el guardián sujeta a dos personajes, lo que protege tiene tiempo de hacer lo que el grupo vino a impedir.",
    "impreso": {
-    "pv": 169,
+    "pv": 156,
     "g": 12,
     "a": 6,
     "vel": 10,
@@ -4201,7 +4261,7 @@ const DEFAULT_DB = {
    "senal": "Nubes que se mueven contra el viento; el pelo se eriza.",
    "contexto": "Convierte el campo en un lugar donde nadie avanza. Cada ronda que el grupo pasa bajo ella es una ronda de rayos; la decisión es cubrirse o correr hacia algo que la ancle.",
    "impreso": {
-    "pv": 138,
+    "pv": 124,
     "g": 15,
     "a": 3,
     "vel": 30,
@@ -4276,7 +4336,7 @@ const DEFAULT_DB = {
    "senal": "Gente que repite frases que no son suyas; dibujos idénticos hechos por desconocidos.",
    "contexto": "Pelea con el grupo contra el grupo. Sabe lo que van a hacer y usa a uno de ellos para impedirlo. La luz y la distancia son las únicas armas que no puede volver en su contra.",
    "impreso": {
-    "pv": 138,
+    "pv": 124,
     "g": 15,
     "a": 3,
     "vel": 30,
@@ -4392,7 +4452,7 @@ const DEFAULT_DB = {
     "guardia": 17
    },
    "impreso": {
-    "pv": 159,
+    "pv": 150,
     "g": 17,
     "a": 4,
     "vel": 30,
@@ -4462,7 +4522,7 @@ const DEFAULT_DB = {
    "senal": "Un lago donde ya no beben los animales; dientes del tamaño de un puñal en la orilla.",
    "contexto": "Cortarle la cabeza sin fuego la hace más peligrosa. El grupo necesita a alguien que corte y a alguien que queme, y que los dos estén en el mismo sitio a la vez.",
    "impreso": {
-    "pv": 195,
+    "pv": 186,
     "g": 11,
     "a": 4,
     "vel": 30,
@@ -4548,7 +4608,7 @@ const DEFAULT_DB = {
     "ataque": 13
    },
    "impreso": {
-    "pv": 169,
+    "pv": 165,
     "g": 17,
     "a": 4,
     "vel": 30,
@@ -4860,7 +4920,7 @@ const DEFAULT_DB = {
     "armadura": 10
    },
    "impreso": {
-    "pv": 656,
+    "pv": 684,
     "g": 14,
     "a": 10,
     "vel": 20,
@@ -4923,7 +4983,7 @@ const DEFAULT_DB = {
    "senal": "Conductos de ventilación con marcas de ácido; los sensores de movimiento marcan una sola señal muy grande.",
    "contexto": "Parece un enemigo y son ocho. Llegan por el techo, rodean y se separan en dos cuando se les hiere. Matar a la reina es la única forma de que dejen de coordinarse.",
    "impreso": {
-    "pv": 106,
+    "pv": 93,
     "g": 18,
     "a": 3,
     "vel": 40,
@@ -4989,7 +5049,7 @@ const DEFAULT_DB = {
    "senal": "Un brillo metálico en el aire; puertas de acero con agujeros como encaje.",
    "contexto": "No se le puede cortar ni golpear con eficacia. El grupo necesita un área —fuego, un pulso, una descarga— o una puerta que el enjambre no pueda atravesar a tiempo.",
    "impreso": {
-    "pv": 106,
+    "pv": 75,
     "g": 14,
     "a": 1,
     "vel": 30,
@@ -5055,7 +5115,7 @@ const DEFAULT_DB = {
    ],
    "contexto": "Los lobos raramente están solos. El peligro no es el daño individual — es la combinación de Caza en Manada (Ventaja constante) y Derribador (los derribados son atacados con Ventaja por los demás). Un grupo de cinco lobos que tira con Ventaja sobre un personaje Derribado es amenaza seria incluso para un Audaz bien acorazado: son muchos golpes pequeños, y la Armadura los frena bien, pero el Derribo multiplica los impactos hasta que la aritmética se invierte. El Alfa del grupo (NA 2, +2 daño) actúa siempre último y apunta al objetivo ya Derribado. La táctica correcta: evitar el Derribo y eliminar al Alfa primero para desmoralizar a la manada (como toda bestia de INT Débil, la manada no tira Moral: se dispersa en cuanto cae el Alfa).",
    "impreso": {
-    "pv": 79,
+    "pv": 39,
     "g": 14,
     "a": 0,
     "vel": 40,
@@ -5126,7 +5186,7 @@ const DEFAULT_DB = {
    ],
    "contexto": "Los esqueletos son obstáculos de desgaste, no amenazas individuales. Su valor táctico real es dos cosas: la inmunidad al Miedo (no tiran Moral) y la vulnerabilidad al Contundente (que los jugadores tienen que descubrir o deducir). Un DJ que coloca esqueletos armados con mazas y armados con espadas en el mismo pasillo está invitando a una pregunta táctica: ¿cómo atacarlos de forma eficiente? Los jugadores que descubren la vulnerabilidad al Contundente se sienten recompensados. Los que no la descubren aprenden que la información del entorno tiene valor.",
    "impreso": {
-    "pv": 85,
+    "pv": 45,
     "g": 14,
     "a": 0,
     "vel": 30,
@@ -5189,12 +5249,12 @@ const DEFAULT_DB = {
     "INT",
     "CAR"
    ],
-   "contexto": "Los zombies son lentos, fáciles de golpear y difíciles de matar definitivamente en el primer intento. Su amenaza es el desgaste numérico y la imprevisibilidad de Obstinación No-muerta: el grupo que cree haber eliminado una amenaza puede encontrarla de pie al inicio del siguiente turno.\n\nEn grupos de 6–10 en un espacio cerrado, los zombies convierten el combate en gestión de recursos más que en táctica individual. Útiles para enseñar al grupo la lección contraria a la que enseña un enemigo acorazado: con Guardia 10 y Armadura 0, el zombie es el objetivo ideal para los ataques ligeros y repetidos, que aquí rinden más que un único golpe pesado. Un grupo que aprende a leer Guardia y Armadura antes de elegir cómo pegar acierta el doble de veces.",
+   "contexto": "Los zombies son lentos, fáciles de golpear y difíciles de matar definitivamente en el primer intento. Su amenaza es el desgaste numérico y la imprevisibilidad de Obstinación No-muerta: el grupo que cree haber eliminado una amenaza puede encontrarla de pie al inicio del siguiente turno.\n\nEn grupos de 6–10 en un espacio cerrado —como esbirros o como una Horda, no como zombies sueltos—, los zombies convierten el combate en gestión de recursos más que en táctica individual. Útiles para enseñar al grupo la lección contraria a la que enseña un enemigo acorazado: con Guardia 10 y Armadura 0, el zombie es el objetivo ideal para los ataques ligeros y repetidos, que aquí rinden más que un único golpe pesado. Un grupo que aprende a leer Guardia y Armadura antes de elegir cómo pegar acierta el doble de veces.",
    "manual": {
     "vel": 20
    },
    "impreso": {
-    "pv": 85,
+    "pv": 45,
     "g": 10,
     "a": 0,
     "vel": 20,
@@ -5257,7 +5317,7 @@ const DEFAULT_DB = {
    ],
    "contexto": "Un orco solo es un encuentro menor. Un grupo de orcos con un Jefe de Tribu (NA 4, Rol Comandante) es una amenaza de diseño: los orcos comunes son Agresivos y Tenaces, el Jefe tiene Aura de Mando que hace que sus Ataques de Oportunidad sean especialmente dolorosos, y eliminar al Jefe cambia la Moral del grupo completo (Puntuación de Moral 12). Funcionan bien con Rol Arrollador (+1d6 al daño y Ataque Masivo) o Hostigador (+10 pies y Flanqueo).",
    "impreso": {
-    "pv": 96,
+    "pv": 60,
     "g": 10,
     "a": 1,
     "vel": 30,
@@ -5332,7 +5392,7 @@ const DEFAULT_DB = {
    "proteccion": "No acercarse a las crías; un escudo plantado o una Fuerza alta dan Ventaja contra su Abrazar.",
    "contexto": "El oso es una amenaza de territorio, no de mazmorra. Aparece porque el grupo entró en su zona, porque hay crías cerca (lo que transforma el encuentro en un dilema moral: matar a un animal que defiende su progenie), o como custodio accidental de algo que el grupo necesita. Mecánicamente, la combinación de Abrazar y Garras-Mordida puede eliminar a un Sagaz en un turno si el oso lo elige como objetivo. La táctica del grupo debe ser romper la presa rápidamente antes de que el ciclo de daño se establezca.",
    "impreso": {
-    "pv": 111,
+    "pv": 79,
     "g": 11,
     "a": 1,
     "vel": 30,
@@ -5439,7 +5499,7 @@ const DEFAULT_DB = {
    "encuentroTxt": "Su Explosión Mental le suma 3 y sus Axiomas, 1: cuenta como NA 11 al calcular el encuentro.",
    "contexto": "El Azotamente es una amenaza de conocimiento, no de estadísticas brutas. Abre con la Explosión Mental desde la sombra, apresa con los tentáculos a quien quedó Aturdido y, en su siguiente turno, le extrae el cerebro. Un grupo que no lo esperaba puede perder a un personaje en dos rondas; uno que trae protección mental, se separa y lo derriba antes de su segundo turno tiene una pelea dura, pero ganable. Vuela, lo que complica que el Audaz lo ancle.",
    "impreso": {
-    "pv": 138,
+    "pv": 124,
     "g": 15,
     "a": 3,
     "vel": 30,
@@ -5525,12 +5585,12 @@ const DEFAULT_DB = {
    "equipo": "Raro: Brazaletes del Trueno. +2 al ataque (ya incluido: Ataque +12) y su mazo suma 1d6 de Rayo. Si cae, son botín.",
    "proteccion": "Resistencia al Rayo, y no ponerse en fila contra su Lanzamiento. Hablar con él.",
    "encuentroTxt": "Como jefe cuenta como NA 12; con su Tormenta Personal, 14, y por su tamaño, 15 (Cap. 2).",
-   "contexto": "Con 390 PV, Guardia 11, Armadura 4 y Ataque +12, el Gigante de la Tormenta es un jefe de arco, no un encuentro de pasillo. Su Armadura 4 castiga especialmente a los personajes que atacan muchas veces con dados pequeños.\n\nLo que lo hace interesante no son sus estadísticas — es que puede hablar y tiene motivaciones. Un Gigante que el grupo intenta matar directamente es un combate difícil. Un Gigante al que el grupo descubre que protege un valle de su tribu, y con el que pueden negociar, es un arco de campaña. El Lanzamiento de Rayo obliga al grupo a dispersarse (línea de 90 pies puede atravesar toda la formación). El Aplastamiento sobre el Audaz puede bloquearlo con Bloqueo Enfrentado, pero a un coste de Adrenalina significativo.",
+   "contexto": "Con 372 PV, Guardia 11, Armadura 4 y Ataque +12, el Gigante de la Tormenta es un jefe de arco, no un encuentro de pasillo. Su Armadura 4 castiga especialmente a los personajes que atacan muchas veces con dados pequeños.\n\nLo que lo hace interesante no son sus estadísticas — es que puede hablar y tiene motivaciones. Un Gigante que el grupo intenta matar directamente es un combate difícil. Un Gigante al que el grupo descubre que protege un valle de su tribu, y con el que pueden negociar, es un arco de campaña. El Lanzamiento de Rayo obliga al grupo a dispersarse (línea de 90 pies puede atravesar toda la formación). El Aplastamiento sobre el Audaz puede bloquearlo con Bloqueo Enfrentado, pero a un coste de Adrenalina significativo.",
    "manual": {
     "ataque": 12
    },
    "impreso": {
-    "pv": 390,
+    "pv": 372,
     "g": 11,
     "a": 4,
     "vel": 30,
@@ -5600,11 +5660,11 @@ const DEFAULT_DB = {
    "debiles": [
     "CON"
    ],
-   "notas": "Forma humana (NA 2). PV 84 · Guardia 14 · Armadura 1 · Velocidad 40 pies · Iniciativa +2 · Ataque +4 · Daño 2d6+5 (arma) · CD 13 · Moral 12. Sin Regeneración, sin inmunidad y sin Maldición de la Luna. Cambiar de forma cuesta 2 PA; los PV perdidos se conservan.",
+   "notas": "Forma humana (NA 2). PV 48 · Guardia 14 · Armadura 1 · Velocidad 40 pies · Iniciativa +2 · Ataque +4 · Daño 2d6+5 (arma) · CD 13 · Moral 12. Sin Regeneración, sin inmunidad y sin Maldición de la Luna. Cambiar de forma cuesta 2 PA; los PV perdidos se conservan.",
    "proteccion": "Plata o daño mágico para atravesar su inmunidad; acónito bebido antes da Ventaja contra la Maldición de la Luna.",
    "contexto": "El hombre lobo es el encuentro que funciona mejor cuando el grupo lo conoce como persona antes de saber que es lo que es. Mecánicamente, la combinación de Regeneración (8 PV por turno) e Inmunidad a daño no mágico sin plata obliga al grupo a tener la herramienta correcta o gestionar el combate de forma inusual: el daño de Axiomas y el daño mágico sí aplican, lo que convierte al Sagaz en el combatiente más efectivo por primera y probablemente única vez en el arco. La Maldición de la Luna es la presión de campaña real: la cuestión no es si el grupo puede matar al hombre lobo, sino si quiere hacerlo, si puede curarlo, y qué pasa si un miembro del grupo contrajo la Maldición.",
    "impreso": {
-    "pv": 93,
+    "pv": 66,
     "g": 16,
     "a": 2,
     "vel": 40,
@@ -5718,12 +5778,12 @@ const DEFAULT_DB = {
    "equipo": "Muy Raro: Placas Negras, el +2 de Armadura de su ficha. Si cae, son botín: una armadura de placas que susurra el juramento que él rompió.",
    "proteccion": "Un símbolo consagrado o Voluntad de Hierro dan Ventaja contra su Pavor y su Aura de Conquista; separarse contra el Orbe.",
    "encuentroTxt": "Su Orbe le suma 2: cuenta como NA 11 al calcular el encuentro (Cap. 2). Sus guerreros quedan a más de cuatro NA de él y no cuentan.",
-   "contexto": "El Caballero de la Muerte (Guardia 17, Armadura 6, 169 PV, Ataque +10) es un desafío de diseño de encuentro. Con Guardia 17, un Audaz de Nivel 9 con PB +4 y FUE +3 impacta con 10 o más en 1d20 —alrededor del 55 %— pero su Armadura 6 se come buena parte de cada golpe. Contra él, el Esfuerzo volcado en daño y las armas Penetrantes rinden mucho más que acumular ataques pequeños. La Llamada Infernal genera presión de área que obliga al grupo a dividir la atención. La Marca Espectral convierte la movilidad del Caballero en una amenaza adicional: puede teletransportarse al Sagaz al fondo de la sala si lo Marcó en el primer turno.\n\nPero lo más poderoso del Caballero de la Muerte como elemento de diseño es su historia: fue un héroe. Tiene un nombre, una tumba, una razón por la que no está en paz. El grupo que descubre esa historia puede tener una vía alternativa: no destruirlo, sino redimirlo o liberarlo. Si lo intenta y falla, el combate es más tenso porque las apuestas eran mayores.",
+   "contexto": "El Caballero de la Muerte (Guardia 17, Armadura 6, 165 PV, Ataque +10) es un desafío de diseño de encuentro. Con Guardia 17, un Audaz de Nivel 9 con PB +4 y FUE +3 impacta con 10 o más en 1d20 —alrededor del 55 %— pero su Armadura 6 se come buena parte de cada golpe. Contra él, el Esfuerzo volcado en daño y las armas Penetrantes rinden mucho más que acumular ataques pequeños. La Llamada Infernal genera presión de área que obliga al grupo a dividir la atención. La Marca Espectral convierte la movilidad del Caballero en una amenaza adicional: puede teletransportarse al Sagaz al fondo de la sala si lo Marcó en el primer turno.\n\nPero lo más poderoso del Caballero de la Muerte como elemento de diseño es su historia: fue un héroe. Tiene un nombre, una tumba, una razón por la que no está en paz. El grupo que descubre esa historia puede tener una vía alternativa: no destruirlo, sino redimirlo o liberarlo. Si lo intenta y falla, el combate es más tenso porque las apuestas eran mayores.",
    "manual": {
     "armadura": 6
    },
    "impreso": {
-    "pv": 169,
+    "pv": 165,
     "g": 17,
     "a": 6,
     "vel": 30,
@@ -5792,7 +5852,7 @@ const DEFAULT_DB = {
     "ataque": 7
    },
    "impreso": {
-    "pv": 111,
+    "pv": 84,
     "g": 14,
     "a": 2,
     "vel": 30,
@@ -5859,7 +5919,7 @@ const DEFAULT_DB = {
    "proteccion": "Rodear la primera línea o atacar desde arriba: sin aliados delante pierde Tras la Línea.",
    "contexto": "El Acólito no pega: sostiene a los suyos. Su trabajo es que nadie llegue hasta él. Colócalo detrás de dos Arrolladores y deja que cure cada ronda: el grupo aprende enseguida que el enemigo que no ataca es el que más importa.",
    "impreso": {
-    "pv": 88,
+    "pv": 57,
     "g": 13,
     "a": 1,
     "vel": 30,
@@ -5921,7 +5981,7 @@ const DEFAULT_DB = {
    "debiles": [],
    "contexto": "El Batidor casi nunca es el combate: es lo que decide si hay combate. Ponlo antes del encuentro principal y deja que los jugadores decidan si lo persiguen (p. 42), lo dejan ir o lo esperan en una emboscada.",
    "impreso": {
-    "pv": 90,
+    "pv": 54,
     "g": 14,
     "a": 1,
     "vel": 45,
@@ -6009,7 +6069,7 @@ const DEFAULT_DB = {
    "proteccion": "Fuego o cualquier área; ropa gruesa y un antídoto dan Ventaja contra el Mordisco Sucio.",
    "contexto": "El enjambre enseña el valor del área: una antorcha o un Axioma bien colocado vale más que tres espadas. En un pasillo estrecho es un obstáculo; en una bodega con víveres, son 1d6 Raciones perdidas si nadie lo espanta a tiempo.",
    "impreso": {
-    "pv": 84,
+    "pv": 52,
     "g": 17,
     "a": 1,
     "vel": 40,
@@ -6537,38 +6597,38 @@ const DEFAULT_DB = {
  "encuentros": {
   "1-2": {
    "name": "Nivel 1–2",
-   "f": 2,
-   "e": 3,
-   "p": 4,
-   "m": 5
+   "f": 4,
+   "e": 5,
+   "p": 6,
+   "m": 7
   },
   "3-4": {
    "name": "Nivel 3–4",
-   "f": 3,
-   "e": 4,
-   "p": 5,
-   "m": 6
+   "f": 4,
+   "e": 5,
+   "p": 7,
+   "m": 8
   },
   "5-6": {
    "name": "Nivel 5–6",
-   "f": 8,
-   "e": 9,
-   "p": 10,
-   "m": 11
+   "f": 6,
+   "e": 7,
+   "p": 8,
+   "m": 10
   },
   "7-8": {
    "name": "Nivel 7–8",
-   "f": 9,
-   "e": 10,
-   "p": 11,
-   "m": 12
+   "f": 6,
+   "e": 8,
+   "p": 9,
+   "m": 11
   },
   "9-10": {
    "name": "Nivel 9–10",
-   "f": 10,
-   "e": 11,
+   "f": 8,
+   "e": 10,
    "p": 12,
-   "m": 13
+   "m": 14
   }
  },
  "grupoAjuste": {

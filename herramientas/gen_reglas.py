@@ -111,7 +111,7 @@ for k, v in ETIQ_NA.items():
 for frase in ['ROW: | Ataque | PB + el mayor de FUE o DES; a distancia, DES',
               'ROW: | Guardia | 10 + PB + MOD DES',
               'ROW: | Daño por turno | Dado de daño de su NA + su ajuste + el MOD con el que ataca',
-              'ROW: | PV | (50 + NA × (5 + MOD CON)) × 1,5, redondeando hacia abajo',
+              'ROW: | PV | (20 + NA × (8 + MOD CON)) × 1,5, redondeando hacia abajo',
               'ROW: | Salvaciones | MOD + ½ NA; en sus atributos Fuertes, MOD + PB (dos; tres en un dragón)',
               'ROW: | Resiste casi todo el daño del grupo (Enjambre, Incorpórea…) y el grupo no tiene cómo evitarlo | +1',
               'Con 4 PA o más son dos Ataques Normales: reparte los dados entre los dos, y el primero lleva el impar',
@@ -122,10 +122,37 @@ for frase in ['ROW: | Ataque | PB + el mayor de FUE o DES; a distancia, DES',
               'Una criatura de NA 0 tiene 1–4 PV']:
     find(M, frase)
 
+# «Valores listos por NA» (Cap. 4, construcción rápida) sale de esas mismas
+# fórmulas: si no cuadra, el Manual ha cambiado una de las dos cosas.
+def _sg(n):
+    return ('+' if n >= 0 else '−') + str(abs(n))
+
+
+def _dano(d, b):
+    return d + ('' if b == 0 else _sg(b))
+
+
+i = find(M, '#Heading2 Valores listos por NA', exact=True)
+rows, _ = rows_from(M, i)
+VL = 0
+for r in rows:
+    if r[0] == 'NA':
+        cab = r[1]; continue
+    B = NA[r[0]]; n = int(r[0]); pb, F, N, D = B['pb'], B['fuerte'], B['normal'], B['debil']
+    if cab.startswith('Ataque'):
+        esperado = [_sg(pb + F) + '/' + _sg(pb + N), _dano(B['dano'], B['ajuste'] + F) + '/' + _dano(B['dano'], B['ajuste'] + N),
+                    '/'.join(str(10 + pb + x) for x in (F, N, D)), str(B['a']), str(B['pa'])]
+    else:
+        pv = '1–4/1–4/1–4' if n == 0 else '/'.join(str((20 + n * (8 + x)) * 3 // 2) for x in (F, N, D))
+        esperado = [pv, str(8 + pb + n // 2 + F), '/'.join(_sg(x) for x in (F + pb, N + n // 2, D + n // 2)), str(10 + n)]
+    assert r[1:] == esperado, ('Valores listos', r, esperado)
+    VL += 1
+assert VL == 32, VL
+
 # ───────────────────────── Roles ─────────────────────────
 i = find(M, '#Heading2 Roles', exact=True)
 rows, _ = rows_from(M, i)
-assert rows[0] == ['Rol', 'Fuertes', 'Débil', 'Ajuste', 'Habilidad de Rol'], rows[0]
+assert rows[0] == ['Rol', 'Clave', 'Débil', 'Ajuste', 'Habilidad de Rol'], rows[0]
 ROL_HAB = {  # nombre de la habilidad, tipo y coste (el texto sale de la tabla)
     'arrollador': ('Ataque Masivo', 'Modificador', '1/ronda'), 'hostigador': ('Flanqueo', 'Rasgo', ''),
     'represor': ('Represión', 'Aptitud', '3 PA · 1/ronda'), 'comandante': ('Aura de Mando', 'Aura', ''),
@@ -158,18 +185,29 @@ def ajuste_rol(txt):
     return e
 
 
+# El atributo clave del Rol sustituye, si el tipo no lo tiene, al Fuerte que
+# «menos encaje con su táctica». El Manual no dice cuál: la app conserva el
+# que pide la táctica del Rol (los dos Fuertes que tenía cada Rol hasta el
+# 20-10-2026) y cambia el otro. El Director puede cambiarlo a mano.
+ROL_AFIN = {'arrollador': ['FUE', 'CON'], 'hostigador': ['DES', 'FUE'], 'represor': ['INT', 'SAB'],
+            'comandante': ['CAR', 'FUE'], 'soporte': ['SAB', 'CAR'], 'explorador': ['DES', 'SAB'],
+            'artillero': ['DES', 'SAB'], 'acechador': ['DES', 'FUE'], 'guardian': ['CON', 'FUE'], 'esbirro': []}
+# Claves alternativas que el Manual permite (párrafo bajo la tabla de Roles)
+find(M, 'Un Represor puede tomar CAR como clave en lugar de INT o SAB (una bruja que maldice), y un Artillero con armas pesadas, FUE en lugar de DES.')
+ROL_CLAVE_ALT = {'represor': ['CAR'], 'artillero': ['FUE']}
 ROLES = {}
-for nombre, fuertes, debil, ajuste, hab in rows[1:]:
+for nombre, clave, debil, ajuste, hab in rows[1:]:
     k = slug(nombre)
     hn, ht, hc = ROL_HAB[k]
     txt = re.sub(r'^[^:]{3,22}(?:\s*\([^)]*\))?:\s*', '', hab) if k not in ('explorador', 'esbirro') else hab
     txt = txt[0].upper() + txt[1:]
-    f, d = lista_atr(fuertes), lista_atr(debil)
-    assert len(f) == 2 or fuertes == 'Libres', (nombre, fuertes)
-    partes = ['Fuertes: ' + (', '.join(f) if f else 'a elegir')]
+    f, d = lista_atr(clave), lista_atr(debil)
+    assert len(f) in (1, 2) or clave == 'Los del tipo', (nombre, clave)
+    alt = ROL_CLAVE_ALT.get(k, [])
+    partes = ['Clave: ' + (' o '.join(f) + (' (o ' + ', '.join(alt) + ')' if alt else '') if f else 'los Fuertes del tipo')]
     if d: partes.append('Débil: ' + ', '.join(d))
     if ajuste != '—': partes.append(ajuste)
-    e = {'name': nombre, 'mod': ' · '.join(partes), 'fuertes': f, 'debiles': d,
+    e = {'name': nombre, 'mod': ' · '.join(partes), 'clave': f, 'claveAlt': alt, 'afin': ROL_AFIN[k], 'debiles': d,
          'hab': hn, 'habTipo': ht, 'habCoste': hc, 'habTxt': txt}
     e.update(ajuste_rol(ajuste))
     ROLES[k] = e
@@ -289,7 +327,7 @@ for (rango, nombre, dado), k in zip(rows[1:], FAM_KEYS):
     FAM[k]['dado'] = dado.split(' ')[0]
 
 # ───────────────────────── Tipos ─────────────────────────
-i = find(M, 'ROW: | Tipo | Rasgos de tipo (gratuitos) | Atributos Débiles | Debilidad coherente')
+i = find(M, 'ROW: | Tipo | Fuertes (Salv. buenas) | Rasgos de tipo (gratuitos) | Atributos Débiles | Debilidad coherente')
 rows, _ = rows_from(M, i)
 TIPO_EXTRA = {
     'bestia': dict(elige=[['olfato_agudo', 'vision_en_la_oscuridad']], fuertesDef=['DES', 'CON']),
@@ -300,13 +338,13 @@ TIPO_EXTRA = {
                    exige=['aliento', 'uso_de_axiomas'], fuertesDef=['FUE', 'CON'], fuerteExtra='INT', alientoGratis=True, tamMin='enorme'),
     'draconido': dict(gratis=[{'id': 'vision_en_la_oscuridad'}, {'id': 'inmunidad', 'nota': 'su elemento'}], exige=['aliento'], fuertesDef=['FUE', 'CON']),
     'no_muerto': dict(gratis=[{'id': 'vigor_inagotable'}, {'id': 'inmunidad_a_estados', 'nota': 'Envenenado y Aterrado'}], fuertesDef=['CON', 'SAB']),
-    'espiritu': dict(gratis=[{'id': 'telepatia'}], fuertesDef=['DES', 'SAB']),
+    'espiritu': dict(gratis=[{'id': 'telepatia'}], fuertesDef=['SAB', 'CAR']),
     'constructo': dict(gratis=[{'id': 'vigor_inagotable'}, {'id': 'inmunidad_a_estados', 'nota': 'Envenenado y Encantado'}], fuertesDef=['FUE', 'CON'], noMoral='nunca'),
     'maquina': dict(gratis=[{'id': 'vigor_inagotable'}, {'id': 'sistemas_redundantes'}], fuertesDef=['CON', 'INT'], noMoral='nunca'),
-    'elemental': dict(gratis=[{'id': 'inmunidad', 'nota': 'su elemento'}, {'id': 'fundirse_con_el_elemento'}], fuertesDef=['CON', 'DES']),
-    'extraplanar': dict(gratis=[{'id': 'telepatia'}, {'id': 'resistencia', 'nota': 'dos tipos de energía'}], fuertesDef=['SAB', 'CAR']),
+    'elemental': dict(gratis=[{'id': 'inmunidad', 'nota': 'su elemento'}, {'id': 'fundirse_con_el_elemento'}], fuertesDef=['CON', 'FUE']),
+    'extraplanar': dict(gratis=[{'id': 'telepatia'}, {'id': 'resistencia', 'nota': 'dos tipos de energía'}], fuertesDef=['CAR', 'SAB']),
     'feerico': dict(gratis=[{'id': 'voluntad_de_hierro'}], exige=['aversion'], fuertesDef=['DES', 'CAR']),
-    'aberracion': dict(gratis=[{'id': 'mente_ajena'}, {'id': 'vision_en_la_oscuridad'}], fuertesDef=['INT', 'SAB']),
+    'aberracion': dict(gratis=[{'id': 'mente_ajena'}, {'id': 'vision_en_la_oscuridad'}], fuertesDef=['CON', 'SAB']),
     'planta_u_hongo': dict(gratis=[{'id': 'inmunidad_a_estados', 'nota': 'Cegado y Ensordecido'}, {'id': 'camuflaje'}], fuertesDef=['CON', 'FUE']),
     'cieno': dict(gratis=[{'id': 'forma_amorfa'}, {'id': 'sentido_sismico'}], fuertesDef=['CON', 'FUE']),
     'mutante': dict(gratisFam={'fam': 'forma'}, fuertesDef=['CON', 'SAB']),
@@ -329,9 +367,15 @@ T_DEB = {'bestia': ['INT'],
          'cieno': ['INT', 'CAR'],
          'mutante': []}
 TIPOS = {}
-for nombre, rasgos, atr_deb, deb in rows[1:]:
+for nombre, fuertes_txt, rasgos, atr_deb, deb in rows[1:]:
     k = slug(nombre)
-    e = {'name': nombre, 'txt': rasgos, 'atrDeb': atr_deb, 'debiles': T_DEB[k], 'deb': deb}
+    e = {'name': nombre, 'txt': rasgos, 'fuertesTxt': fuertes_txt, 'atrDeb': atr_deb, 'debiles': T_DEB[k], 'deb': deb}
+    # Los Fuertes por defecto (fuertesDef, más fuerteExtra en el dragón) tienen
+    # que salir de la columna del Manual: los fijos, tal cual; donde el tipo deja
+    # elegir (elemental, extraplanar, humanoide, mutante), uno de los que nombra.
+    fijos = lista_atr(fuertes_txt.split('(')[0]) if k != 'elemental' else ['CON']
+    pon = TIPO_EXTRA[k]['fuertesDef'] + ([TIPO_EXTRA[k]['fuerteExtra']] if TIPO_EXTRA[k].get('fuerteExtra') else [])
+    assert all(a in pon for a in fijos) and all(a in lista_atr(fuertes_txt) or k in ('humanoide', 'extraplanar', 'mutante') for a in pon), (nombre, fuertes_txt, pon)
     # lo que la lista dice tiene que estar en el texto del Manual
     assert all(a in atr_deb for a in T_DEB[k]), (nombre, atr_deb)
     e.update(TIPO_EXTRA[k])
@@ -339,7 +383,7 @@ for nombre, rasgos, atr_deb, deb in rows[1:]:
         assert gr['id'] in POR_ID, gr
     TIPOS[k] = e
 assert len(TIPOS) == 17, len(TIPOS)
-find(M, 'Su INT es Fuerte, además de los dos de su Rol, y su Salvación también suma el PB')
+find(M, 'Tiene tres Fuertes, y su clave de Rol no sustituye a ninguno: se suma como cuarto si no es uno de ellos')
 
 
 # ───────────────────────── Tablas sueltas ─────────────────────────
@@ -560,7 +604,7 @@ def calcular(c):
     bono = B['ajuste'] + pega
     sb = f'+{bono}' if bono > 0 else str(bono) if bono < 0 else ''
     dano = f'{(n + 1) // 2}d{caras}{sb} y {n // 2}d{caras}{sb}' if pa >= 4 else f'{n}d{caras}{sb}'
-    pv = max(1, c['na'] * 2) if rol.get('esbirro') else 4 if na == 0 else (50 + na * (5 + mod['CON'])) * 3 // 2
+    pv = max(1, c['na'] * 2) if rol.get('esbirro') else 4 if na == 0 else (20 + na * (8 + mod['CON'])) * 3 // 2
     if c['estructura'] == 'jefe': pv *= 2
     gasto, maximo = pesos(c, na)
     exceso = max(0, gasto - maximo)

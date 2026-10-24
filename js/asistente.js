@@ -93,12 +93,11 @@
     const sub = el('div', 'wiz-sub');
     Object.entries(app.DB.tipos).forEach(([k, t]) => {
       const sel = cr().tipo === k;
-      sub.appendChild(app.tarjetaOpcion(t.name, '', t.txt, `Atributos Débiles: ${t.atrDeb} · Debilidad coherente: ${t.deb}`, sel, () => {
+      sub.appendChild(app.tarjetaOpcion(t.name, '', t.txt, `Fuertes: ${t.fuertesTxt || '—'} · Débiles: ${t.atrDeb} · Debilidad coherente: ${t.deb}`, sel, () => {
         if (cr().tipo !== k) {
-          const antes = cr().tipo;
           cr().tipo = k;
           app._ponerRasgosDeTipo(cr());
-          app._reponerAtributos(cr(), antes);
+          app._reponerAtributos(cr());
           if (t.tamMin && app.ORDEN_TAM.indexOf(cr().tam) < app.ORDEN_TAM.indexOf(t.tamMin)) cr().tam = t.tamMin;
         }
         pintar();
@@ -118,7 +117,7 @@
 
   /* ── Paso 4 · Rol ─────────────────────────────────────────────── */
   function pasoRol(b) {
-    b.appendChild(el('p', 'wiz-hint', 'Uno o ninguno: cómo se comporta en escena. Decide sus dos atributos Fuertes; algunos marcan también uno Débil.'));
+    b.appendChild(el('p', 'wiz-hint', 'Uno o ninguno: cómo se comporta en escena. Su atributo clave es siempre Fuerte: si el tipo no lo tiene, sustituye a uno de los suyos. Algunos marcan también uno Débil.'));
     b.appendChild(app._campo('Estructura', app._seg([['normal', 'Normal'], ['jefe', 'Jefe'], ['horda', 'Horda']], cr().estructura,
       k => { cr().estructura = k; cr().pvAct = null; pintar(); }, 'Estructura')));
     if (cr().estructura === 'jefe') b.appendChild(app._info('PV ×2 y +2 de Potencial. Usa al menos una: Acción de Jefe, Turno Doble o un séquito. Al calibrar el encuentro sube 2 NA.'));
@@ -133,7 +132,7 @@
         : `${H.n}: una sola criatura de NA ${Math.min(15, cr().na + H.na)} (el de sus miembros + ${H.na}). Un solo turno; doble daño de área; a mitad de sus PV se divide en dos.`));
     }
     const sub = el('div', 'wiz-sub');
-    sub.appendChild(app.tarjetaOpcion('Sin Rol', 'Fuertes a elegir', 'Sus dos atributos Fuertes los decides tú en el paso siguiente.', '', !cr().rol, () => { cr().rol = ''; app._reponerAtributos(cr()); cr().pvAct = null; pintar(); }));
+    sub.appendChild(app.tarjetaOpcion('Sin Rol', 'Los Fuertes de su tipo', 'Se queda con los Fuertes de su tipo, sin ajuste ni habilidad de Rol.', '', !cr().rol, () => { cr().rol = ''; app._reponerAtributos(cr()); cr().pvAct = null; pintar(); }));
     Object.entries(app.DB.roles).forEach(([k, r]) => {
       sub.appendChild(app.tarjetaOpcion(r.name, '', r.mod, `${r.hab}: ${r.habTxt}`, cr().rol === k, () => { cr().rol = k; app._reponerAtributos(cr()); cr().pvAct = null; pintar(); }));
     });
@@ -144,10 +143,10 @@
   function pasoAtributos(b) {
     const S = app.calcCr(cr());
     const B = S.B;
-    b.appendChild(el('p', 'wiz-hint', `El Rol da los dos Fuertes (${app._signo(B.fuerte)}) y el tipo sugiere los Débiles (${app._signo(B.debil)}); el resto son Normales (${app._signo(B.normal)}). El tamaño ya está aplicado.`));
+    b.appendChild(el('p', 'wiz-hint', `El tipo da los dos Fuertes (${app._signo(B.fuerte)}), la clave del Rol siempre lo es y el tipo sugiere los Débiles (${app._signo(B.debil)}); el resto son Normales (${app._signo(B.normal)}). El tamaño ya está aplicado.`));
     app._editorAtributos(b, pintar);
     const sub = el('div', 'wiz-sub');
-    sub.appendChild(app._info(`${S.rol.name ? S.rol.name + ' — ' + S.rol.mod : 'Sin Rol — Fuertes a elegir'}\n${S.tipo.name} — Débiles: ${S.tipo.atrDeb || '—'}\n${S.tam.name} — ${S.tam.atrTxt || 'sin cambios'}`));
+    sub.appendChild(app._info(`${S.tipo.name} — Fuertes: ${S.tipo.fuertesTxt || '—'} · Débiles: ${S.tipo.atrDeb || '—'}\n${S.rol.name ? S.rol.name + ' — ' + S.rol.mod : 'Sin Rol — los Fuertes de su tipo'}\n${S.tam.name} — ${S.tam.atrTxt || 'sin cambios'}`));
     b.appendChild(sub);
   }
 
@@ -170,7 +169,7 @@
       `Ataque = Competencia ${app._signo(S.pb)} + ${pega} ${app._signo(S.mod[pega])}\n` +
       `Daño por turno = ${S.danoBase}${S.rol.danoDados ? ' + ' + S.rol.danoDados + 'd6 de su Rol' : ''} + ${pega}\n` +
       `Guardia = 10 + Competencia + DES ${app._signo(S.mod.DES)}\n` +
-      (S.esbirro ? 'PV = NA × 2 (esbirro)\n' : `PV = 50 + NA × (5 + CON ${app._signo(S.mod.CON)})${S.jefe ? ', el doble por ser jefe' : ''}\n`) +
+      (S.esbirro ? 'PV = NA × 2 (esbirro)\n' : `PV = (20 + NA × (8 + CON ${app._signo(S.mod.CON)})) × 1,5${S.jefe ? ', el doble por ser jefe' : ''}\n`) +
       `Salvaciones fuertes: ${cr().fuertes.map(a => a + ' ' + app._signo(S.salv[a])).join(' · ')}\n` +
       `Al calibrar el encuentro: ${app._txtCalibrar(S)}`));
 
