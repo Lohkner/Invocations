@@ -2742,7 +2742,7 @@ const DEFAULT_DB = {
     "CON"
    ],
    "debiles": [],
-   "senal": "Silbatos, antorchas que se acercan en fila.",
+   "senal": "Silbatos que se contestan de calle en calle · antorchas que se acercan en fila · un farol que se apaga de golpe.",
    "contexto": "No son enemigos: son tiempo. Cuatro guardias no matan a nadie, pero cada ronda que el grupo pasa con ellos es una ronda más para que llegue quien sí puede hacerlo.",
    "impreso": {
     "pv": 2,
@@ -2763,7 +2763,10 @@ const DEFAULT_DB = {
      "CAR": 0
     },
     "enc": 1
-   }
+   },
+   "idea": "«Circulen. Aquí no ha pasado nada.»",
+   "botin": "1d6 cr cada uno; uno lleva la llave de la garita",
+   "notas": "Común · Número: 2d4 (4d6 en el cuartel) · En su guarida: 10 % · Inteligencia: media · Moral: Huyen si cae su sargento\n\nLa guardia de una ciudad no son soldados: son vecinos con lanza, mal pagados y peor entrenados, que conocen cada portal de su barrio y a quién no conviene molestar. Aceptan sobornos de 5 cr por cabeza para no ver algo pequeño, y de 50 para no ver algo grande; nada compra que olviden un muerto. Visten sobrevestas con el color de la ciudad, casi siempre desteñido, y llevan farol y lanza. Su sargento, si lo hay, es un Mercenario Veterano con otro nombre.\n\nGanchos (d6):\n1 uno de ellos es primo de alguien del grupo y lo reconoce\n2 cobran un peaje que no existe en ninguna ordenanza\n3 buscan a alguien que se parece demasiado a uno de los personajes\n4 vuelven borrachos de una fiesta y quieren compañía, no problemas\n5 escoltan a un preso que pide ayuda a gritos\n6 no son guardias: llevan uniformes robados y buscan lo mismo que el grupo"
   },
   "kobold_trampero": {
    "nombre": "Kobold Trampero",
@@ -2803,7 +2806,7 @@ const DEFAULT_DB = {
     "FUE"
    ],
    "debiles": [],
-   "senal": "Cascabeles colgados de hilos, piedras apiladas en los cruces.",
+   "senal": "Cascabeles colgados de hilos · piedras apiladas en los cruces · un olor a sebo quemado que sale del suelo.",
    "contexto": "El kobold no pelea: te hace pelear contra su casa. Si el grupo avanza con prisa, las trampas hacen el trabajo; si avanza con cuidado, los kobolds tienen tiempo de rodearlo.",
    "impreso": {
     "pv": 42,
@@ -2824,7 +2827,10 @@ const DEFAULT_DB = {
      "CAR": 0
     },
     "enc": 1
-   }
+   },
+   "idea": "«No lo verás. Verás lo que dejó para ti.»",
+   "botin": "Monedas de cobre, piezas de trampa, 1d4 objetos robados",
+   "notas": "Común · Número: 1d6 (4d6 en la madriguera) · En su guarida: 40 % · Inteligencia: media, muy astuta · Moral: 11\n\nLos kobolds caben por donde no cabe nadie y lo saben. Cavan madrigueras de techo bajo con galerías que se cruzan, y adoran los mecanismos: un kobold viejo puede pasarse un invierno entero afinando el resorte de una sola trampa. Coleccionan cascabeles y los cuelgan de hilos a la entrada para oír quién pasa. Tienen escamas color óxido, ojos amarillos y una voz que parece un ladrido. Odian a los enanos, que les roban las minas, y negocian con cualquiera que les pague en metal.\n\nGanchos (d6):\n1 la madriguera tiene una trampa que ni ellos recuerdan dónde está\n2 el jefe quiere contratar al grupo contra los kobolds de la madriguera vecina\n3 tienen a un enano prisionero y piden rescate en hierro\n4 están cavando hacia algo que no deberían despertar\n5 uno de ellos quiere desertar y ofrece el mapa de las trampas\n6 la madriguera está vacía: algo se los comió a todos"
   },
   "dron_centinela": {
    "nombre": "Dron Centinela",
@@ -2873,7 +2879,7 @@ const DEFAULT_DB = {
     "CON",
     "CAR"
    ],
-   "senal": "Un zumbido intermitente, luces rojas que barren el pasillo.",
+   "senal": "Un zumbido intermitente · luces rojas que barren el pasillo · marcas de quemadura a la altura del pecho.",
    "contexto": "Uno solo es una molestia. Tres, cubriendo el mismo pasillo desde el techo, obligan al grupo a buscar otra ruta o a asumir que alguien va a caer antes de llegar a la puerta.",
    "impreso": {
     "pv": 39,
@@ -2894,7 +2900,10 @@ const DEFAULT_DB = {
      "CAR": -2
     },
     "enc": 1
-   }
+   },
+   "idea": "«Identifíquese. Identifíquese. Identifíquese.»",
+   "botin": "Una célula de energía (25 cr) y, con Tecnología contra su CD, un chip de Construido",
+   "notas": "Infrecuente; común en ruinas tecnológicas · Número: 1d3 · Inteligencia: ninguna: programada · Moral: No la tira\n\nNadie recuerda quién los fabricó. Los drones centinela siguen patrullando pasillos de instalaciones que llevan siglos muertas, cumpliendo una orden que nadie puede ya revocar. Son esferas del tamaño de una cabeza, de metal mate, con un ojo rojo que barre el pasillo cada pocos segundos. Si alguien lleva una credencial de su instalación —una placa, un sello, a veces solo un uniforme con el emblema correcto— lo escoltan en lugar de dispararle. El Rayo les sobrecarga los circuitos: reciben ×1,5 de su daño.\n\nGanchos (d6):\n1 su orden es proteger a alguien que lleva siglos muerto, y ese alguien sigue ahí\n2 lleva una grabación del último día de la instalación\n3 está dañado y dispara a cualquier cosa que se mueva, incluidas sus compañeras\n4 obedece a quien lleve un emblema que uno de los personajes tiene sin saberlo\n5 escolta a una máquina más grande que todavía no ha despertado\n6 alguien lo ha reprogramado para vigilar un tesoro que no es suyo"
   },
   "cieno_gris": {
    "nombre": "Cieno Gris",
@@ -2942,7 +2951,7 @@ const DEFAULT_DB = {
     "INT",
     "CAR"
    ],
-   "senal": "Armas y armaduras corroídas en el suelo, sin dueño.",
+   "senal": "Armas y armaduras corroídas en el suelo, sin dueño · un charco donde no gotea nada · olor a cobre mojado.",
    "contexto": "No mata rápido: desarma. Cada golpe que recibe el Audaz le quita Armadura que tardará en recuperar, y el grupo descubre demasiado tarde que las espadas también se corroen.",
    "impreso": {
     "pv": 60,
@@ -2963,7 +2972,10 @@ const DEFAULT_DB = {
      "CAR": -2
     },
     "enc": 2
-   }
+   },
+   "idea": "«No mires el charco. El charco sí te mira.»",
+   "botin": "Lo que no pudo disolver: monedas, gemas, hebillas",
+   "notas": "Infrecuente · Número: 1 · Inteligencia: ninguna · Moral: No la tira\n\nEl cieno gris vive en cloacas, criptas inundadas y sótanos donde gotea el agua. No caza: espera a que algo pise donde no debe. Digiere carne, cuero y metal, y por eso sus guaridas están llenas de cosas que no supo disolver: monedas, gemas, hebillas de cinturón sin cinturón. Es gris pizarra con vetas verdosas, y huele a cobre mojado. Dicen que en las ciudades viejas los alcantarilleros los mantienen alimentados para que se coman lo que nadie quiere encontrar.\n\nGanchos (d6):\n1 tiene dentro, sin digerir, la llave que el grupo busca\n2 son dos y uno está en el techo\n3 alguien lo alimenta a propósito y no quiere que lo maten\n4 está en una fuente pública y ya se ha llevado a dos niños\n5 es un experimento: brilla en la oscuridad y no le hace nada el frío\n6 hay una víctima dentro que todavía respira"
   },
   "mercenario_veterano": {
    "nombre": "Mercenario Veterano",
@@ -2996,7 +3008,7 @@ const DEFAULT_DB = {
    ],
    "debiles": [],
    "equipo": "cota de malla y escudo (Armadura 3 con el Rol; el escudo da +1 a la Guardia y +2 al Bloqueo).",
-   "senal": "Hogueras de campamento ordenadas, un estandarte de compañía.",
+   "senal": "Hogueras de campamento ordenadas · un estandarte de compañía · tiendas puestas con una zanja alrededor.",
    "contexto": "El mercenario no busca ganar: busca que su pagador salga vivo. Pelea en línea, protege al que paga y se rinde en cuanto el contrato deja de compensar (Moral 12).",
    "manual": {
     "armadura": 3,
@@ -3021,7 +3033,10 @@ const DEFAULT_DB = {
      "CAR": 0
     },
     "enc": 2
-   }
+   },
+   "idea": "«El precio era por pelear. Morir se cobra aparte.»",
+   "botin": "2d6 cr cada uno; el contrato firmado de la compañía",
+   "notas": "Común · Número: 1d6 (2d10 y un capitán en el campamento) · En su guarida: 20 % · Inteligencia: media · Moral: 12\n\nLas compañías mercenarias tienen nombre, estandarte y libro de cuentas. Un veterano ha sobrevivido a suficientes campañas como para saber que nadie paga a los muertos: pelea en línea, cuida su escudo más que su espada y nunca persigue. Visten lo que han ido ganando —una cota de un señor, un yelmo de otro— y llevan cosido el emblema de la compañía. Respetan a quien les hace una oferta mejor y desprecian a quien no la cumple.\n\nGanchos (d6):\n1 los contrató el mismo enemigo del grupo, pero les debe tres meses\n2 su capitán es un antiguo compañero de uno de los personajes\n3 escoltan una carga que no saben qué es, y no quieren saberlo\n4 buscan trabajo y ofrecen sus espadas al grupo\n5 desertaron de una guerra y los busca su propio ejército\n6 uno de ellos es un noble disfrazado que paga la compañía en secreto"
   },
   "tejedora_del_techo": {
    "nombre": "Tejedora del Techo",
@@ -3078,7 +3093,7 @@ const DEFAULT_DB = {
    "rolNota": "Primer Golpe: su primer impacto contra una criatura Desprevenida suma el daño base otra vez.",
    "proteccion": "Un antídoto bebido antes, o un Axioma que cure venenos, da Ventaja contra la parálisis. Una antorcha encendida en la mano da Ventaja contra la Telaraña y quema los hilos que toca; con luz brillante, la Tejedora pelea con Desventaja.",
    "encuentroTxt": "Pasa en 3 su presupuesto de Potencial: cuenta como NA 4 al calcular el encuentro.",
-   "senal": "Hilos pegajosos a la altura de la cabeza; ratas envueltas; ningún eco en la galería.",
+   "senal": "Hilos pegajosos a la altura de la cabeza · ratas envueltas como regalos · ningún eco en la galería.",
    "contexto": "No pelea: atrapa con la tela al último de la fila, lo muerde hasta paralizarlo y se lo lleva. El grupo decide entre perseguirla hacia su terreno o dejar atrás a un compañero.",
    "impreso": {
     "pv": 66,
@@ -3099,7 +3114,10 @@ const DEFAULT_DB = {
      "CAR": -2
     },
     "enc": 4
-   }
+   },
+   "idea": "«En esta galería no hay eco. Lo que suena, lo oye ella.»",
+   "botin": "Lo que llevaban sus presas; su seda vale 50 cr la vara",
+   "notas": "Rara · Número: 1 (1d3 en su guarida) · En su guarida: 60 % · Inteligencia: animal, pero paciente · Moral: No la tira\n\nLas Tejedoras viven en minas abandonadas, criptas y cualquier galería con techo alto y aire quieto. Son negras con bandas color hueso y del tamaño de un caballo, y casi ciegas: cazan por el hilo, no por la vista. Las hembras viejas tienen el abdomen cubierto de cicatrices circulares que los mineros dicen que son mordeduras de sus propias crías. Como guardan vivas a sus presas, sus guaridas casi siempre tienen supervivientes, y un grupo que pierde a alguien tiene un motivo para seguirla hasta donde no quiere ir. Ponen una vez cada tres años, y entonces dejan de cazar y se vuelven el doble de territoriales.\n\nGanchos (d6):\n1 está poniendo huevos: no persigue, pero no cede un palmo\n2 guarda un capullo con alguien que sigue vivo y que el grupo conoce\n3 es vieja y casi ciega: sus hilos cubren tres galerías\n4 comparte guarida con otra, y se roban las presas\n5 está herida por algo más grande que vive más abajo\n6 los mineros le dejan cabras para que no suba"
   },
   "sabueso_infernal": {
    "nombre": "Sabueso Infernal",
@@ -3153,7 +3171,7 @@ const DEFAULT_DB = {
    "rolNota": "Flanqueo: Ventaja si un aliado está adyacente al mismo objetivo.",
    "proteccion": "Resistencia al Fuego, o separarse: el Aliento no alcanza a quien está lejos de los demás. La sal consagrada le cierra el paso.",
    "encuentroTxt": "Su Aliento le suma 3: cuenta como NA 6 al calcular el encuentro.",
-   "senal": "Hierba quemada en forma de huellas; un olor a azufre que no se va.",
+   "senal": "Hierba quemada con forma de huellas · un olor a azufre que no se va · ganado muerto con el pelo chamuscado.",
    "contexto": "Cazan en tríos y abren con el aliento antes de cerrar el cerco. El grupo que se agrupa para defenderse es el que mejor queda para el siguiente aliento.",
    "impreso": {
     "pv": 57,
@@ -3174,7 +3192,10 @@ const DEFAULT_DB = {
      "CAR": 0
     },
     "enc": 6
-   }
+   },
+   "idea": "«Si hueles azufre, ya te ha olido él.»",
+   "botin": "Ninguno; su collar de hierro negro vale 30 cr",
+   "notas": "Rara · Número: 1d3 (2d4 con su amo) · En su guarida: 20 % · Inteligencia: baja, pero astuta · Moral: No la tira\n\nLos sabuesos infernales no nacen en este mundo: alguien los trae, y casi nunca se van del todo. Son perros de caza del tamaño de un lobo grande, de pelo corto color ceniza y ojos que brillan como brasas a través del humo. Su aliento huele a azufre, y su saliva deja quemaduras pequeñas donde gotea. Obedecen a quien les dio de comer primero en este plano; si su amo muere, se quedan cazando en el mismo territorio, cada vez más hambrientos, hasta que alguien les pone fin.\n\nGanchos (d6):\n1 su amo murió hace un año y siguen cazando para él\n2 llevan un collar con el sello de una casa noble\n3 persiguen a alguien que ha robado algo del otro lado\n4 son una sola hembra con dos cachorros: el grupo puede llevarse uno\n5 un culto les deja ofrendas en un cruce de caminos\n6 huyen de algo peor que también cruzó"
   },
   "ghoul": {
    "nombre": "Ghoul",
@@ -3238,7 +3259,7 @@ const DEFAULT_DB = {
    "rolNota": "Ataque Masivo: derriba al impactar, una vez por ronda.",
    "proteccion": "Agua bendita bebida antes del combate o un amuleto consagrado: Ventaja en la Salvación. Los elfos son inmunes a la parálisis.",
    "encuentroTxt": "Sus garras pasan en 2 su presupuesto de Potencial: cuenta como NA 4 al calcular el encuentro.",
-   "senal": "Tumbas abiertas desde dentro; huesos partidos a lo largo.",
+   "senal": "Tumbas abiertas desde dentro · huesos partidos a lo largo · tierra removida en el cementerio, sin pala.",
    "contexto": "Derriba y se ceba. Un personaje en el suelo junto a un ghoul pierde un turno levantándose y sufre dos ataques con Ventaja; el grupo tiene que decidir quién se queda a su lado.",
    "impreso": {
     "pv": 79,
@@ -3259,7 +3280,10 @@ const DEFAULT_DB = {
      "CAR": -2
     },
     "enc": 4
-   }
+   },
+   "idea": "«Tiene paciencia. Todo el mundo acaba bajo tierra.»",
+   "botin": "Ajuares funerarios: 3d6 × 10 cr en anillos y monedas de difunto",
+   "notas": "Infrecuente · Número: 1d4 (2d6 en el osario) · En su guarida: 50 % · Inteligencia: media · Moral: 13\n\nLos ghouls fueron personas que comieron lo que no debían en un invierno largo, y la tumba no les quitó el hambre. Recuerdan su nombre, hablan con voz ronca y pueden negociar, aunque cualquier trato con ellos termina en una mesa. Son flacos hasta el hueso, de piel gris amarillenta, con uñas negras y largas y dientes partidos de roer. Viven en osarios y criptas donde siempre hay algo que comer, y entierran a sus presas para dejarlas madurar. La luz sagrada les quema como el aceite: reciben ×1,5 de daño Radiante.\n\nGanchos (d6):\n1 el sepulturero los alimenta para que no salgan\n2 uno de ellos era un pariente de alguien del grupo\n3 tienen enterrado a un viajero que sigue vivo\n4 quieren un trato: comida a cambio de información de los muertos\n5 su guarida conecta con las cloacas de la ciudad\n6 obedecen a un ghoul viejo que se hace llamar «el Abad»"
   },
   "fuego_fatuo": {
    "nombre": "Fuego Fatuo",
@@ -3304,7 +3328,7 @@ const DEFAULT_DB = {
    "debiles": [],
    "rolNota": "Represión (3 PA): Cegado (Salvación CON, Ud4).",
    "proteccion": "Atarse con una cuerda o taparse los oídos: Ventaja contra su Voz Seductora, y quien la falla así se queda quieto en lugar de caminar hacia el agua.",
-   "senal": "Luces azules entre los juncos; viajeros que juran haber visto un farol.",
+   "senal": "Luces azules entre los juncos · viajeros que juran haber visto un farol · campanillas en todas las ventanas de la aldea.",
    "contexto": "No mata: conduce. La víctima Encantada camina hacia la ciénaga más profunda (Cap. 7), y el grupo tiene que elegir entre perseguir la luz o sacar a su compañero del agua.",
    "impreso": {
     "pv": 61,
@@ -3325,7 +3349,10 @@ const DEFAULT_DB = {
      "CAR": 0
     },
     "enc": 3
-   }
+   },
+   "idea": "«Sigue la luz. Siempre hay alguien al final de la luz.»",
+   "botin": "Lo que llevaban sus víctimas, en el fondo del agua",
+   "notas": "Rara · Número: 1 (1d3 en ciénagas antiguas) · Inteligencia: alta · Moral: 13\n\nUn fuego fatuo es lo que queda de alguien que se ahogó perdido en una ciénaga y no quiere estar solo allí abajo. Es una luz azul pálida del tamaño de un puño, que tiembla como la llama de un farol a lo lejos. No odia a los vivos: los quiere cerca. Por eso no mata, conduce. Los pantanos viejos tienen varios, y las aldeas cercanas cuelgan campanillas en las ventanas para que nadie salga cuando se ven luces entre los juncos.\n\nGanchos (d6):\n1 era la hija del molinero y su madre todavía la llama de noche\n2 conduce a los viajeros hacia un tesoro, no hacia la muerte\n3 son tres y se pelean por la misma víctima\n4 su cuerpo está en el fondo con una carta sin entregar\n5 solo aparece cuando alguien del grupo miente\n6 un brujo la ha atado a un frasco y la usa de cebo"
   },
   "arpia": {
    "nombre": "Arpía",
@@ -3371,7 +3398,7 @@ const DEFAULT_DB = {
    "debiles": [],
    "rolNota": "Represión (3 PA): chillido; Aterrado (Salvación SAB, Ud4).",
    "proteccion": "Cera en los oídos: Ventaja contra su canto, a cambio de quedar Ensordecido mientras la lleve.",
-   "senal": "Un canto hermoso en los acantilados; restos de marineros al pie.",
+   "senal": "Un canto hermoso en los acantilados · restos de marineros al pie · gaviotas que no se acercan.",
    "contexto": "Encanta a uno y ataca desde el aire a quien intenta despertarlo. Es frágil y huye pronto, así que la pelea no se gana matándola, sino sacando al encantado del borde.",
    "impreso": {
     "pv": 66,
@@ -3392,7 +3419,10 @@ const DEFAULT_DB = {
      "CAR": 0
     },
     "enc": 3
-   }
+   },
+   "idea": "«El canto es lo único bello que tiene. Lo usa bien.»",
+   "botin": "Restos de naufragios: 2d6 × 10 cr y un objeto curioso",
+   "notas": "Infrecuente · Número: 1d4 (2d6 en el acantilado) · En su guarida: 30 % · Inteligencia: alta · Moral: 9\n\nLas arpías anidan en acantilados sobre el mar, donde el viento arrastra su canto hasta los barcos. Tienen cuerpo de buitre grande, alas pardas y una cara de mujer vieja y hermosa a la vez, y huelen a pescado podrido. Viven de lo que el mar les trae: marineros que saltan por la borda hacia la voz, y lo que llevaban en los bolsillos. Coleccionan objetos brillantes sin entender para qué sirven, y cantan entre ellas en un idioma que se parece a uno humano olvidado.\n\nGanchos (d6):\n1 su nido tiene la brújula de un barco que el grupo busca\n2 cantan una canción que uno de los personajes conoce de niño\n3 una de ellas quiere irse y ofrece guiar al grupo\n4 un capitán les paga para hundir a la competencia\n5 su canto se oye en la ciudad y la gente sale de noche\n6 el nido está sobre una cueva con un naufragio entero dentro"
   },
   "mimico": {
    "nombre": "Mímico",
@@ -3439,7 +3469,7 @@ const DEFAULT_DB = {
    ],
    "rolNota": "Primer Golpe: su primer impacto contra una criatura Desprevenida suma el daño base otra vez.",
    "proteccion": "Tantear muebles y cofres con un palo, o Percepción CD 16: descubierto, pierde su Primer Golpe. El alcohol o el fuego aflojan su adhesivo: Ventaja para escapar.",
-   "senal": "Un cofre sin polvo en una sala abandonada; marcas de arrastre bajo él.",
+   "senal": "Un cofre sin polvo en una sala abandonada · marcas de arrastre bajo él · un olor dulzón a pegamento.",
    "contexto": "El primer golpe es el peor. Después, el personaje pegado al mímico tiene que elegir entre forcejear y seguir recibiendo ácido o que sus compañeros lo golpeen de cerca y se quemen.",
    "impreso": {
     "pv": 84,
@@ -3460,7 +3490,10 @@ const DEFAULT_DB = {
      "CAR": -2
     },
     "enc": 4
-   }
+   },
+   "idea": "«El cofre no tenía polvo. Eso era lo único raro.»",
+   "botin": "Lo que tragó y no pudo digerir: 3d6 × 10 cr y 1d3 objetos",
+   "notas": "Infrecuente · Número: 1 · En su guarida: 100 % · Inteligencia: media · Moral: 14\n\nNadie sabe qué aspecto tiene un mímico cuando no imita nada, porque nunca deja de imitar algo. Copia lo que ve en una sala durante semanas, hasta que la madera, el hierro y hasta el polvo de su forma son perfectos; lo único que suele olvidar es ensuciarse. Habla, mal y con voces robadas, y a veces acepta comida a cambio de no comerse a nadie. Los mímicos viejos aprenden a imitar puertas, y una puerta que se come a quien la abre es la peor trampa de una mazmorra.\n\nGanchos (d6):\n1 es una puerta, no un cofre\n2 imita el ataúd del señor de la cripta\n3 habla y quiere salir de la mazmorra: se ofrece como cofre del grupo\n4 son dos, y uno imita al otro\n5 tragó la llave que el grupo necesita\n6 un mago lo usa de caja fuerte y vendrá a por él"
   },
   "ogro": {
    "nombre": "Ogro",
@@ -3511,7 +3544,7 @@ const DEFAULT_DB = {
    ],
    "rolNota": "Ataque Masivo: derriba al impactar, una vez por ronda.",
    "proteccion": "Un escudo plantado da Ventaja contra su Golpe Aplastante; una finta o un cebo lo sacan de la pelea un turno.",
-   "senal": "Árboles tronchados a la altura del pecho; cabras desaparecidas.",
+   "senal": "Árboles tronchados a la altura del pecho · cabras desaparecidas · huellas del tamaño de un escudo.",
    "contexto": "Pega muchísimo y piensa muy poco. El grupo que lo engaña —una finta, un señuelo, un puente que no aguanta su peso— lo vence sin recibir un solo golpe.",
    "impreso": {
     "pv": 96,
@@ -3532,7 +3565,10 @@ const DEFAULT_DB = {
      "CAR": 1
     },
     "enc": 4
-   }
+   },
+   "idea": "«Pega como una avalancha. Piensa como una cabra.»",
+   "botin": "2d6 × 10 cr en un saco, y algo que robó sin saber lo que vale",
+   "notas": "Común · Número: 1d3 (1d6 en su cueva) · En su guarida: 40 % · Inteligencia: baja · Moral: No la tira\n\nLos ogros miden el doble que una persona y comen el triple. Viven en cuevas junto a los caminos, solos o en familias pequeñas, y bajan a robar ganado cuando se acaba la caza. Tienen la piel parda y gruesa, el pelo apelmazado y los dientes de abajo más largos que los de arriba. No son malvados por convicción, sino por hambre y por pereza: un ogro bien alimentado puede pasarse una semana durmiendo. Se les puede contratar, engañar o asustar con cosas que no entienden, como un espejo o un fuego de colores.\n\nGanchos (d6):\n1 un señor local le paga en ganado para que guarde un paso\n2 está enamorado de una estatua y la defiende\n3 tiene un hijo pequeño que se ha perdido en el bosque\n4 robó un cofre del que no sabe sacar nada\n5 le duele una muela y está de muy mal humor\n6 un mago lo ha convencido de que el grupo es comida"
   },
   "bruja_del_pantano": {
    "nombre": "Bruja del Pantano",
@@ -3582,7 +3618,7 @@ const DEFAULT_DB = {
    ],
    "rolNota": "Represión (3 PA): Ralentizado (Salvación FUE, Ud4).",
    "proteccion": "Hierro frío encima: Ventaja contra su Maldición. Dormir en tierra consagrada aleja sus Pesadillas.",
-   "senal": "Muñecos de paja en las puertas; los niños sueñan con una casa sobre patas.",
+   "senal": "Muñecos de paja en las puertas · los niños sueñan con una casa sobre patas · la leche se corta en toda la aldea.",
    "contexto": "Ataca antes de que el grupo sepa que está en guerra: con pesadillas que les quitan el descanso y maldiciones que llegan con la cena. Enfrentarla es encontrarla, y encontrarla es saber quién es.",
    "impreso": {
     "pv": 97,
@@ -3603,7 +3639,10 @@ const DEFAULT_DB = {
      "CAR": 1
     },
     "enc": 5
-   }
+   },
+   "idea": "«No la busques. Ella ya sabe dónde duermes.»",
+   "botin": "Frascos, huesos y deudas: 4d6 × 10 cr y un objeto maldito",
+   "notas": "Rara · Número: 1 (a veces un aquelarre de 3) · En su guarida: 70 % · Inteligencia: excepcional · Moral: 15\n\nLas brujas del pantano son feéricas viejas que se quedaron en este mundo cuando las demás se fueron, y se han vuelto amargas en el agua quieta. Viven en casas torcidas al borde de las ciénagas, llenas de frascos, raíces colgadas y muñecos de paja con pelo de verdad. Comercian: un remedio por un recuerdo, un niño sano por el próximo que nazca. Siempre cumplen la letra de un trato y nunca su espíritu. Su forma verdadera es la de una mujer muy alta, de piel verdosa y dedos largos como ramas, con los ojos del color del agua estancada.\n\nGanchos (d6):\n1 tiene un trato antiguo con la familia de uno de los personajes\n2 busca a dos hermanas para formar un aquelarre\n3 ha robado la voz de alguien y la guarda en un frasco\n4 ofrece curar a un aliado moribundo, y el precio parece barato\n5 está enferma y quiere que alguien le traiga un remedio de la ciudad\n6 su casa se mueve cada noche y nadie la encuentra dos veces"
   },
   "manticora": {
    "nombre": "Mantícora",
@@ -3648,7 +3687,7 @@ const DEFAULT_DB = {
    "rolNota": "Posición: si no se ha movido, Ventaja en su primer ataque a distancia.",
    "proteccion": "Cobertura o separarse más de 15 pies: la Andanada no alcanza a todos, y un escudo da Ventaja en esa Salvación.",
    "encuentroTxt": "Su Andanada le suma 2: cuenta como NA 7 al calcular el encuentro.",
-   "senal": "Cadáveres erizados de púas negras; un rugido que parece una risa.",
+   "senal": "Cadáveres erizados de púas negras · un rugido que parece una risa · caballos que se niegan a seguir el camino.",
    "contexto": "Dispara desde donde nadie llega y baja solo cuando alguien se aísla. Obliga al grupo a buscar cobertura en campo abierto, o a encontrar la forma de traerla al suelo.",
    "impreso": {
     "pv": 75,
@@ -3669,7 +3708,10 @@ const DEFAULT_DB = {
      "CAR": 1
     },
     "enc": 7
-   }
+   },
+   "idea": "«Se ríe cuando dispara. Nadie sabe de qué.»",
+   "botin": "Restos de viajeros: 4d6 × 10 cr y equipo roto",
+   "notas": "Infrecuente · Número: 1d2 · En su guarida: 25 % · Inteligencia: baja, pero cruel · Moral: 15\n\nLa mantícora tiene cuerpo de león, alas de murciélago, una cola cubierta de púas negras y una cara casi humana, con tres filas de dientes. Habla, aunque solo para burlarse, y disfruta del miedo tanto como de la carne. Anida en riscos sobre los caminos de montaña y caza a los viajeros desde el aire, siempre de lejos, hasta que uno se queda solo. Sus púas vuelven a crecer en una noche; las caídas se venden en los mercados como agujas de veneno.\n\nGanchos (d6):\n1 caza en el único paso de montaña hacia donde va el grupo\n2 una caravana entera está atrapada bajo su risco\n3 un señor ofrece una fortuna por una mantícora viva\n4 está vieja y le quedan pocas púas: negocia\n5 tiene una cría en el nido y no se aleja de él\n6 alguien la ha marcado con un hierro: tuvo dueño"
   },
   "basilisco": {
    "nombre": "Basilisco",
@@ -3711,7 +3753,7 @@ const DEFAULT_DB = {
    ],
    "rolNota": "Represión (3 PA): Aterrado (Salvación SAB, Ud4).",
    "proteccion": "Apartar la mirada cuando la usa: Ventaja en la Salvación. Quien la aparta durante todo el combate ataca con Desventaja. Un espejo pulido le devuelve la mirada: el basilisco hace la misma Salvación.",
-   "senal": "Estatuas demasiado realistas, con cara de sorpresa; pájaros de piedra en las ramas.",
+   "senal": "Estatuas demasiado realistas, con cara de sorpresa · pájaros de piedra en las ramas · un silencio sin insectos.",
    "contexto": "La mirada no mata al primer intento: avisa. El grupo tiene un turno para decidir si pelea con los ojos cerrados (Desventaja) o se arriesga a una segunda mirada.",
    "impreso": {
     "pv": 97,
@@ -3732,7 +3774,10 @@ const DEFAULT_DB = {
      "CAR": -2
     },
     "enc": 5
-   }
+   },
+   "idea": "«Las estatuas del jardín tenían cara de sorpresa.»",
+   "botin": "Lo que llevaban las estatuas: 5d6 × 10 cr en piedra y metal",
+   "notas": "Rara · Número: 1 · En su guarida: 60 % · Inteligencia: media · Moral: 15\n\nEl basilisco es un lagarto de ocho patas del tamaño de un perro grande, de escamas verde oscuro y ojos amarillos y redondos como monedas. Es lento y paciente, y no necesita perseguir a nadie: su comida se queda quieta. Roe las estatuas que hace, piedra incluida, y sus guaridas son jardines de figuras rotas a medio comer. Los alquimistas pagan bien por su sangre, que en un frasco devuelve la carne a la piedra si se aplica a tiempo.\n\nGanchos (d6):\n1 una de las estatuas es alguien a quien el grupo busca\n2 un noble lo tiene encadenado en su jardín como guardia\n3 su sangre es lo único que puede salvar a un petrificado\n4 está ciego de un ojo: su mirada solo cubre un lado\n5 son una pareja con huevos a punto de abrirse\n6 un escultor vende como suyas las estatuas que hace"
   },
   "troll": {
    "nombre": "Troll",
@@ -3787,7 +3832,7 @@ const DEFAULT_DB = {
    ],
    "rolNota": "Ataque Masivo: Sangrado al impactar, una vez por ronda.",
    "proteccion": "Fuego o ácido: cortan la Regeneración y lo rematan. Sin ellos, cada vez que cae vuelve a levantarse.",
-   "senal": "Huesos de caballo mordidos; un hedor que se huele a una milla.",
+   "senal": "Huesos de caballo mordidos · un hedor que se huele a una milla · una mano verde que se arrastra sola por el camino.",
    "contexto": "Se puede tumbar muchas veces y se levanta todas. La pelea contra un troll es una pelea por el fuego: quién lo lleva, cuánto queda y cómo aguantar hasta usarlo.",
    "impreso": {
     "pv": 138,
@@ -3808,7 +3853,10 @@ const DEFAULT_DB = {
      "CAR": 1
     },
     "enc": 6
-   }
+   },
+   "idea": "«Lo matamos tres veces. A la cuarta trajimos aceite.»",
+   "botin": "Lo que no se pudo comer: 5d6 × 10 cr y armaduras abolladas",
+   "notas": "Infrecuente · Número: 1d3 · En su guarida: 40 % · Inteligencia: baja · Moral: No la tira\n\nLos trolls son altos, flacos y verdes como el moho, con brazos que les llegan a las rodillas y una nariz larga que lo huele todo. Comen sin parar porque se están curando sin parar: la carne les vuelve a crecer en minutos, y un troll hambriento se come sus propios miembros caídos. Viven bajo puentes, en cuevas húmedas y en las ruinas de los pueblos que vaciaron. La pelea contra un troll es una pelea por el fuego: quién lo lleva, cuánto queda y cómo aguantar hasta usarlo.\n\nGanchos (d6):\n1 vive bajo el único puente del río y cobra peaje en carne\n2 el pueblo le entrega un animal al mes y quiere que el grupo lo resuelva\n3 tiene un brazo que no es suyo: se lo cosió de otro troll\n4 un mago le ha implantado una gema que corta su Regeneración\n5 guarda la tumba de un rey que lo derrotó una vez\n6 son tres hermanos que discuten quién se come a quién"
   },
   "espectro": {
    "nombre": "Espectro",
@@ -3861,7 +3909,7 @@ const DEFAULT_DB = {
    ],
    "rolNota": "Flanqueo: Ventaja si un aliado está adyacente al mismo objetivo.",
    "proteccion": "Luz brillante y armas mágicas. Un símbolo consagrado da Ventaja contra su Pavor.",
-   "senal": "Frío en una sola habitación; los espejos se empañan desde dentro.",
+   "senal": "Frío en una sola habitación · los espejos se empañan desde dentro · la mesa puesta para alguien que no llega.",
    "contexto": "Sale de la pared, toca y vuelve a entrar. No se le puede acorralar, así que el grupo tiene que traer la luz a su terreno o sacarlo del lugar al que está ligado.",
    "impreso": {
     "pv": 84,
@@ -3882,7 +3930,10 @@ const DEFAULT_DB = {
      "CAR": 1
     },
     "enc": 6
-   }
+   },
+   "idea": "«No ha salido de esa casa. No va a dejar que salgas tú.»",
+   "botin": "Lo que guardaba en vida, escondido en la casa",
+   "notas": "Rara · Número: 1 · En su guarida: 100 % · Inteligencia: media · Moral: 16\n\nUn espectro es alguien que murió con algo pendiente en un lugar concreto y se quedó a vigilarlo. Tiene la forma que tenía al morir, pero gris y transparente, con los bordes deshilachados como humo. Repite las costumbres de su vida: pone la mesa, enciende chimeneas que no calientan, espera en la ventana. Se puede hablar con él, y a veces se le puede liberar terminando lo que dejó a medias; pero se enfurece con quien toca lo que era suyo.\n\nGanchos (d6):\n1 espera a un hijo que se fue a la guerra y nunca volvió\n2 guarda una carta que inculpa a alguien poderoso\n3 cree que el grupo son los ladrones que lo mataron\n4 solo quiere que alguien entierre bien su cuerpo, que sigue en el sótano\n5 son dos, marido y mujer, y no se hablan\n6 la casa se va a derribar mañana y él lo sabe"
   },
   "golem_de_arcilla": {
    "nombre": "Gólem de Arcilla",
@@ -3938,7 +3989,7 @@ const DEFAULT_DB = {
    ],
    "rolNota": "Ataque Masivo: derriba al impactar, una vez por ronda.",
    "proteccion": "Apartar a su creador: sin él, pierde 1 PA y sus Aptitudes. Quien se mantiene a más de 10 pies no recibe su Pisotón.",
-   "senal": "Huellas profundas y exactas, siempre a la misma distancia; runas en una puerta.",
+   "senal": "Huellas profundas y exactas, siempre a la misma distancia · runas en una puerta · barro seco en el umbral de una sala limpia.",
    "contexto": "Casi nada le hace daño y todo lo que toca cae. La verdadera pelea es contra quien lo controla: encontrarlo y apartarlo convierte al gólem en una estatua lenta.",
    "impreso": {
     "pv": 138,
@@ -3959,7 +4010,10 @@ const DEFAULT_DB = {
      "CAR": -2
     },
     "enc": 6
-   }
+   },
+   "idea": "«No odia. No teme. Obedece.»",
+   "botin": "Ninguno; la tablilla de órdenes de su pecho vale 200 cr a un erudito",
+   "notas": "Muy rara · Número: 1 · En su guarida: 90 % · Inteligencia: ninguna · Moral: No la tira\n\nUn gólem de arcilla es barro de río modelado con forma de hombre grande, cocido a medias y animado con una tablilla de órdenes escrita en su pecho. No tiene cara, solo dos huecos donde irían los ojos. Cumple su última orden hasta que se deshace, y la cumple al pie de la letra: un gólem al que le dijeron «que nadie entre» no impide que nadie salga. Borrar una palabra de la tablilla —que exige estar pegado a él y una tirada de Arcano CD 20— cambia la orden, y a veces la vuelve absurda.\n\nGanchos (d6):\n1 su creador murió y sigue cumpliendo una orden de hace un siglo\n2 la orden es proteger a un niño que ya es un anciano\n3 alguien ha borrado una letra y ahora ataca a quien lleve azul\n4 hay un segundo gólem a medio hacer en el taller\n5 su tablilla tiene escrito el nombre de uno de los personajes\n6 obedece a quien sepa la palabra que su creador decía al despertarlo"
   },
   "cazador_sintetico": {
    "nombre": "Cazador Sintético",
@@ -4018,7 +4072,7 @@ const DEFAULT_DB = {
    ],
    "rolNota": "Flanqueo.",
    "proteccion": "Rayo, y cortarle la línea de visión: su Arma Montada necesita verte. Un pulso electromagnético le quita la Sobrecarga.",
-   "senal": "Cámaras destruidas en orden; un objetivo marcado con un punto rojo que nadie más ve.",
+   "senal": "Cámaras destruidas en orden · un objetivo marcado con un punto rojo que nadie más ve · pisadas que se detienen sin motivo.",
    "contexto": "Tiene un nombre en la lista y no se detiene hasta tacharlo. El grupo puede pelear, esconder a su objetivo o descubrir quién lo programó y cambiarle la lista.",
    "impreso": {
     "pv": 84,
@@ -4039,7 +4093,10 @@ const DEFAULT_DB = {
      "CAR": -2
     },
     "enc": 6
-   }
+   },
+   "idea": "«Objetivo confirmado. Tiempo estimado: once minutos.»",
+   "botin": "Rifle integrado (inutilizable sin taller) y 1d3 chips de Construido",
+   "notas": "Rara · Número: 1 · Inteligencia: alta, sin voluntad propia · Moral: No la tira\n\nLos cazadores sintéticos se fabricaron para una guerra que terminó, y alguien sigue vendiendo sus servicios. Tienen forma humana, demasiado delgada y demasiado quieta, con una piel de polímero gris que cambia de color para confundirse con lo que tienen detrás. No hablan salvo para confirmar un objetivo. Llevan la lista grabada en un núcleo detrás del esternón: quien lo extraiga, con Tecnología CD 19 sobre el cazador inutilizado, sabe quién pagó y por quién.\n\nGanchos (d6):\n1 el nombre de la lista es el de uno de los personajes\n2 su objetivo es un niño que el grupo escolta\n3 está averiado y lleva tres nombres que ya están muertos\n4 alguien ofrece cambiarle la lista a cambio de un favor enorme\n5 hay otro cazador con la misma lista y compiten\n6 el que lo programó quiere detenerlo y no sabe cómo"
   },
   "wyvern": {
    "nombre": "Wyvern",
@@ -4092,8 +4149,8 @@ const DEFAULT_DB = {
    "rolNota": "Ataque Masivo: derriba al impactar, una vez por ronda.",
    "proteccion": "Un antídoto bebido antes da Ventaja contra el aguijón, y quien la supera con Ventaja recibe solo la mitad del veneno sin quedar Envenenado. Cobertura o dispersarse contra el Aliento.",
    "encuentroTxt": "Su Aliento le suma 3: cuenta como NA 9 al calcular el encuentro.",
-   "notas": "Edad. Una cría es Mediana (plantilla Cría: NA 4); un wyvern viejo, Enorme (plantilla Anciana: NA 8).",
-   "senal": "Ganado arrancado del suelo; huesos con marcas de ácido en lo alto de un risco.",
+   "notas": "Infrecuente · Número: 1d2 · En su guarida: 30 % · Inteligencia: animal · Moral: No la tira\n\nEl wyvern es pariente lejano de los dragones: dos patas, alas enormes y una cola con un aguijón del tamaño de una espada. No habla, no negocia y no guarda tesoros: caza. Anida en riscos altos y baja sobre el ganado y los viajeros, abre con el ácido desde el aire, baja sobre el que quedó en pie y se lo lleva. Tiene la piel gris verdosa y los ojos amarillos, y huele a vinagre. Una cría es Mediana (plantilla Cría: NA 4); un wyvern viejo es Enorme (plantilla Anciana: NA 8).\n\nGanchos (d6):\n1 su nido tiene huevos que un noble quiere a cualquier precio\n2 un jinete lo montaba y ha muerto: lleva la silla puesta\n3 está herido por un rayo y caza de día, con rabia\n4 dos wyverns se disputan el valle\n5 un pueblo lo alimenta con condenados\n6 ha anidado en la torre de un mago muerto\n\nEdad. Una cría es Mediana (plantilla Cría: NA 4); un wyvern viejo, Enorme (plantilla Anciana: NA 8).",
+   "senal": "Ganado arrancado del suelo · huesos con marcas de ácido en lo alto de un risco · rocas corroídas bajo el nido.",
    "contexto": "No habla, no negocia y no guarda tesoros: caza. Abre con el aliento desde el aire, baja sobre el que quedó en pie y se lo lleva. Es un dragón sin la mente de un dragón, y por eso se le puede engañar con un cebo.",
    "manual": {
     "vel": 20
@@ -4117,7 +4174,9 @@ const DEFAULT_DB = {
      "CAR": -2
     },
     "enc": 9
-   }
+   },
+   "idea": "«Un dragón sin la mente de un dragón. Eso lo hace peor, no mejor.»",
+   "botin": "Ninguno: no guarda nada; en el nido, restos con 3d6 × 10 cr"
   },
   "guardian_de_raiz": {
    "nombre": "Guardián de Raíz",
@@ -4187,7 +4246,7 @@ const DEFAULT_DB = {
    ],
    "rolNota": "Custodia (Reacción).",
    "proteccion": "Fuego. Quien empieza su turno a más de 10 pies no queda atrapado en su Zona de Control.",
-   "senal": "Un claro donde los árboles miran hacia dentro; caminos que se cierran.",
+   "senal": "Un claro donde los árboles miran hacia dentro · caminos que se cierran a la espalda · hojas verdes en pleno invierno.",
    "contexto": "No persigue: retiene. Mientras el guardián sujeta a dos personajes, lo que protege tiene tiempo de hacer lo que el grupo vino a impedir.",
    "impreso": {
     "pv": 156,
@@ -4208,7 +4267,10 @@ const DEFAULT_DB = {
      "CAR": -2
     },
     "enc": 7
-   }
+   },
+   "idea": "«El bosque no te impide pasar. Te pide que te quedes.»",
+   "botin": "Lo que guarda: un santuario, una tumba o un árbol madre",
+   "notas": "Rara · Número: 1 · En su guarida: 100 % · Inteligencia: media, lenta · Moral: 17\n\nLos guardianes de raíz son árboles viejos que algo despertó para proteger un lugar: una tumba, un manantial, el árbol madre de un bosque. Tienen la forma de un tronco grueso con dos ramas como brazos y una corteza agrietada donde a veces se adivina una cara. Hablan muy despacio, en una lengua que suena a madera crujiendo, y pueden tardar una hora en decir una frase. Mientras el guardián sujeta a dos personajes, lo que protege tiene tiempo de hacer lo que el grupo vino a impedir.\n\nGanchos (d6):\n1 protege la tumba de un druida que podría volver\n2 deja pasar a quien deje una semilla plantada\n3 está enfermo: un hongo lo pudre y suplica ayuda\n4 un leñador quiere que lo talen y paga bien\n5 protege a un niño que se perdió hace cien años y no envejece\n6 hay dos guardianes y uno quiere dejar de serlo"
   },
   "elemental_de_tormenta": {
    "nombre": "Elemental de Tormenta",
@@ -4258,7 +4320,7 @@ const DEFAULT_DB = {
    "rolNota": "Represión (3 PA): Conmocionado (Salvación CON, Ud4).",
    "proteccion": "Resistencia al Rayo: Ventaja contra su Tormenta y la mitad de su daño. Una barra de hierro clavada en tierra le impide fundirse con las nubes.",
    "encuentroTxt": "Su Tormenta Personal le suma 3: cuenta como NA 10 al calcular el encuentro.",
-   "senal": "Nubes que se mueven contra el viento; el pelo se eriza.",
+   "senal": "Nubes que se mueven contra el viento · el pelo se eriza · un olor a hierro y a lluvia antes de la lluvia.",
    "contexto": "Convierte el campo en un lugar donde nadie avanza. Cada ronda que el grupo pasa bajo ella es una ronda de rayos; la decisión es cubrirse o correr hacia algo que la ancle.",
    "impreso": {
     "pv": 124,
@@ -4279,7 +4341,10 @@ const DEFAULT_DB = {
      "CAR": -2
     },
     "enc": 10
-   }
+   },
+   "idea": "«El cielo bajó a pelear, y trajo su propio clima.»",
+   "botin": "Ninguno; tras la tormenta, a veces un fulgurita del tamaño de un brazo (100 cr)",
+   "notas": "Rara · Número: 1 · Inteligencia: alta · Moral: 17\n\nUn elemental de tormenta es una nube negra del tamaño de una casa, con forma vagamente humana y rayos que le corren por dentro como venas. Llega con el viento contrario y se va cuando se cansa, y en su camino deja tejados levantados y árboles partidos. Algunos los invocan los magos para castigar a un pueblo; otros nacen solos, en las montañas, cuando chocan dos frentes. Convierte el campo en un lugar donde nadie avanza: la decisión es cubrirse o correr hacia algo que la ancle.\n\nGanchos (d6):\n1 un mago lo tiene atado a una torre y se le escapa\n2 persigue a un barco concreto por todo el mar\n3 es la tormenta que mató a los padres de alguien del grupo\n4 está atrapado en un valle y destruye lo que hay dentro\n5 un pueblo lo venera y le ofrece metales\n6 se debilita: alguien le está robando los rayos"
   },
   "tejedor_del_vacio": {
    "nombre": "Tejedor del Vacío",
@@ -4333,7 +4398,7 @@ const DEFAULT_DB = {
    ],
    "rolNota": "Represión (3 PA): Conmocionado (Salvación SAB, Ud4).",
    "proteccion": "Luz brillante, y Voluntad de Hierro o un Axioma de protección mental: Ventaja contra su Voz y su Dominar; quien falla con Ventaja queda solo Encantado.",
-   "senal": "Gente que repite frases que no son suyas; dibujos idénticos hechos por desconocidos.",
+   "senal": "Gente que repite frases que no son suyas · dibujos idénticos hechos por desconocidos · un alcalde que ya no parpadea.",
    "contexto": "Pelea con el grupo contra el grupo. Sabe lo que van a hacer y usa a uno de ellos para impedirlo. La luz y la distancia son las únicas armas que no puede volver en su contra.",
    "impreso": {
     "pv": 124,
@@ -4354,7 +4419,10 @@ const DEFAULT_DB = {
      "CAR": 1
     },
     "enc": 7
-   }
+   },
+   "idea": "«Ya sé lo que vas a hacer. Por eso lo harás por mí.»",
+   "botin": "Lo que le traen sus siervos: 6d6 × 10 cr y secretos escritos",
+   "notas": "Muy rara · Número: 1 (con 2d4 siervos dominados) · En su guarida: 60 % · Inteligencia: genial · Moral: 17\n\nNadie sabe de dónde vienen los tejedores del vacío; ellos tampoco lo dicen. Son altos y delgados, de piel violácea y sin boca, con una cabeza alargada que palpita levemente al pensar. Se instalan bajo las ciudades y tejen una red de personas dominadas que les traen comida, noticias y otras mentes. No tienen prisa: un tejedor puede pasar años convirtiendo a un consejo entero en sus manos sin que nadie note nada salvo que todos repiten las mismas frases.\n\nGanchos (d6):\n1 domina a alguien a quien el grupo quiere\n2 busca una mente concreta: la de uno de los personajes\n3 tiene a la guardia de la ciudad bajo su red\n4 huye de otro tejedor más viejo y ofrece una alianza\n5 su red se está rompiendo y sus siervos despiertan confusos\n6 lleva siglos dormido y acaba de despertar bajo la catedral"
   },
   "vampiro_senorial": {
    "nombre": "Vampiro Señorial",
@@ -4446,7 +4514,7 @@ const DEFAULT_DB = {
    "equipo": "Anillo de Sangre Antigua (Raro): +1 a la Guardia (ya incluido: Guardia 17) y +1d6 Necrótico a su mordisco. Si cae, es botín.",
    "proteccion": "Un símbolo sagrado presentado con fe, o un Axioma de protección mental: Ventaja contra su Voz y su Mirada, y quien falla con Ventaja queda solo Encantado. De día, en su ataúd, está indefenso.",
    "encuentroTxt": "Pasa en 3 su presupuesto de Potencial: cuenta como NA 9 al calcular el encuentro.",
-   "senal": "Una familia noble que solo recibe de noche; sirvientes pálidos que no comen.",
+   "senal": "Una familia noble que solo recibe de noche · sirvientes pálidos que no comen · ningún espejo en toda la casa.",
    "contexto": "Nunca pelea solo y nunca pelea donde no quiere. Encanta a quien más daño hace, se cura con quien más cerca está y se retira por el techo cuando pierde la ventaja.",
    "manual": {
     "guardia": 17
@@ -4470,7 +4538,10 @@ const DEFAULT_DB = {
      "CAR": 4
     },
     "enc": 9
-   }
+   },
+   "idea": "«Pasad. La casa es vuestra. Hace siglos que no recibo invitados.»",
+   "botin": "Una fortuna antigua: 1.000 cr en arte y joyas, y su anillo",
+   "notas": "Muy rara · Número: 1 (con 1d4 siervos y su jauría) · En su guarida: 80 % · Inteligencia: excepcional · Moral: 18\n\nUn vampiro señorial fue noble en vida y no ha dejado de serlo. Vive en la casa de su familia, rodeado de sirvientes que le temen y le adoran a partes iguales, y recibe de noche a quien considera digno. Es pálido, elegante y amable, y nunca pelea solo ni donde no quiere: encanta a quien más daño hace, se cura con quien más cerca está y se retira por el techo cuando pierde la ventaja. Lleva el Anillo de Sangre Antigua (Raro): +1 a la Guardia, ya incluido, y +1d6 Necrótico a su mordisco. Si cae, es botín.\n\nGanchos (d6):\n1 quiere casarse con alguien del grupo, y lo pide con cortesía\n2 su hijo es un vampiro joven que se le ha escapado de las manos\n3 gobierna el pueblo mejor que el señor vivo de al lado\n4 busca un remedio para dejar de serlo y pagará lo que sea\n5 otro vampiro le disputa la casa\n6 lleva un siglo esperando a que vuelva alguien, y ese alguien es un personaje"
   },
   "hidra": {
    "nombre": "Hidra",
@@ -4519,7 +4590,7 @@ const DEFAULT_DB = {
    "rolNota": "Ataque Masivo: Sangrado al impactar, una vez por ronda.",
    "proteccion": "Fuego tras cada cabeza cortada. Pelear de dos en dos: uno corta, otro quema.",
    "encuentroTxt": "Su Ataque Barrido le suma 2 y su tamaño, 1: cuenta como NA 11 al calcular el encuentro.",
-   "senal": "Un lago donde ya no beben los animales; dientes del tamaño de un puñal en la orilla.",
+   "senal": "Un lago donde ya no beben los animales · dientes del tamaño de un puñal en la orilla · el agua huele amarga.",
    "contexto": "Cortarle la cabeza sin fuego la hace más peligrosa. El grupo necesita a alguien que corte y a alguien que queme, y que los dos estén en el mismo sitio a la vez.",
    "impreso": {
     "pv": 186,
@@ -4540,7 +4611,10 @@ const DEFAULT_DB = {
      "CAR": -2
     },
     "enc": 11
-   }
+   },
+   "idea": "«Le cortamos una cabeza. Ahora tiene dos.»",
+   "botin": "Lo que el lago se tragó: 8d6 × 10 cr en el fondo y huesos de héroes",
+   "notas": "Rara · Número: 1 · En su guarida: 60 % · Inteligencia: animal · Moral: No la tira\n\nLa hidra es una serpiente gigante de cuerpo grueso como un tonel, con cinco cuellos largos que terminan en cinco cabezas que no se ponen de acuerdo. Vive en lagos y pantanos profundos, respira bajo el agua y sale a la orilla a cazar al amanecer. Su sangre es verde y amarga, y envenena el agua donde vive: los animales dejan de beber en su lago antes de que nadie la vea. Las hidras viejas tienen tantas cicatrices en los cuellos como cabezas han perdido, y algunas tienen nueve.\n\nGanchos (d6):\n1 tiene nueve cabezas y dos de ellas hablan\n2 vive en el lago que abastece a la ciudad\n3 un héroe muerto en su guarida lleva aún su espada mágica\n4 una de sus cabezas está ciega y es la más agresiva\n5 está criando: hay tres hidras pequeñas en el pantano\n6 un alquimista paga una fortuna por una cabeza intacta"
   },
   "serafin_ceniciento": {
    "nombre": "Serafín Ceniciento",
@@ -4602,7 +4676,7 @@ const DEFAULT_DB = {
    "rolNota": "Aura de Mando.",
    "equipo": "Espada de la Sentencia (Muy Raro): +2 al ataque (ya incluido: Ataque +13) y +1d8 Radiante. Quien la empuñe no puede mentir.",
    "proteccion": "Saber qué juró y hacérselo cumplir. Resistencia al Fuego contra su Cuerpo Ígneo.",
-   "senal": "Ceniza que cae de un cielo despejado; cánticos en una lengua que todos entienden.",
+   "senal": "Ceniza que cae de un cielo despejado · cánticos en una lengua que todos entienden · los perros de la ciudad aúllan a la vez.",
    "contexto": "Viene a cumplir una sentencia, no a pelear. Se le puede vencer, pero también se le puede hacer jurar: el grupo que entiende qué juró antes de llegar tiene una salida que no pasa por la espada.",
    "manual": {
     "ataque": 13
@@ -4626,7 +4700,10 @@ const DEFAULT_DB = {
      "CAR": 5
     },
     "enc": 9
-   }
+   },
+   "idea": "«No vengo a pelear. Vengo a cumplir una sentencia.»",
+   "botin": "La Espada de la Sentencia (Muy Raro)",
+   "notas": "Muy rara · Número: 1 · Inteligencia: excepcional · Moral: 19\n\nLos serafines cenicientos son los ejecutores de una corte que no está en este mundo. Tienen forma humana alta y alada, con la piel gris como la ceniza fría y los ojos llenos de brasas; donde pisan queda una huella negra. No odian a nadie: cumplen. Llevan la Espada de la Sentencia (Muy Raro), que da +2 al ataque, ya incluido, y +1d8 Radiante; quien la empuña no puede mentir. Un serafín que termina su sentencia se va sin mirar atrás, aunque la ciudad que lo rodea esté ardiendo.\n\nGanchos (d6):\n1 su sentencia es contra uno de los personajes, por algo que hizo un antepasado\n2 viene a por un culpable que el grupo sabe inocente\n3 ha jurado proteger una ciudad y la ciudad lo ha traicionado\n4 busca a otro serafín que desertó\n5 acepta un duelo de palabras en lugar de uno de espadas\n6 su sentencia ya se cumplió, pero nadie le ha dicho que se vaya"
   },
   "liche": {
    "nombre": "Liche",
@@ -4715,7 +4792,7 @@ const DEFAULT_DB = {
    "equipo": "Báculo de la Filacteria (Muy Raro): +2 a la CD de Axioma (ya incluido: CD 25) y +1d8 Necrótico a su toque. Si cae, el báculo es botín.",
    "proteccion": "Destruir la filacteria antes. Voluntad de Hierro o un Axioma contra la muerte: Ventaja contra su Toque Paralizante y su Pavor.",
    "encuentroTxt": "Pasa en 2 su presupuesto de Potencial: cuenta como NA 11; como jefe, 15, y por sus Axiomas, 16.",
-   "senal": "Una biblioteca prohibida saqueada; un pueblo que dejó de envejecer.",
+   "senal": "Una biblioteca prohibida saqueada · un pueblo que dejó de envejecer · tumbas abiertas en orden alfabético.",
    "contexto": "Matarlo no es vencerlo. La pelea contra el liche es un paso del camino: el grupo que no sabe dónde está la filacteria solo consigue unos días.",
    "manual": {
     "cd": 25
@@ -4739,7 +4816,10 @@ const DEFAULT_DB = {
      "CAR": 2
     },
     "enc": 16
-   }
+   },
+   "idea": "«Matarme es fácil. Lo difícil es que dure.»",
+   "botin": "Una biblioteca prohibida, 2.000 cr y el Báculo de la Filacteria",
+   "notas": "Muy rara · Número: 1 (con sus no-muertos) · En su guarida: 90 % · Inteligencia: genial · Moral: 20\n\nUn liche fue un erudito que prefirió no morir. Encerró su vida en un objeto, la filacteria, y dejó que el cuerpo se secara alrededor de una mente que no para de estudiar. Es un esqueleto vestido con los ropajes de su orden, con dos luces frías donde tuvo los ojos. Lleva el Báculo de la Filacteria (Muy Raro): +2 a la CD de Axioma, ya incluido, y +1d8 Necrótico a su toque. El grupo que no sabe dónde está la filacteria solo consigue unos días.\n\nGanchos (d6):\n1 su filacteria es el colgante que lleva uno de los personajes\n2 busca un libro que el grupo encontró sin saber qué era\n3 quiere un aprendiz, y ha elegido\n4 fue el maestro de un personaje con Fuente\n5 su filacteria está en otra ciudad, en un museo\n6 duda: lleva un siglo pensando en morir de verdad"
   },
   "dragon_rojo_adulto": {
    "nombre": "Dragón Rojo Adulto",
@@ -4815,7 +4895,7 @@ const DEFAULT_DB = {
    "equipo": "Coraza del Tesoro (Muy Raro): gemas y monedas fundidas en las escamas del pecho; +2 de Armadura (ya incluido: Armadura 7) y +1 a la Guardia (ya incluido: Guardia 14). Arrancarlas del cadáver lleva una hora.",
    "proteccion": "Resistencia al Fuego: Ventaja contra su Aliento y la mitad de su daño. Voluntad de Hierro contra su Pavor. Nunca pelear en su guarida.",
    "encuentroTxt": "Pasa en 2 su presupuesto de Potencial: cuenta como NA 11; como jefe, 15; con su Aliento, 17; por su tamaño, 18, y por sus Axiomas, 19.",
-   "senal": "Una montaña que humea sin ser volcán; pueblos que pagan un tributo que nadie nombra.",
+   "senal": "Una montaña que humea sin ser volcán · pueblos que pagan un tributo que nadie nombra · rebaños enteros desaparecidos en una noche.",
    "contexto": "Aliento, vuelo y acciones entre turnos: el dragón no deja al grupo quedarse quieto ni juntarse. Nadie debería pelear contra él sin haber pensado antes cómo bajarlo del cielo. Es más listo que el grupo: negocia, miente y usa sus Axiomas para que nadie llegue entero a su guarida.",
    "manual": {
     "armadura": 7,
@@ -4840,7 +4920,10 @@ const DEFAULT_DB = {
      "CAR": 2
     },
     "enc": 19
-   }
+   },
+   "idea": "«Os habría quemado al entrar. Pero me aburro.»",
+   "botin": "Su tesoro: 5.000 cr en monedas, 2d4 objetos mágicos y la Coraza del Tesoro",
+   "notas": "Muy rara · Número: 1 · En su guarida: 95 % · Inteligencia: genial · Moral: 20\n\nUn dragón rojo adulto es la criatura más orgullosa del mundo y lo sabe. Mide lo que una iglesia, tiene escamas del color de la sangre seca y los cuernos negros, y huele a azufre y a monedas calientes. Es más listo que el grupo: negocia, miente y disfruta de la conversación tanto como del fuego. Duerme sobre su tesoro durante años y lo conoce moneda a moneda. Con el tiempo, las gemas y el oro se le funden en las escamas del pecho: la Coraza del Tesoro (Muy Raro) le da +2 de Armadura y +1 a la Guardia, ya incluidos, y arrancarla del cadáver lleva una hora.\n\nGanchos (d6):\n1 quiere contratar al grupo para robarle a otro dragón\n2 tiene en su tesoro la corona de un reino que la busca\n3 está viejo y busca a quién dejar su tesoro\n4 un culto le ofrece sacrificios y él los desprecia\n5 duerme, y lleva veinte años dormido\n6 su madre vive todavía, y es peor"
   },
   "titan_mecanico": {
    "nombre": "Titán Mecánico",
@@ -4914,7 +4997,7 @@ const DEFAULT_DB = {
    "equipo": "Núcleo del Primer Titán (Legendario): +3 de Armadura (ya incluido: Armadura 10). Único: la primera vez que baja de la mitad de sus PV, su Escudo de Energía se recarga entero. Si cae, el núcleo sigue latiendo.",
    "proteccion": "Subir hasta el núcleo; Rayo; dispersarse contra su Tormenta.",
    "encuentroTxt": "Como jefe cuenta como NA 17; con su Tormenta, 19, y por su tamaño, 20.",
-   "senal": "El suelo tiembla a intervalos regulares; una ciudad entera evacuada sin explicación.",
+   "senal": "El suelo tiembla a intervalos regulares · una ciudad entera evacuada sin explicación · engranajes del tamaño de una rueda de molino en el camino.",
    "contexto": "No se puede vencer desde fuera. El grupo tiene que subir, encontrar el núcleo que la fase deja al descubierto y salir antes de que la autodestrucción los alcance.",
    "manual": {
     "armadura": 10
@@ -4938,7 +5021,10 @@ const DEFAULT_DB = {
      "CAR": -2
     },
     "enc": 20
-   }
+   },
+   "idea": "«No se le vence desde fuera. Hay que subir.»",
+   "botin": "El Núcleo del Primer Titán (Legendario)",
+   "notas": "Única · Número: 1 · Inteligencia: alta, sin voluntad propia · Moral: No la tira\n\nEl Titán Mecánico es una máquina de guerra del tamaño de una torre, con forma de hombre acorazado y una ciudad de engranajes por dentro. Se construyó para defender algo que ya no existe, y camina en círculos alrededor de sus ruinas. Su corazón es el Núcleo del Primer Titán (Legendario): +3 de Armadura, ya incluido, y la primera vez que baja de la mitad de sus PV, su escudo de energía se recarga entero. Si cae, el núcleo sigue latiendo, y quien lo tenga tendrá que decidir qué hacer con él.\n\nGanchos (d6):\n1 alguien vive dentro: una familia de chatarreros\n2 su núcleo es lo único que puede alimentar una ciudad\n3 camina hacia la capital y nadie sabe por qué\n4 un culto lo considera un dios y lo protege\n5 hay un segundo titán enterrado que empieza a moverse\n6 obedece a un niño que encontró su llave"
   },
   "colmena_xenomorfa": {
    "nombre": "Colmena Xenomorfa",
@@ -4980,7 +5066,7 @@ const DEFAULT_DB = {
     "CON"
    ],
    "proteccion": "Armas a distancia o armas que no importe perder, por su Sangre Ácida. Matar a la reina.",
-   "senal": "Conductos de ventilación con marcas de ácido; los sensores de movimiento marcan una sola señal muy grande.",
+   "senal": "Conductos de ventilación con marcas de ácido · los sensores de movimiento marcan una sola señal muy grande · un calor húmedo que sale de las paredes.",
    "contexto": "Parece un enemigo y son ocho. Llegan por el techo, rodean y se separan en dos cuando se les hiere. Matar a la reina es la única forma de que dejen de coordinarse.",
    "impreso": {
     "pv": 93,
@@ -5001,7 +5087,10 @@ const DEFAULT_DB = {
      "CAR": 1
     },
     "enc": 7
-   }
+   },
+   "idea": "«En el sensor era una sola señal. Grande.»",
+   "botin": "Ninguno; en el nido, el equipo de sus víctimas",
+   "notas": "Muy rara · Número: Una banda de 8 xenos (NA 3) · En su guarida: 70 % · Inteligencia: animal; la reina, alta · Moral: No la tira mientras viva la reina\n\nLos xenos llegaron en algo que cayó del cielo, y no se han ido. Son negros y brillantes, alargados, con una cola segmentada que termina en una punta y una boca dentro de la boca. Construyen colmenas con lo que encuentran —metal, piedra, cuerpos— y las llenan de un calor húmedo. Llegan por el techo, rodean y se separan en dos cuando se les hiere: parece un enemigo y son ocho.\n\nGanchos (d6):\n1 la reina está poniendo huevos y la banda no se aleja\n2 alguien quiere un huevo vivo y paga por él\n3 un superviviente vive escondido en el nido\n4 la colmena está en la bodega de una nave que debe despegar\n5 hay dos colmenas y están en guerra\n6 uno de los personajes fue picado hace días y no lo sabe"
   },
   "enjambre_de_nanitos": {
    "nombre": "Enjambre de Nanitos",
@@ -5046,7 +5135,7 @@ const DEFAULT_DB = {
    ],
    "debiles": [],
    "proteccion": "Rayo o cualquier área. Una puerta estanca lo frena.",
-   "senal": "Un brillo metálico en el aire; puertas de acero con agujeros como encaje.",
+   "senal": "Un brillo metálico en el aire · puertas de acero con agujeros como encaje · herramientas desmontadas pieza por pieza sobre una mesa.",
    "contexto": "No se le puede cortar ni golpear con eficacia. El grupo necesita un área —fuego, un pulso, una descarga— o una puerta que el enjambre no pueda atravesar a tiempo.",
    "impreso": {
     "pv": 75,
@@ -5067,7 +5156,10 @@ const DEFAULT_DB = {
      "CAR": 0
     },
     "enc": 3
-   }
+   },
+   "idea": "«La puerta era de acero. Ahora es de encaje.»",
+   "botin": "Ninguno; un frasco de nanitos inertes vale 100 cr a un ingeniero",
+   "notas": "Rara; común en ruinas tecnológicas · Número: Un grupo de 6 nubes diminutas (NA 1) · Inteligencia: alta, colectiva · Moral: No la tira\n\nLos nanitos se hicieron para reparar: máquinas del tamaño de un grano de polvo que desmontan lo roto y lo vuelven a montar. Sin órdenes, desmontan todo y no montan nada. Se mueven como una nube de humo plateado que zumbea muy bajo, y dejan las superficies perforadas con un dibujo que parece encaje. Siguen buscando a su operador, y a veces obedecen a quien lleva una pieza de su antiguo equipo.\n\nGanchos (d6):\n1 están reparando algo enorme sin que nadie se lo pida\n2 obedecen a quien lleve la placa de su ingeniero muerto\n3 se han comido la única llave de la cámara\n4 han empezado a construir otro enjambre\n5 un mercader quiere un frasco lleno, vivos\n6 uno de los personajes tiene un implante que reconocen como suyo"
   },
   "lobo": {
    "nombre": "Lobo",
@@ -5133,7 +5225,11 @@ const DEFAULT_DB = {
      "CAR": 0
     },
     "enc": 1
-   }
+   },
+   "idea": "«Uno se deja ver. Los otros cuatro, no.»",
+   "botin": "Ninguno; pieles a 2 cr cada una",
+   "senal": "Ovejas degolladas sin comer · aullidos que se contestan desde tres colinas · huellas que rodean el campamento.",
+   "notas": "Común · Número: 2d4 (manada con un Alfa) · En su guarida: 15 % · Inteligencia: animal · Moral: No la tira: se dispersan si cae el Alfa\n\nLos lobos raramente están solos y nunca atacan sin motivo: hambre, crías o un territorio invadido. Son grises con el lomo oscuro y ojos amarillos que reflejan la luz del fuego. Siguen a los viajeros durante días antes de decidirse, y los pastores saben que un lobo que se deja ver es el que distrae.\n\nGanchos (d6):\n1 la manada tiene hambre porque algo grande les quitó la caza\n2 el Alfa es blanco y los aldeanos lo creen un espíritu\n3 una loba con crías bloquea el único camino\n4 un cazador ofrece buen dinero por las pieles\n5 uno de los lobos lleva un collar: fue de alguien\n6 huyen de un incendio y pasan a través del grupo"
   },
   "esqueleto": {
    "nombre": "Esqueleto",
@@ -5204,7 +5300,11 @@ const DEFAULT_DB = {
      "CAR": -2
     },
     "enc": 1
-   }
+   },
+   "idea": "«No tiene miedo. No tiene prisa. No tiene carne.»",
+   "botin": "Armas oxidadas y monedas de enterramiento: 1d6 cr cada uno",
+   "senal": "Nichos vacíos en la cripta · huesos con armadura alineados en el suelo · un tintineo seco en la oscuridad.",
+   "notas": "Común en criptas · Número: 2d6 · En su guarida: 80 % · Inteligencia: ninguna · Moral: No la tira\n\nLos esqueletos son los muertos de una cripta que alguien despertó para guardarla, y la siguen guardando cuando ese alguien ya no está. Conservan restos de lo que llevaron en vida —un yelmo, una hebilla, un anillo en un dedo de hueso— y repiten gestos viejos: forman en fila, saludan a una puerta, vuelven a su nicho al terminar. Son un obstáculo de desgaste, no una amenaza individual.\n\nGanchos (d6):\n1 uno de ellos lleva el anillo familiar de alguien del grupo\n2 están en fila ante una puerta y no atacan si nadie la toca\n3 repiten cada noche la batalla en la que murieron\n4 un nigromante los usa de obreros en una mina\n5 solo se mueven cuando suena una campana\n6 uno conserva la voz y pide que lo entierren"
   },
   "zombie": {
    "nombre": "Zombie",
@@ -5272,7 +5372,11 @@ const DEFAULT_DB = {
      "CAR": -2
     },
     "enc": 1
-   }
+   },
+   "idea": "«Lento. Torpe. Y vuelve a levantarse.»",
+   "botin": "Lo que llevaban en vida",
+   "senal": "Puertas arañadas por fuera · un olor a tierra mojada · pisadas que arrastran un pie.",
+   "notas": "Común · Número: 1d6 (horda de 6–10 en espacios cerrados) · Inteligencia: ninguna · Moral: No la tira\n\nLos zombies son cuerpos que se niegan a quedarse quietos: por una maldición, un Axioma o algo en el agua. Caminan arrastrando los pies, con la boca abierta y los ojos blancos, y huelen a tierra mojada mucho antes de verse. Con Guardia 10 y Armadura 0 son el blanco ideal para los ataques ligeros y repetidos, que aquí rinden más que un golpe pesado. En grupos de 6 a 10 en un espacio cerrado se juegan como esbirros o como una Horda, no como zombies sueltos, y convierten el combate en gestión de recursos.\n\nGanchos (d6):\n1 la plaga empezó en un pozo y sigue en el agua\n2 uno de ellos lleva una carta que nunca llegó a entregar\n3 un pueblo entero se levantó a la vez a medianoche\n4 alguien los alimenta para que no salgan del sótano\n5 obedecen al sonido de un silbato que alguien tiene\n6 uno camina hacia su casa cada noche, y su familia le abre"
   },
   "orco": {
    "nombre": "Orco",
@@ -5335,7 +5439,11 @@ const DEFAULT_DB = {
      "CAR": 0
     },
     "enc": 2
-   }
+   },
+   "idea": "«Si cae uno, los demás pegan más fuerte.»",
+   "botin": "2d6 cr cada uno; trofeos de caza y de guerra",
+   "senal": "Fogatas grandes con huesos alrededor · tambores al anochecer · troncos marcados con el signo del clan.",
+   "notas": "Común · Número: 2d6 (banda con un Jefe de Tribu) · En su guarida: 30 % · Inteligencia: media · Moral: 12\n\nLos orcos viven en clanes que miden el honor en batallas, y entre batalla y batalla, en cicatrices. Son anchos, de piel verde grisácea y colmillos inferiores que asoman, y se pintan la cara con ceniza antes de pelear. Un orco solo es un encuentro menor; una banda con un Jefe de Tribu (NA 4) es una amenaza seria, porque abatir al Jefe obliga a toda la banda a tirar Moral. Respetan a quien les gana en duelo y comercian con quien les paga en hierro.\n\nGanchos (d6):\n1 el clan busca a un guerrero propio que se fue con los humanos\n2 un orco joven reta en duelo al más fuerte del grupo\n3 la banda escolta a su chamán hacia un lugar sagrado\n4 huyen de algo que ha destruido su campamento\n5 un señor humano les paga para hostigar a su vecino\n6 el Jefe de Tribu quiere un trato y lo cumplirá"
   },
   "oso_pardo": {
    "nombre": "Oso Pardo",
@@ -5410,7 +5518,11 @@ const DEFAULT_DB = {
      "CAR": 0
     },
     "enc": 3
-   }
+   },
+   "idea": "«No vino a por ti. Tú viniste a por él.»",
+   "botin": "Ninguno; la piel vale 20 cr",
+   "senal": "Cortezas arañadas a dos metros de altura · colmenas destrozadas · un olor fuerte a almizcle.",
+   "notas": "Infrecuente · Número: 1 (con 1d2 crías) · En su guarida: 25 % · Inteligencia: animal · Moral: No la tira\n\nEl oso pardo es una amenaza de territorio, no de mazmorra. Aparece porque el grupo entró en su zona, porque hay crías cerca o porque guarda, sin saberlo, algo que el grupo necesita. Es enorme, de pelo castaño con las puntas plateadas, y se levanta sobre dos patas para mirar antes de cargar. Con crías cerca, el encuentro se vuelve un dilema: matar a un animal que defiende a los suyos. No acercarse a las crías es la mejor protección.\n\nGanchos (d6):\n1 tiene una flecha vieja clavada y ataca a cualquier humano\n2 duerme en la cueva que el grupo necesita atravesar\n3 sus crías están atrapadas en una trampa de cazador\n4 es el oso de un circo que escapó y sabe hacer trucos\n5 un druida lo protege y pide que no le hagan daño\n6 está enfermo y bajó al pueblo por hambre"
   },
   "azotamente": {
    "nombre": "Azotamente",
@@ -5517,7 +5629,11 @@ const DEFAULT_DB = {
      "CAR": 1
     },
     "enc": 11
-   }
+   },
+   "idea": "«Sabía lo que ibas a hacer. Por eso ya no puedes hacerlo.»",
+   "botin": "Objetos de sus víctimas: 5d6 × 10 cr y 1d2 objetos mágicos",
+   "senal": "Gente que repite frases sin sentido · cadáveres con el cráneo abierto y vacío · un zumbido que solo oyen los que tienen Fuente.",
+   "notas": "Muy rara · Número: 1 (con 1d4 esclavos) · En su guarida: 70 % · Inteligencia: genial · Moral: 17\n\nEl azotamente es una figura humana alta, de piel violácea y húmeda, con una cabeza de pulpo y cuatro tentáculos donde debería tener la boca. Vive bajo tierra, en ciudades de esclavos que no saben que lo son, y se alimenta de cerebros. Es una amenaza de conocimiento, no de fuerza: abre desde la sombra, apresa a quien quedó Aturdido y en su siguiente turno le extrae el cerebro. Un grupo que no lo esperaba puede perder a alguien en dos rondas; uno que trae protección mental, se separa y lo derriba antes de su segundo turno tiene una pelea dura pero ganable. Vuela, y eso complica que el Audaz lo ancle.\n\nGanchos (d6):\n1 uno de sus esclavos es alguien a quien el grupo busca\n2 ha perdido su colonia y busca una nueva\n3 quiere comerciar: secretos a cambio de cerebros de condenados\n4 lleva años dentro de la cabeza de un noble\n5 huye de otros de su especie\n6 ha leído la mente de un personaje y conoce su mayor secreto"
   },
   "gigante_de_la_tormenta": {
    "nombre": "Gigante de la Tormenta",
@@ -5608,7 +5724,11 @@ const DEFAULT_DB = {
      "CAR": 2
     },
     "enc": 15
-   }
+   },
+   "idea": "«Puede aplastarte. Prefiere escucharte, si tienes algo que decir.»",
+   "botin": "Los Brazaletes del Trueno (Raro) y 3.000 cr en la guarida",
+   "senal": "Tormentas que nacen en un cielo despejado · árboles partidos por el rayo en línea recta · huellas que se llenan de agua de lluvia.",
+   "notas": "Muy rara · Número: 1 · En su guarida: 60 % · Inteligencia: alta · Moral: 18\n\nLos gigantes de la tormenta viven en cumbres y en islas que nadie visita, y miden lo que una torre. Tienen la piel gris azulada, el pelo blanco y largo como espuma, y la voz suena como un trueno lejano. Es un jefe de arco, no un encuentro de pasillo. Lo que lo hace interesante no son sus números: puede hablar y tiene motivos. Un gigante al que el grupo intenta matar es un combate difícil; uno al que el grupo descubre protegiendo un valle de su tribu, y con el que puede negociar, es una campaña. Lleva los Brazaletes del Trueno (Raro): +2 al ataque, ya incluido, y +1d6 de Rayo a su mazo. Si cae, son botín.\n\nGanchos (d6):\n1 protege el valle de su tribu y cree que el grupo viene a robarlo\n2 busca a su hija, raptada por un mago\n3 un rey le debe un juramento roto hace un siglo\n4 está viejo y quiere un heredero digno de los brazaletes\n5 una flota naufragó en su isla y él guarda a los supervivientes\n6 la tormenta no es suya: alguien la provoca para que le echen la culpa"
   },
   "licantropo": {
    "nombre": "Licántropo",
@@ -5660,7 +5780,7 @@ const DEFAULT_DB = {
    "debiles": [
     "CON"
    ],
-   "notas": "Forma humana (NA 2). PV 48 · Guardia 14 · Armadura 1 · Velocidad 40 pies · Iniciativa +2 · Ataque +4 · Daño 2d6+5 (arma) · CD 13 · Moral 12. Sin Regeneración, sin inmunidad y sin Maldición de la Luna. Cambiar de forma cuesta 2 PA; los PV perdidos se conservan.",
+   "notas": "Rara · Número: 1 (a veces una familia de 1d4) · En su guarida: 30 % · Inteligencia: media · Moral: 14 (12 en forma humana)\n\nEl hombre lobo funciona mejor cuando el grupo lo conoce como persona antes de saber lo que es: el herrero amable, la viuda del molino, el niño del posadero. En forma de lobo es una bestia alta y encorvada, de pelo del mismo color que su cabello humano. La presión real es de campaña: no si el grupo puede matarlo, sino si quiere, si puede curarlo y qué pasa si uno de ellos contrajo la maldición.\n\nGanchos (d6):\n1 es alguien que ayudó al grupo hace dos sesiones\n2 sabe lo que es y pide que lo encadenen antes de la luna\n3 una cura existe, pero está en el templo de otra fe\n4 su manada son los guardias del pueblo\n5 uno de los personajes ya tiene síntomas\n6 el cazador que lo persigue es peor que él\n\nForma humana (NA 2). PV 48 · Guardia 14 · Armadura 1 · Velocidad 40 pies · Iniciativa +2 · Ataque +4 · Daño 2d6+5 (arma) · CD 13 · Moral 12. Sin Regeneración, sin inmunidad y sin Maldición de la Luna. Cambiar de forma cuesta 2 PA; los PV perdidos se conservan.",
    "proteccion": "Plata o daño mágico para atravesar su inmunidad; acónito bebido antes da Ventaja contra la Maldición de la Luna.",
    "contexto": "El hombre lobo es el encuentro que funciona mejor cuando el grupo lo conoce como persona antes de saber que es lo que es. Mecánicamente, la combinación de Regeneración (8 PV por turno) e Inmunidad a daño no mágico sin plata obliga al grupo a tener la herramienta correcta o gestionar el combate de forma inusual: el daño de Axiomas y el daño mágico sí aplican, lo que convierte al Sagaz en el combatiente más efectivo por primera y probablemente única vez en el arco. La Maldición de la Luna es la presión de campaña real: la cuestión no es si el grupo puede matar al hombre lobo, sino si quiere hacerlo, si puede curarlo, y qué pasa si un miembro del grupo contrajo la Maldición.",
    "impreso": {
@@ -5682,7 +5802,10 @@ const DEFAULT_DB = {
      "CAR": 1
     },
     "enc": 4
-   }
+   },
+   "idea": "«Era el herrero. Era amable. Era él.»",
+   "botin": "Lo que tenga en su vida humana",
+   "senal": "Ganado muerto en noches de luna llena · un vecino que siempre está enfermo esos días · huellas que cambian de pie a garra a mitad del camino."
   },
   "caballero_de_la_muerte": {
    "nombre": "Caballero de la Muerte",
@@ -5801,7 +5924,11 @@ const DEFAULT_DB = {
      "CAR": 5
     },
     "enc": 11
-   }
+   },
+   "idea": "«Fue un héroe. Juró algo. Lo rompió.»",
+   "botin": "Las Placas Negras (Muy Raro) y el tesoro de su antigua orden",
+   "senal": "Una orden de caballería extinguida · flores frescas en una tumba que nadie visita · un caballo negro sin jinete en el camino.",
+   "notas": "Muy rara · Número: 1 (con su guardia de esqueletos) · En su guarida: 80 % · Inteligencia: alta · Moral: 19\n\nUn caballero de la muerte fue un héroe: tiene nombre, tumba y una razón por la que no está en paz. Viste unas placas negras que susurran el juramento que rompió —las Placas Negras (Muy Raro), +2 de Armadura, ya incluido— y sus ojos son dos brasas frías dentro del yelmo. Con Guardia 17 y Armadura 6, el Esfuerzo volcado en daño y las armas Penetrantes rinden mucho más que los ataques pequeños. El grupo que descubre su historia tiene otra salida: redimirlo o liberarlo. Si lo intenta y falla, el combate pesa más.\n\nGanchos (d6):\n1 juró proteger una ciudad que lo traicionó\n2 su espada rota está en manos de un personaje\n3 busca a alguien que le recuerde su nombre\n4 su antigua orden quiere ocultar lo que pasó\n5 solo pelea de noche y de día es una estatua en su capilla\n6 quiere que alguien termine lo que él no pudo"
   },
   "jefe_de_tribu": {
    "nombre": "Jefe de Tribu",
@@ -5870,7 +5997,11 @@ const DEFAULT_DB = {
      "CAR": 3
     },
     "enc": 4
-   }
+   },
+   "idea": "«No vino a ganar el duelo. Vino a que su banda gane la batalla.»",
+   "botin": "El Hacha del Clan (Infrecuente) y el tesoro del clan: 4d6 × 10 cr",
+   "senal": "Un tótem nuevo en la entrada del valle · la banda canta su nombre al marchar · cabezas de rivales en estacas.",
+   "notas": "Infrecuente · Número: 1 (con su banda) · En su guarida: 50 % · Inteligencia: media · Moral: 14\n\nEl Jefe de Tribu se queda un paso por detrás de la primera línea y dirige el ataque hacia quien quede expuesto. Lleva el Hacha del Clan (Infrecuente): +1 al ataque, ya incluido; quien la lleve después habla por el clan, le guste o no. Ganó su puesto en un duelo y lo defiende cada invierno, y la mitad de su banda espera que alguien lo mate para ocupar su lugar.\n\nGanchos (d6):\n1 su rival dentro del clan ofrece ayuda al grupo para derribarlo\n2 busca una alianza contra un enemigo común\n3 su hijo está prisionero en la ciudad\n4 el clan pasa hambre y él no sabe cómo decírselo\n5 quiere retar en duelo al líder del grupo\n6 el hacha del clan fue robada y la busca"
   },
   "acolito_de_la_ceniza": {
    "nombre": "Acólito de la Ceniza",
@@ -5937,7 +6068,11 @@ const DEFAULT_DB = {
      "CAR": 3
     },
     "enc": 3
-   }
+   },
+   "idea": "«No pega. Sostiene a los que pegan.»",
+   "botin": "Ofrendas del culto: 2d6 × 10 cr y un símbolo de hierro",
+   "senal": "Marcas de ceniza en las puertas · hogueras apagadas en círculo · gente con la frente sucia que no se lava.",
+   "notas": "Infrecuente · Número: 1d3 (con guerreros de su culto) · En su guarida: 40 % · Inteligencia: media · Moral: 13\n\nLos acólitos de la ceniza sirven a un fuego que no calienta: un culto que cree que el mundo debe arder para empezar limpio. Visten túnicas grises, se marcan la frente con ceniza cada mañana y no hablan con quien no lleva la marca. Colócalo detrás de dos Arrolladores y deja que cure cada ronda: el grupo aprende enseguida que el enemigo que no ataca es el que más importa.\n\nGanchos (d6):\n1 el culto ha captado a alguien de la familia de un personaje\n2 preparan una quema en la plaza del pueblo\n3 uno de ellos quiere dejar el culto y pide protección\n4 su sumo sacerdote es un noble respetado\n5 buscan una reliquia que el grupo lleva sin saberlo\n6 el fuego que adoran existe, y está despertando"
   },
   "batidor": {
    "nombre": "Batidor",
@@ -5999,7 +6134,11 @@ const DEFAULT_DB = {
      "CAR": 0
     },
     "enc": 2
-   }
+   },
+   "idea": "«No vino a pelear. Vino a ver cuántos sois.»",
+   "botin": "1d6 cr y un mapa de la zona con marcas",
+   "senal": "Ramas rotas a la altura de los ojos · una hoguera apagada con tierra · un pájaro que no deja de chillar en la misma rama.",
+   "notas": "Común · Número: 1d2 · Inteligencia: media · Moral: 12\n\nEl Batidor casi nunca es el combate: es lo que decide si hay combate. Viste de pardo, lleva arco corto y poca carga, y conoce la zona mejor que nadie. Ponlo antes del encuentro principal y deja que el grupo decida si lo persigue (p. 42), lo deja ir o lo espera en una emboscada. Un batidor capturado sabe mucho y dice poco, salvo que le ofrezcan algo mejor que su paga.\n\nGanchos (d6):\n1 trabaja para el enemigo del grupo y lleva su sello\n2 es un niño que hace de explorador para su aldea\n3 busca al grupo para entregarle un mensaje\n4 huye de su propio bando y quiere desertar\n5 lleva días siguiendo al grupo y sabe sus nombres\n6 es el único superviviente de una patrulla"
   },
   "enjambre_de_ratas": {
    "nombre": "Enjambre de Ratas",
@@ -6087,7 +6226,11 @@ const DEFAULT_DB = {
      "CAR": -2
     },
     "enc": 3
-   }
+   },
+   "idea": "«Una rata es una molestia. Mil son un problema de Raciones.»",
+   "botin": "Ninguno",
+   "senal": "Sacos de grano roídos · un chillido que sube por las paredes · gatos que se niegan a bajar al sótano.",
+   "notas": "Común · Número: Una horda de seis ratas (NA 1) · Inteligencia: animal · Moral: No la tira\n\nEl enjambre enseña el valor del área: una antorcha o un Axioma bien colocado vale más que tres espadas. En un pasillo estrecho es un obstáculo; en una bodega con víveres son 1d6 Raciones perdidas si nadie lo espanta a tiempo. Salen de las cloacas cuando sube el agua o cuando algo más grande caza ahí abajo.\n\nGanchos (d6):\n1 huyen de algo que caza en las cloacas\n2 un flautista ofrece librar al pueblo de ellas a cambio de un precio\n3 llevan una enfermedad que ya tiene a tres enfermos\n4 una rata enorme las dirige\n5 se han comido las provisiones del grupo esa noche\n6 un alquimista las cría para sus experimentos"
   }
  },
  "tablas": {

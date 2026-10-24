@@ -52,6 +52,10 @@ def extraer(nombre):
 M = extraer('Stars_and_Sorcery_Manual_de_Monstruos_v1.docx')
 G = extraer('Stars_and_Sorcery_Guia_del_Director_v1.docx')
 MB = extraer('Stars_and_Sorcery_Manual_Basico_v1.docx')
+# Las piezas del bestiario (Rasgos separados) salen de una copia fija: ver
+# la cabecera de herramientas/bestiario_piezas.txt
+with open(os.path.join(RAIZ, 'herramientas', 'bestiario_piezas.txt'), encoding='utf-8') as f:
+    BP = [l for l in f.read().split('\n') if not l.startswith('# ')]
 
 
 def slug(s):
@@ -731,6 +735,7 @@ def leer_encuentro(c, imp, txt):
     todos = [int(x) for x in re.findall(r'(?:NA |, )(\d+)', txt)]
     imp['enc'] = todos[-1] if todos else None
 BEST = {}
+M_ACTUAL, M = M, BP   # el bucle lee la copia fija; M vuelve a ser el Manual al acabar
 i0 = find(M, '#Heading1 Bestiario')
 i1 = find(M, '#Heading1 Referencia rápida')
 j = i0
@@ -815,6 +820,7 @@ while j < i1:
         j = k
     else:
         j += 1
+M = M_ACTUAL
 
 # Vuelo y trepar: la velocidad concreta del bestiario va en la nota del Rasgo
 VEL_NOTA = {'dron_centinela': ('vuelo', '30 pies'), 'fuego_fatuo': ('vuelo', '30 pies'), 'arpia': ('vuelo', '40 pies'),
@@ -833,8 +839,9 @@ GUIA_TT = {  # el tipo no viene en la Guía: se asigna por lo que la criatura es
     'Acólito de la Ceniza': ('humanoide', 'mediano'), 'Batidor': ('humanoide', 'mediano'), 'Enjambre de Ratas': ('bestia', 'diminuto'),
 }
 ICONO_TIPO = {'[t_pasivo]': 'Rasgo', '[t_disparador]': 'Reacción', '[t_modificador]': 'Modificador', '✦': 'Aptitud'}
+G_ACTUAL, G = G, BP
 i0 = find(G, '#Heading1 Bestiario básico')
-i1 = find(G, '#Heading1 Referencia del Director')
+i1 = find(G, '#Heading1 Referencia del Director', i0)
 j = i0
 while j < i1:
     if G[j].startswith('#Heading2 '):
@@ -897,6 +904,83 @@ while j < i1:
         j = k
     else:
         j += 1
+G = G_ACTUAL
+
+
+# ──────────── Bestiario tal como lo escriben hoy el Manual y la Guía ────────────
+# Desde el 24-10-2026 (01:35) cada criatura abre con una frase y una tabla
+# (Rareza, Número, En su guarida, Botín, Inteligencia, Tamaño y tipo, NA y Rol,
+# Moral), sigue con su línea de combate y sus atributos, los Rasgos en
+# párrafos, su descripción, Señales y una tabla de ganchos d6. Las cifras se
+# comparan con las de la copia fija; lo demás va a la ficha.
+def leer_actual(L, i0, i1, nivel, fuente):
+    j = i0
+    while j < i1:
+        m = re.match(r'#' + nivel + r' (.+?) \((?:Horda de )?NA (\d+)', L[j])
+        if not m:
+            j += 1; continue
+        nombre = m.group(1).split(' / ')[0]
+        k = j + 1
+        fin = next(x for x in range(k, i1 + 1) if x == i1 or L[x].startswith('#Heading'))
+        B = L[k:fin]
+        j = fin
+        key = slug(nombre)
+        c = BEST.get(key)
+        if not c:
+            errores.append((nombre, 'criatura nueva en el ' + fuente + ': falta en bestiario_piezas.txt')); continue
+        assert B[0].startswith('«'), (nombre, B[0])
+        c['idea'] = B[0]
+        filas = [cells(x) for x in B if x.startswith('ROW: |')]
+        assert filas[0] == ['Rareza', 'Número', 'En su guarida', 'Botín'] and filas[2] == ['Inteligencia', 'Tamaño y tipo', 'NA · Rol', 'Moral'], (nombre, filas[:3])
+        rareza, numero, guarida, botin = filas[1]
+        intel, tamtipo, narol, moral = filas[3]
+        c['botin'] = botin
+        datos = [rareza, 'Número: ' + numero]
+        if guarida != '—': datos.append('En su guarida: ' + guarida)
+        datos.append('Inteligencia: ' + intel[0].lower() + intel[1:])
+        datos.append('Moral: ' + moral)
+        # Las cifras impresas tienen que ser las de la copia fija
+        ic = next(i for i, x in enumerate(B) if re.match(r'(?:Forma \w+ · )?Guardia \d+ · ', x))   # el licántropo: «Forma lobo · Guardia…»
+        lin, at = B[ic], B[ic + 1]
+        imp = c['impreso']
+        for et, pat, val in [('PV', r'PV (\d+)', imp['pv']), ('Guardia', r'Guardia (\d+)', imp['g']), ('Armadura', r'Armadura (\d+)', imp['a']),
+                             ('Iniciativa', r'Iniciativa ([+−]\d+)', imp['ini']), ('Ataque', r' ([+−]\d+)(?: a [^,]+)?, \d+d', imp['atk']),
+                             ('CD', r'CD (\d+)', imp['cd'])]:
+            mm = re.search(pat, lin)
+            if not mm or num(mm.group(1)) != val:
+                errores.append((nombre, et + ' impreso cambia', val, mm.group(1) if mm else None))
+        md = re.search(r', (\d+d\d+[+−]?\d*(?: y \d+d\d+[+−]?\d*)?)', lin)
+        if not md or md.group(1).replace('−', '-') != imp['dano'].replace('−', '-'):
+            errores.append((nombre, 'Daño impreso cambia', imp['dano'], md.group(1) if md else None))
+        attrs = dict((a, num(v)) for a, v in re.findall(r'\b(FUE|DES|CON|INT|SAB|CAR) ([+−]\d+)', at))
+        if attrs != imp['attrs']:
+            errores.append((nombre, 'atributos impresos cambian', imp['attrs'], attrs))
+        # Después de los Rasgos: la descripción, «Encuentro.» y «Señales.»
+        resto = [x for x in B[ic + 2:] if not x.startswith('ROW: |')]
+        isen = next(i for i, x in enumerate(resto) if x.startswith('Señales. '))
+        c['senal'] = resto[isen][9:]
+        ienc = next((i for i, x in enumerate(resto) if x.startswith('Encuentro. ')), None)
+        if ienc is not None:
+            e = re.findall(r'(?:NA |, |y )(\d+)', resto[ienc])
+            if not e or int(e[-1]) != imp['enc']:
+                errores.append((nombre, 'línea «Encuentro» cambia', imp['enc'], resto[ienc][:80]))
+        desc = resto[min(x for x in (isen, ienc) if x is not None) - 1]
+        ganchos = [f'{f[0]} {f[1]}' for f in filas[5:] if len(f) == 2 and f[0].isdigit()] if len(filas) > 5 and filas[4] == ['d6', 'Gancho'] else []
+        if len(ganchos) != 6:
+            errores.append((nombre, 'ganchos', len(ganchos)))
+        notas = [' · '.join(datos), desc]
+        if ganchos: notas.append('Ganchos (d6):\n' + '\n'.join(ganchos))
+        if c.get('notas'): notas.append(c['notas'])
+        c['notas'] = '\n\n'.join(notas)
+        c['actual'] = True
+
+
+leer_actual(M, find(M, '#Heading1 Bestiario'), find(M, '#Heading1 Referencia rápida'), 'Heading3', 'Manual de Monstruos')
+gi = find(G, '#Heading1 Bestiario básico')
+leer_actual(G, gi, find(G, '#Heading1 Referencia del Director', gi), 'Heading2', 'Guía')
+for k, c in BEST.items():
+    if not c.pop('actual', False):
+        errores.append((c['nombre'], 'ya no está en el bestiario del Manual ni de la Guía'))
 print('bestiario:', len(BEST))
 for e in errores:
     print('  AVISO', e)

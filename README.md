@@ -4,6 +4,24 @@ La app hermana de **S&S Companion** para quien dirige *Stars & Sorcery*: crea
 amenazas, calibra encuentros y genera botín, zonas y facciones. PWA estática:
 sin build, sin dependencias, funciona sin conexión.
 
+## Novedades v1.4.1 — Manuales del 24-10-2026 (01:35)
+
+`CACHE_VERSION` es `ss-director-v22` y `RULES_DATA_VERSION`,
+`v1-monstruos-guia-r15`.
+
+- **Bestiario con más datos**: las 44 criaturas del Manual y de la Guía traen
+  ahora su frase (va en la idea), su botín y sus señales tal como los escribe
+  el Manual. En Notas van su rareza, número, guarida, inteligencia y Moral, su
+  descripción y sus seis ganchos (d6).
+- **Los Rasgos siguen separados**: el Manual los escribe ahora agrupados en
+  párrafos («El garrote.», «La manada.»), sin marcar los de especie. La app
+  conserva la ficha anterior, con cada Rasgo y su Potencial, porque el NA del
+  encuentro se calcula con ellos. Esa ficha está en
+  `herramientas/bestiario_piezas.txt`. El generador comprueba que las cifras
+  impresas hoy (PV, Guardia, Armadura, Iniciativa, ataque, daño, CD, atributos
+  y la línea «Encuentro») sigan siendo las de esa copia, y avisa si cambian.
+- Reglas, fórmulas y tablas no cambian en esta entrega.
+
 ## Novedades v1.4 — Manuales del 23-10-2026
 
 `CACHE_VERSION` es `ss-director-v21` y `RULES_DATA_VERSION`,
