@@ -145,7 +145,7 @@ Object.assign(app, {
     const nov = this.h('div', 'set-row dir-fila-toggle');
     const txt = this.h('div', 'set-row-txt');
     txt.append(this.h('span', 'set-lbl', 'Jugadores que empiezan'),
-      this.h('span', 'set-hint', 'La tabla supone jugadores que conocen sus fichas y usan el Esfuerzo; si empiezan, −1 NA en cada dificultad. Una jornada de solo uno o dos combates sube un escalón: si se dan las dos cosas, se compensan.'));
+      this.h('span', 'set-hint', 'La tabla supone jugadores que conocen sus fichas y usan el Esfuerzo; si empiezan, −1 NA en cada dificultad.'));
     const tg = this.h('button', 'toggle-btn'); tg.type = 'button';
     tg.setAttribute('aria-pressed', String(!!g.novatos));
     tg.setAttribute('aria-label', 'Jugadores que empiezan');
@@ -774,7 +774,7 @@ Object.assign(app, {
     acc.appendChild(this._boton(this._ico('i-d20') + 'Trampa al azar', () => this.trampaAlAzar()));
     host.appendChild(acc);
     if (this.mesa.trampaUlt) host.appendChild(this.h('p', 'dir-resultado u-pre-wrap', this.mesa.trampaUlt));
-    host.appendChild(this.h('p', 'dir-nota', 'Detectarla: Percepción o Investigación contra la CD. Desactivarla: Herramientas de Ladrón o Tecnología. Un fallo por 5 o más la dispara. Toda amenaza tiene señal: descríbela antes de que el grupo llegue a la condición.'));
+    host.appendChild(this.h('p', 'dir-nota', 'Detectarla: Percepción o Investigación contra la CD. Desactivarla: Mecanismos o Tecnología. Un fallo por 5 o más la dispara. Toda amenaza tiene señal: descríbela antes de que el grupo llegue a la condición.'));
     host.appendChild(this.h('span', 'fl dir-ref-t', 'Biblioteca de peligros'));
     const lista = this.h('div', 'dir-lista');
     Object.entries(this.DB.peligros).sort((a, b) => a[1].na - b[1].na).forEach(([k, p]) => {

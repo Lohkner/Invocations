@@ -2992,7 +2992,7 @@ const DEFAULT_DB = {
     },
     {
      "id": "bloqueador",
-     "txt": "Con su Reacción de la ronda, en lugar de Custodia: bloquea con 1d20 + 6 contra el total de un ataque (Bloqueo Enfrentado, Manual Básico, Cap. 9)."
+     "txt": "Una vez por ronda, bloquea con 1d20 + 6 contra el total del ataque."
     },
     {
      "id": "formacion",
@@ -6636,7 +6636,7 @@ const DEFAULT_DB = {
     "Encuentro — Aparece una amenaza. Tira Reacción (2d10) para la actitud inicial. No necesariamente hostil.",
     "Indicio — Huellas, ruidos, olor, rastro visual. Avisa de peligro sin desencadenarlo.",
     "Recurso — Pierde 1 Ración o 1d4 proyectiles si son lo que más importa (se mojan, se estropean, se caen); si no, tira el Ud del recurso más relevante (agua, luz, herramientas).",
-    "Entorno — Cambio climático, trampa ambiental, fluctuación del poder, inundación parcial.",
+    "Entorno — Cambio climático, trampa ambiental, fluctuación del poder.",
     "Luz — Tira el Ud de la fuente de luz activa del grupo.",
     "Calma — El tiempo transcurre sin incidentes. El grupo avanza."
    ]
@@ -6912,7 +6912,7 @@ const DEFAULT_DB = {
    "d6": "1–2",
    "na": "0–2",
    "sintonia": "No requiere",
-   "nivel": "Cualquier nivel. Consumibles, herramientas menores, munición encantada (p. ej., un tónico de curandero: 1d8 + 2 PV, Usar Objeto 1 PA, 25 cr).",
+   "nivel": "Cualquier nivel. Consumibles, herramientas menores, munición encantada.",
    "props": 0,
    "atk": "—",
    "def": "—",

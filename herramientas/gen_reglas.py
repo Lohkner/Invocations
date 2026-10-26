@@ -1004,8 +1004,7 @@ assert list(ENC) == ['1-2', '3-4', '5-6', '7-8', '9-10'], list(ENC)
 # «Con cinco o seis, suma 1 a cada casilla; con dos o tres, resta 1.» Nada dice de un
 # personaje solo: se le resta 2.
 find(M, 'Con cinco o seis, suma 1 a cada casilla; con dos o tres, resta 1')
-find(M, 'con jugadores que empiezan, diseña un escalón por debajo')
-find(M, 'Si la jornada va a tener solo uno o dos combates, diseña cada uno un escalón por encima. Si se dan las dos cosas, se compensan.')
+find(M, 'con jugadores que empiezan, baja un escalón')
 GRUPO_AJUSTE = {'1': -2, '2': -1, '3': -1, '4': 0, '5': 1, '6': 1}
 # El cálculo va en el código (js/amenaza.js → naEnc y js/mesa.js → _naDeLineas;
 # js/asistente.js → varias iguales). Si el Manual cambia la regla, esto avisa.
@@ -1013,7 +1012,7 @@ for frase in ['ROW: | Es un jefe | +3; +4 desde NA 6', 'ROW: | Es Enorme o Colos
               'ROW: | Se pasa de su Potencial | +1 por cada 2 puntos',
               'a 0 o 1 NA, 1; a 2 o 3, ½; a 4, ¼; a 5 o más, no cuenta',
               'con 1½, +2; con 2, +3; con 3, +4; con 4 o 5, +6; con 6 o 7, +7; con 8 o más, +9',
-              'Cuatro esbirros cuentan como una criatura de su NA (dos, como media; uno, como un cuarto), y una horda usa su NA efectivo',
+              'Cuatro esbirros cuentan como una criatura de su NA, y una horda usa su NA efectivo',
               'réstale al NA de la casilla: con dos, 3; con tres, 4; con cuatro o cinco, 6; con seis o siete, 7; con ocho o más, 9']:
     find(M, frase)
 

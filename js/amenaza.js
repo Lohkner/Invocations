@@ -844,7 +844,7 @@ Object.assign(app, {
     v.appendChild(g);
     v.appendChild(this.h('p', 'dir-nota', S.noMoral
       ? 'No tira Moral: huye o se detiene cuando la pelea deja de tener sentido para ella.'
-      : 'Moral: tira 2d10; si supera la Puntuación (no basta igualar), rompe. Compruébala al caer su líder, al perder la mitad del grupo o tras un golpe que le quite media vida.'));
+      : 'Moral: tira 2d10; si supera la Puntuación, rompe. Compruébala al caer su líder, al perder la mitad del grupo o tras un golpe que le quite media vida.'));
   },
   tirarMoral(puntuacion, etiqueta) {
     const a = this._d(10), b = this._d(10);
