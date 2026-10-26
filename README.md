@@ -4,6 +4,21 @@ La app hermana de **S&S Companion** para quien dirige *Stars & Sorcery*: crea
 amenazas, calibra encuentros y genera botín, zonas y facciones. PWA estática:
 sin build, sin dependencias, funciona sin conexión.
 
+## Novedades v1.4.2 — Manuales del 26-10-2026
+
+`CACHE_VERSION` es `ss-director-v23` y `RULES_DATA_VERSION`,
+`v1-monstruos-guia-r16`.
+
+- **Mercenario Veterano**: su Bloqueo usa ahora la Reacción de la ronda, en
+  lugar de la Custodia (Bloqueo Enfrentado del Manual Básico).
+- **Moral**: rompe si la tirada supera la Puntuación; igualarla no basta.
+- **Jugadores que empiezan**: la nota recuerda que una jornada de solo uno o
+  dos combates sube un escalón, y que las dos cosas se compensan.
+- Textos de la Guía que salen solos: «Entorno» en las complicaciones
+  (inundación parcial) y el ejemplo de objeto Común (tónico de curandero).
+- El Manual aclara que dos esbirros cuentan como media criatura y uno como un
+  cuarto: la app ya los contaba así.
+
 ## Novedades v1.4.1 — Manuales del 24-10-2026 (01:35)
 
 `CACHE_VERSION` es `ss-director-v22` y `RULES_DATA_VERSION`,

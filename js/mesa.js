@@ -145,7 +145,7 @@ Object.assign(app, {
     const nov = this.h('div', 'set-row dir-fila-toggle');
     const txt = this.h('div', 'set-row-txt');
     txt.append(this.h('span', 'set-lbl', 'Jugadores que empiezan'),
-      this.h('span', 'set-hint', 'La tabla supone jugadores que conocen sus fichas y usan el Esfuerzo; si empiezan, −1 NA en cada dificultad.'));
+      this.h('span', 'set-hint', 'La tabla supone jugadores que conocen sus fichas y usan el Esfuerzo; si empiezan, −1 NA en cada dificultad. Una jornada de solo uno o dos combates sube un escalón: si se dan las dos cosas, se compensan.'));
     const tg = this.h('button', 'toggle-btn'); tg.type = 'button';
     tg.setAttribute('aria-pressed', String(!!g.novatos));
     tg.setAttribute('aria-label', 'Jugadores que empiezan');
