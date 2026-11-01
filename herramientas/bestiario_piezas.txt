@@ -275,6 +275,20 @@ Fotosensible. En luz brillante, Desventaja en ataques y Percepción.
 Protección. Luz brillante, y Voluntad de Hierro o un Axioma de protección mental: Ventaja contra su Voz y su Dominar; quien falla con Ventaja queda solo Encantado.
 Señal. Gente que repite frases que no son suyas; dibujos idénticos hechos por desconocidos.
 Contexto táctico. Pelea con el grupo contra el grupo. Sabe lo que van a hacer y usa a uno de ellos para impedirlo. La luz y la distancia son las únicas armas que no puede volver en su contra.
+#Heading3 Deva (NA 7)
+Extraplanar · Mediano · Soporte · PV 93 · Guardia 15 · Armadura 3 · Velocidad 30 pies, vuelo 90 pies · Iniciativa +1 · Ataque +5 · Daño 3d6 y 2d6 Radiante (maza de luz) · PA 4 · CD 19 · Moral 17
+FUE +1 · DES +1 · CON −2 · INT +1 · SAB +4 · CAR +4 · Salvaciones fuertes: SAB +8, CAR +8
+(Telepatía; Resistencia a Radiante y Necrótico.) Restaurar (2 PA): un aliado a 30 pies recupera 1d8 PV o se libra de un estado.
+Visión Verdadera (especie, definitoria). Ve a través de ilusiones, invisibilidad y cambios de forma hasta 60 pies.
+Vuelo. Vuela a 90 pies.
+Cambiaformas. Adopta a voluntad una forma mortal corriente (0 PA), en la que conserva sus estadísticas.
+Toque Sanador. 3 PA · Ud6: toca a una criatura y le devuelve 1 punto de Flesh; contra un no-muerto, el toque hace 4d6 Radiante (Salvación CON CD 19 mitad).
+Uso de Axiomas. Conoce tres Axiomas de Divinidad de hasta Nivel 4: Curar Heridas Graves, Protección del Mal 30 pies y Lenguas; CD 19, Reserva 35, Esfuerzo hasta 2.
+El Mensaje. Mientras no haya entregado su mensaje, no ataca primero ni abandona la escena: se defiende, cura y espera. Quien lo escucha entero, sin interrumpirlo, tiene Ventaja en su siguiente tirada relacionada con él.
+Nombre Verdadero. Quien pronuncia el nombre con que fue creado le hace una pregunta que debe responder con la verdad.
+Aversión. No puede herir a quien le ofrece hospitalidad sincera bajo su techo.
+Encuentro. Cuenta como NA 8 al calcular el encuentro: 7, más 1 por sus Axiomas.
+Contexto táctico. No viene a pelear: viene a avisar. Si el grupo lo ataca antes de escucharlo, se defiende y cura a quien proteja, pero el mensaje sigue sin entregarse.
 #Heading3 Vampiro Señorial (NA 8)
 No-muerto · Mediano · Comandante · PV 150 · Guardia 17 · Armadura 4 · Velocidad 30 pies · Iniciativa +2 · Ataque +8 · Daño 3d6+4 y 2d6+4 Perforante y Necrótico (mordisco) · PA 4 · CD 20 · Moral 18
 FUE +4 · DES +2 · CON +2 · INT +2 · SAB +2 · CAR +4 · Salvaciones fuertes: CAR +8, FUE +8
@@ -328,7 +342,7 @@ Pavor (especie). Aura de 30 pies: la primera vez que una criatura entra o empiez
 Invocar Aliados (racial mayor). 3 PA · 1/combate: al final de su turno se levantan 1d4 no-muertos de NA 5, que actúan justo después de él. Se anuncia una ronda antes.
 Toque Paralizante (especie, definitoria). Su toque obliga además a una Salvación CON CD 25 o queda Paralizado (Ud4).
 Resistencia Legendaria. Ud6: cuando falla una Salvación, puede superarla igualmente.
-Uso de Axiomas (especie). Conoce seis Axiomas de hasta Nivel 5 (Erudición): Relámpago, Cono de Frío, Muro de Fuerza, Detener Monstruo, Animar Muerto y Puerta Dimensional; CD 25, Reserva 60.
+Uso de Axiomas (especie). Conoce seis Axiomas de hasta Nivel 5 (Erudición): Relámpago, Cono de Frío, Muro de Fuerza, Detener Monstruo, Animar Muerto y Puerta Dimensional; CD 25, Reserva 60, Esfuerzo hasta 3 (jefe).
 Contraaxioma. Reacción · Ud6: anula un Axioma de Nivel 5 o menos usado a 60 pies.
 Filacteria (especie). Mientras no se destruya su filacteria, vuelve a formarse junto a ella en 1d4 días. Encontrarla y destruirla es la verdadera aventura.
 Acción de Jefe. Al final del turno de cada personaje, gasta 1 PA de su siguiente turno (máx. 2 por ronda).
@@ -344,7 +358,7 @@ Dragón · Colosal · Arrollador · Jefe · PV 510 · Guardia 14 · Armadura 7 �
 FUE +8 · DES −2 · CON +7 · INT +5 · SAB +2 · CAR +2 · Salvaciones fuertes: FUE +13, CON +12, INT +10
 (Visión en la Oscuridad, Telepatía; Inmune a Fuego; INT Fuerte.) Jefe: PV ×2. Ataque Masivo: derriba al impactar, una vez por ronda.
 Pavor (especie). Aura de 30 pies: la primera vez que una criatura entra o empieza su turno dentro, Salvación SAB CD 26 o queda Aterrada mientras siga dentro. Quien la supera es inmune un día.
-Uso de Axiomas (especie). Conoce tres Axiomas de hasta Nivel 5 (Erudición): Muro de Fuego, Sugestión y Puerta Dimensional; CD 26, Reserva 50.
+Uso de Axiomas (especie). Conoce tres Axiomas de hasta Nivel 5 (Erudición): Muro de Fuego, Sugestión y Puerta Dimensional; CD 26, Reserva 50, Esfuerzo hasta 3 (jefe).
 Cuerpo Ígneo (racial mayor). Quien lo toque o lo golpee cuerpo a cuerpo recibe 3d6 de Fuego. Los objetos inflamables a su alcance prenden.
 Aliento (especie, definitoria). 3 PA · Ud6: cono de 60 pies, Salvación DES CD 26, 9d6 de Fuego; la mitad si la supera. No lo repite en su turno siguiente.
 Vuelo. Vuela a 80 pies.
@@ -356,6 +370,18 @@ Protección. Resistencia al Fuego: Ventaja contra su Aliento y la mitad de su da
 Encuentro. Pasa en 2 su presupuesto de Potencial: cuenta como NA 11; como jefe, 15; con su Aliento, 17; por su tamaño, 18, y por sus Axiomas, 19.
 Señal. Una montaña que humea sin ser volcán; pueblos que pagan un tributo que nadie nombra.
 Contexto táctico. Aliento, vuelo y acciones entre turnos: el dragón no deja al grupo quedarse quieto ni juntarse. Nadie debería pelear contra él sin haber pensado antes cómo bajarlo del cielo. Es más listo que el grupo: negocia, miente y usa sus Axiomas para que nadie llegue entero a su guarida.
+#Heading3 Arconte (NA 11)
+Extraplanar · Grande · Comandante · PV 195 · Guardia 17 · Armadura 5 · Velocidad 30 pies, vuelo 60 pies · Iniciativa +2 · Ataque +11 · Daño 4d6+4 y 3d6+4 Radiante (lanza de la ley) · PA 5 · CD 23 · Moral 21
+FUE +6 · DES +2 · CON +2 · INT +2 · SAB +2 · CAR +5 · Salvaciones fuertes: CAR +10, FUE +11
+(Telepatía; Resistencia a Radiante y Fuego.) Aura de Mando.
+Nunca Desprevenida. Dentro de su tierra siente quién cruza sus fronteras y no puede ser sorprendido. Fuera de ella pierde esto y su Prohibición.
+Vuelo. Vuela a 60 pies.
+Prohibición (especie, definitoria). 2 PA · Ud6: declara una acción prohibida —atacar, mentir, huir o usar Axiomas de una escuela— en 60 pies, hasta el final de su próximo turno. Quien la haga recibe 4d6 Radiante (Salvación CAR CD 23 mitad). La anuncia en voz alta: siempre se sabe qué está prohibido.
+Uso de Axiomas. Conoce tres Axiomas de Divinidad de hasta Nivel 6: Misión Divina, Disipar el Mal y Barrera de Cuchillas; CD 23, Reserva 55, Esfuerzo hasta 2.
+Nombre Verdadero. Pronunciar su nombre verdadero (2 PA) lo deja Aturdido (Ud4), una vez por combate.
+Aversión. No puede dañar a quien esté bajo su protección legítima —un ciudadano de su tierra, un huésped con salvoconducto—, aunque luche contra él.
+Encuentro. Cuenta como NA 14 al calcular el encuentro: 11, 13 por su Prohibición y 14 por sus Axiomas.
+Contexto táctico. Pelear en su tierra es pelear con sus leyes: cada Prohibición cambia lo que el grupo puede hacer esa ronda. Sacarlo de su jurisdicción, o ponerse bajo su protección, desarma la mitad de su poder.
 #Heading3 Titán Mecánico (NA 13)
 Máquina · Colosal · Guardián · Jefe · PV 684 · Guardia 14 · Armadura 10 · Velocidad 20 pies · Iniciativa −2 · Ataque +15 · Daño 4d6+12 y 4d6+12 Contundente (puños) · PA 5 · CD 29 · Moral —
 FUE +9 · DES −2 · CON +8 · INT +3 · SAB +3 · CAR −2 · Salvaciones fuertes: CON +14, FUE +15
@@ -374,6 +400,20 @@ Protección. Subir hasta el núcleo; Rayo; dispersarse contra su Tormenta.
 Encuentro. Como jefe cuenta como NA 17; con su Tormenta, 19, y por su tamaño, 20.
 Señal. El suelo tiembla a intervalos regulares; una ciudad entera evacuada sin explicación.
 Contexto táctico. No se puede vencer desde fuera. El grupo tiene que subir, encontrar el núcleo que la fase deja al descubierto y salir antes de que la autodestrucción los alcance.
+#Heading3 Seraph (NA 15)
+Extraplanar · Enorme · Represor · Jefe · PV 600 · Guardia 19 · Armadura 7 · Velocidad 30 pies, vuelo 120 pies · Iniciativa +2 · Ataque +12 · Daño 5d6+5 y 4d6+5 Radiante y Fuego (llama) · PA 6 · CD 29 · Moral 25
+FUE +5 · DES +2 · CON +4 · INT +3 · SAB +7 · CAR +7 · Salvaciones fuertes: SAB +14, CAR +14
+(Telepatía; Inmune a Fuego y Radiante.) Jefe: PV ×2. Represión (3 PA): Aterrado (Salvación SAB, Ud4).
+Seis Alas (racial mayor). Quien intente mirarle la cara hace Salvación CON CD 29 o queda Cegado (Ud6). 3 PA · 1/combate: descubre el rostro, y todas las criaturas a 60 pies que lo vean hacen esa Salvación con Desventaja.
+Vuelo. Vuela a 120 pies.
+Fuego que Purifica (especie, definitoria). Radio de 30 pies: al inicio de su turno, cada enemigo dentro recibe 3d6 Radiante y Fuego; los no-muertos y los infernales, el doble.
+La Brasa. 3 PA · 1/combate: toca los labios de una criatura. Si es mortal, Salvación CAR CD 29; si falla, terminan sus maldiciones, posesiones y estados de Encantado, y durante un día no puede mentir. Si es un no-muerto o un infernal, recibe 10d6 Radiante, sin Salvación.
+Uso de Axiomas. Conoce tres Axiomas de Divinidad de hasta Nivel 8: Palabra Sagrada, Aura Sagrada y Juicio Flamígero; CD 29, Reserva 75, Esfuerzo hasta 4 (jefe).
+Acción de Jefe. Al final del turno de cada personaje, gasta 1 PA de su siguiente turno (máx. 2 por ronda).
+Resistencia Legendaria. Ud6: cuando falla una Salvación, puede superarla igualmente.
+Victoria Alternativa. Vino a quemar algo —un pacto, un nombre, una mentira, un objeto—. Si el grupo se lo entrega o lo destruye ante él, el combate termina y se retira.
+Encuentro. Cuenta como NA 23 al calcular el encuentro: 15, 19 como jefe, 21 por su aura, 22 por su tamaño y 23 por sus Axiomas.
+Contexto táctico. Ningún grupo de Nivel 10 puede vencerlo en combate: es una amenaza del Horizonte de Leyenda, o una escena que se resuelve descubriendo qué vino a quemar.
 #Heading2 Hordas y enjambres
 #Heading3 Colmena Xenomorfa (NA 7)
 Banda de 8 xenos (NA 3) · NA efectivo 7

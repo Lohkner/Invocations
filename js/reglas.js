@@ -1789,7 +1789,7 @@ const DEFAULT_DB = {
     "name": "Uso de Axiomas",
     "tipo": "Rasgo",
     "peso": 2,
-    "txt": "Conoce hasta tres Axiomas del Catálogo de un Nivel no superior a la mitad de su NA (redondeando hacia arriba, máximo 9). Usa su CD y una Reserva de NA × 5 puntos. Potencial 3 si alguno es de Nivel 4 o más.",
+    "txt": "Conoce hasta tres Axiomas del Catálogo de un Nivel no superior a la mitad de su NA (redondeando hacia arriba, máximo 9). Usa su CD y una Reserva de NA × 5 puntos. Puede aplicar Esfuerzo a sus Axiomas, pagando 3 puntos de su Reserva por cada uno: +4 al daño, +2 a la CD (solo una vez por Axioma) o +1 objetivo. Su Límite de Esfuerzo depende de su NA: 1 hasta NA 6, 2 de NA 7 a 12 y 3 desde NA 13; un jefe suma 1. Sus ataques y Aptitudes no admiten Esfuerzo, y el Esfuerzo no cambia el NA del encuentro. Potencial 3 si alguno es de Nivel 4 o más.",
     "pide": "Axiomas que conoce (hasta tres)"
    },
    {
@@ -4424,6 +4424,106 @@ const DEFAULT_DB = {
    "botin": "Lo que le traen sus siervos: 6d6 × 10 cr y secretos escritos",
    "notas": "Muy rara · Número: 1 (con 2d4 siervos dominados) · En su guarida: 60 % · Inteligencia: genial · Moral: 17\n\nNadie sabe de dónde vienen los tejedores del vacío; ellos tampoco lo dicen. Son altos y delgados, de piel violácea y sin boca, con una cabeza alargada que palpita levemente al pensar. Se instalan bajo las ciudades y tejen una red de personas dominadas que les traen comida, noticias y otras mentes. No tienen prisa: un tejedor puede pasar años convirtiendo a un consejo entero en sus manos sin que nadie note nada salvo que todos repiten las mismas frases.\n\nGanchos (d6):\n1 domina a alguien a quien el grupo quiere\n2 busca una mente concreta: la de uno de los personajes\n3 tiene a la guardia de la ciudad bajo su red\n4 huye de otro tejedor más viejo y ofrece una alianza\n5 su red se está rompiendo y sus siervos despiertan confusos\n6 lleva siglos dormido y acaba de despertar bajo la catedral"
   },
+  "deva": {
+   "nombre": "Deva",
+   "na": 7,
+   "tipo": "extraplanar",
+   "tam": "mediano",
+   "rol": "soporte",
+   "estructura": "normal",
+   "rasgos": [
+    {
+     "id": "telepatia",
+     "gratis": true
+    },
+    {
+     "id": "resistencia",
+     "nota": "Radiante y Necrótico",
+     "gratis": true
+    },
+    {
+     "id": "vision_verdadera",
+     "txt": "Ve a través de ilusiones, invisibilidad y cambios de forma hasta 60 pies.",
+     "especie": true,
+     "definitoria": true
+    },
+    {
+     "id": "vuelo",
+     "txt": "Vuela a 90 pies.",
+     "nota": "90 pies"
+    },
+    {
+     "id": "cambiaformas",
+     "txt": "Adopta a voluntad una forma mortal corriente (0 PA), en la que conserva sus estadísticas."
+    },
+    {
+     "custom": true,
+     "name": "Toque Sanador",
+     "tipo": "Aptitud",
+     "peso": 0,
+     "txt": "toca a una criatura y le devuelve 1 punto de Flesh; contra un no-muerto, el toque hace 4d6 Radiante (Salvación CON CD 19 mitad).",
+     "coste": "3 PA",
+     "frec": "Ud6"
+    },
+    {
+     "id": "uso_de_axiomas",
+     "txt": "Conoce tres Axiomas de Divinidad de hasta Nivel 4: Curar Heridas Graves, Protección del Mal 30 pies y Lenguas; CD 19, Reserva 35, Esfuerzo hasta 2.",
+     "peso": 3
+    },
+    {
+     "custom": true,
+     "name": "El Mensaje",
+     "tipo": "Rasgo",
+     "peso": 0,
+     "txt": "Mientras no haya entregado su mensaje, no ataca primero ni abandona la escena: se defiende, cura y espera. Quien lo escucha entero, sin interrumpirlo, tiene Ventaja en su siguiente tirada relacionada con él."
+    },
+    {
+     "id": "nombre_verdadero",
+     "txt": "Quien pronuncia el nombre con que fue creado le hace una pregunta que debe responder con la verdad."
+    },
+    {
+     "id": "aversion",
+     "txt": "No puede herir a quien le ofrece hospitalidad sincera bajo su techo."
+    }
+   ],
+   "fuente": "Manual de Monstruos",
+   "danoTipo": "Radiante",
+   "ataqueNombre": "Maza de luz",
+   "fuertes": [
+    "SAB",
+    "CAR"
+   ],
+   "debiles": [
+    "CON"
+   ],
+   "rolNota": "Restaurar (2 PA): un aliado a 30 pies recupera 1d8 PV o se libra de un estado.",
+   "encuentroTxt": "Cuenta como NA 8 al calcular el encuentro: 7, más 1 por sus Axiomas.",
+   "contexto": "No viene a pelear: viene a avisar. Si el grupo lo ataca antes de escucharlo, se defiende y cura a quien proteja, pero el mensaje sigue sin entregarse.",
+   "impreso": {
+    "pv": 93,
+    "g": 15,
+    "a": 3,
+    "vel": 30,
+    "atk": 5,
+    "dano": "3d6 y 2d6",
+    "cd": 19,
+    "ini": 1,
+    "moral": 17,
+    "attrs": {
+     "FUE": 1,
+     "DES": 1,
+     "CON": -2,
+     "INT": 1,
+     "SAB": 4,
+     "CAR": 4
+    },
+    "enc": 8
+   },
+   "idea": "«Traigo un mensaje. Si no os gusta, no lo cambiéis conmigo: cambiad lo que lo provocó.»",
+   "botin": "Ninguno; si cede una pluma, es un Foco de Divinidad",
+   "senal": "Una luz sin fuente en una ventana · los animales se callan a la vez · dos vecinos soñaron la misma frase.",
+   "notas": "Rara · Número: 1, o un coro de 1d3 · Inteligencia: excepcional · Moral: 17\n\nDeva es una palabra antigua para «los que brillan». Son los mensajeros del orden celeste, los más bajos de su escala y los únicos que caminan con frecuencia entre mortales. Tienen forma humana sin edad ni marcas, alas de luz que solo se ven cuando quieren y una voz que se entiende en cualquier lengua. No vienen a juzgar ni a combatir: vienen a avisar, y casi siempre llegan tarde para evitar lo que anuncian.\n\nGanchos (d6):\n1 trae un mensaje para uno de los personajes, de alguien que ya está muerto\n2 el mensaje es una advertencia, y el grupo es la amenaza\n3 olvidó su mensaje y teme volver sin él\n4 lo persigue alguien que quiere que el mensaje no llegue\n5 pide escolta hasta su destinatario, que vive en territorio hostil\n6 entregó el mensaje equivocado, y ya hay consecuencias"
+  },
   "vampiro_senorial": {
    "nombre": "Vampiro Señorial",
    "na": 8,
@@ -4748,7 +4848,7 @@ const DEFAULT_DB = {
     },
     {
      "id": "uso_de_axiomas",
-     "txt": "Conoce seis Axiomas de hasta Nivel 5 (Erudición): Relámpago, Cono de Frío, Muro de Fuerza, Detener Monstruo, Animar Muerto y Puerta Dimensional; CD 25, Reserva 60.",
+     "txt": "Conoce seis Axiomas de hasta Nivel 5 (Erudición): Relámpago, Cono de Frío, Muro de Fuerza, Detener Monstruo, Animar Muerto y Puerta Dimensional; CD 25, Reserva 60, Esfuerzo hasta 3 (jefe).",
      "peso": 3,
      "especie": true
     },
@@ -4849,7 +4949,7 @@ const DEFAULT_DB = {
     },
     {
      "id": "uso_de_axiomas",
-     "txt": "Conoce tres Axiomas de hasta Nivel 5 (Erudición): Muro de Fuego, Sugestión y Puerta Dimensional; CD 26, Reserva 50.",
+     "txt": "Conoce tres Axiomas de hasta Nivel 5 (Erudición): Muro de Fuego, Sugestión y Puerta Dimensional; CD 26, Reserva 50, Esfuerzo hasta 3 (jefe).",
      "peso": 3,
      "especie": true
     },
@@ -4924,6 +5024,98 @@ const DEFAULT_DB = {
    "idea": "«Os habría quemado al entrar. Pero me aburro.»",
    "botin": "Su tesoro: 5.000 cr en monedas, 2d4 objetos mágicos y la Coraza del Tesoro",
    "notas": "Muy rara · Número: 1 · En su guarida: 95 % · Inteligencia: genial · Moral: 20\n\nUn dragón rojo adulto es la criatura más orgullosa del mundo y lo sabe. Mide lo que una iglesia, tiene escamas del color de la sangre seca y los cuernos negros, y huele a azufre y a monedas calientes. Es más listo que el grupo: negocia, miente y disfruta de la conversación tanto como del fuego. Duerme sobre su tesoro durante años y lo conoce moneda a moneda. Con el tiempo, las gemas y el oro se le funden en las escamas del pecho: la Coraza del Tesoro (Muy Raro) le da +2 de Armadura y +1 a la Guardia, ya incluidos, y arrancarla del cadáver lleva una hora.\n\nGanchos (d6):\n1 quiere contratar al grupo para robarle a otro dragón\n2 tiene en su tesoro la corona de un reino que la busca\n3 está viejo y busca a quién dejar su tesoro\n4 un culto le ofrece sacrificios y él los desprecia\n5 duerme, y lleva veinte años dormido\n6 su madre vive todavía, y es peor"
+  },
+  "arconte": {
+   "nombre": "Arconte",
+   "na": 11,
+   "tipo": "extraplanar",
+   "tam": "grande",
+   "rol": "comandante",
+   "estructura": "normal",
+   "rasgos": [
+    {
+     "id": "telepatia",
+     "gratis": true
+    },
+    {
+     "id": "resistencia",
+     "nota": "Radiante y Fuego",
+     "gratis": true
+    },
+    {
+     "id": "nunca_desprevenida",
+     "txt": "Dentro de su tierra siente quién cruza sus fronteras y no puede ser sorprendido. Fuera de ella pierde esto y su Prohibición."
+    },
+    {
+     "id": "vuelo",
+     "txt": "Vuela a 60 pies.",
+     "nota": "60 pies"
+    },
+    {
+     "custom": true,
+     "name": "Prohibición",
+     "tipo": "Aptitud",
+     "peso": 2,
+     "txt": "declara una acción prohibida —atacar, mentir, huir o usar Axiomas de una escuela— en 60 pies, hasta el final de su próximo turno. Quien la haga recibe 4d6 Radiante (Salvación CAR CD 23 mitad). La anuncia en voz alta: siempre se sabe qué está prohibido.",
+     "area": 2,
+     "coste": "2 PA",
+     "frec": "Ud6",
+     "especie": true,
+     "definitoria": true
+    },
+    {
+     "id": "uso_de_axiomas",
+     "txt": "Conoce tres Axiomas de Divinidad de hasta Nivel 6: Misión Divina, Disipar el Mal y Barrera de Cuchillas; CD 23, Reserva 55, Esfuerzo hasta 2.",
+     "peso": 3
+    },
+    {
+     "id": "nombre_verdadero",
+     "txt": "Pronunciar su nombre verdadero (2 PA) lo deja Aturdido (Ud4), una vez por combate."
+    },
+    {
+     "id": "aversion",
+     "txt": "No puede dañar a quien esté bajo su protección legítima —un ciudadano de su tierra, un huésped con salvoconducto—, aunque luche contra él."
+    }
+   ],
+   "fuente": "Manual de Monstruos",
+   "danoTipo": "Radiante",
+   "ataqueNombre": "Lanza de la ley",
+   "fuertes": [
+    "CAR",
+    "FUE"
+   ],
+   "debiles": [],
+   "rolNota": "Aura de Mando.",
+   "encuentroTxt": "Cuenta como NA 14 al calcular el encuentro: 11, 13 por su Prohibición y 14 por sus Axiomas.",
+   "contexto": "Pelear en su tierra es pelear con sus leyes: cada Prohibición cambia lo que el grupo puede hacer esa ronda. Sacarlo de su jurisdicción, o ponerse bajo su protección, desarma la mitad de su poder.",
+   "manual": {
+    "dano": "4d6+4 y 3d6+4",
+    "cd": 23
+   },
+   "impreso": {
+    "pv": 195,
+    "g": 17,
+    "a": 5,
+    "vel": 30,
+    "atk": 11,
+    "dano": "4d6+4 y 3d6+4",
+    "cd": 23,
+    "ini": 2,
+    "moral": 21,
+    "attrs": {
+     "FUE": 6,
+     "DES": 2,
+     "CON": 2,
+     "INT": 2,
+     "SAB": 2,
+     "CAR": 5
+    },
+    "enc": 14
+   },
+   "idea": "«Esta tierra tiene ley. Yo soy lo que queda de ella cuando nadie mira.»",
+   "botin": "El Sello de la Jurisdicción y los tributos de su tierra (3.000 cr)",
+   "senal": "Leyes nuevas grabadas de la noche a la mañana · peajes donde nunca los hubo · todos los mendigos de la ciudad desaparecen el mismo día.",
+   "notas": "Muy rara · Número: 1, con 1d3 devas · En su guarida: 60 % · Inteligencia: genial · Moral: 21\n\nLos antiguos llamaban arcontes a los que gobiernan. En el orden celeste son los príncipes de los pueblos: cada reino y cada ciudad con nombre tiene uno que vela por ella, la juzga y la defiende. Tienen forma humana de gran estatura, armadura de un metal que no existe en este mundo y un rostro que recuerda a las estatuas de los fundadores. Algunos sabios advierten que no todos son benignos: hay arcontes que confunden la ley con su voluntad y cobran tributo por dejar pasar. El Sello de la Jurisdicción (Muy Raro) es su emblema: quien lo porta es reconocido como autoridad en esa tierra por quien sepa leerlo.\n\nGanchos (d6):\n1 el grupo ha roto una ley de su tierra sin saberlo\n2 su ciudad cayó hace siglos y él sigue gobernando las ruinas\n3 dos arcontes reclaman la misma frontera\n4 exige el tributo de un pueblo que ya no puede pagarlo\n5 busca un juez mortal para un caso que él no puede juzgar\n6 ha empezado a creer que la ley es él"
   },
   "titan_mecanico": {
    "nombre": "Titán Mecánico",
@@ -5025,6 +5217,113 @@ const DEFAULT_DB = {
    "idea": "«No se le vence desde fuera. Hay que subir.»",
    "botin": "El Núcleo del Primer Titán (Legendario)",
    "notas": "Única · Número: 1 · Inteligencia: alta, sin voluntad propia · Moral: No la tira\n\nEl Titán Mecánico es una máquina de guerra del tamaño de una torre, con forma de hombre acorazado y una ciudad de engranajes por dentro. Se construyó para defender algo que ya no existe, y camina en círculos alrededor de sus ruinas. Su corazón es el Núcleo del Primer Titán (Legendario): +3 de Armadura, ya incluido, y la primera vez que baja de la mitad de sus PV, su escudo de energía se recarga entero. Si cae, el núcleo sigue latiendo, y quien lo tenga tendrá que decidir qué hacer con él.\n\nGanchos (d6):\n1 alguien vive dentro: una familia de chatarreros\n2 su núcleo es lo único que puede alimentar una ciudad\n3 camina hacia la capital y nadie sabe por qué\n4 un culto lo considera un dios y lo protege\n5 hay un segundo titán enterrado que empieza a moverse\n6 obedece a un niño que encontró su llave"
+  },
+  "seraph": {
+   "nombre": "Seraph",
+   "na": 15,
+   "tipo": "extraplanar",
+   "tam": "enorme",
+   "rol": "represor",
+   "estructura": "jefe",
+   "rasgos": [
+    {
+     "id": "telepatia",
+     "gratis": true
+    },
+    {
+     "id": "inmunidad",
+     "nota": "Fuego y Radiante",
+     "gratis": true
+    },
+    {
+     "custom": true,
+     "name": "Seis Alas",
+     "tipo": "Aptitud",
+     "peso": 3,
+     "txt": "Quien intente mirarle la cara hace Salvación CON CD 29 o queda Cegado (Ud6). 3 PA · 1/combate: descubre el rostro, y todas las criaturas a 60 pies que lo vean hacen esa Salvación con Desventaja.",
+     "racial": true,
+     "especie": true
+    },
+    {
+     "id": "vuelo",
+     "txt": "Vuela a 120 pies.",
+     "nota": "120 pies"
+    },
+    {
+     "custom": true,
+     "name": "Fuego que Purifica",
+     "tipo": "Aura",
+     "peso": 3,
+     "txt": "Radio de 30 pies: al inicio de su turno, cada enemigo dentro recibe 3d6 Radiante y Fuego; los no-muertos y los infernales, el doble.",
+     "area": 3,
+     "especie": true,
+     "definitoria": true
+    },
+    {
+     "custom": true,
+     "name": "La Brasa",
+     "tipo": "Aptitud",
+     "peso": 0,
+     "txt": "toca los labios de una criatura. Si es mortal, Salvación CAR CD 29; si falla, terminan sus maldiciones, posesiones y estados de Encantado, y durante un día no puede mentir. Si es un no-muerto o un infernal, recibe 10d6 Radiante, sin Salvación.",
+     "coste": "3 PA",
+     "frec": "1/combate"
+    },
+    {
+     "id": "uso_de_axiomas",
+     "txt": "Conoce tres Axiomas de Divinidad de hasta Nivel 8: Palabra Sagrada, Aura Sagrada y Juicio Flamígero; CD 29, Reserva 75, Esfuerzo hasta 4 (jefe).",
+     "peso": 3
+    },
+    {
+     "id": "accion_de_jefe",
+     "txt": "Al final del turno de cada personaje, gasta 1 PA de su siguiente turno (máx. 2 por ronda)."
+    },
+    {
+     "id": "resistencia_legendaria",
+     "txt": "Ud6: cuando falla una Salvación, puede superarla igualmente."
+    },
+    {
+     "id": "victoria_alternativa",
+     "txt": "Vino a quemar algo —un pacto, un nombre, una mentira, un objeto—. Si el grupo se lo entrega o lo destruye ante él, el combate termina y se retira."
+    }
+   ],
+   "fuente": "Manual de Monstruos",
+   "danoTipo": "Radiante y Fuego",
+   "ataqueNombre": "Llama",
+   "fuertes": [
+    "SAB",
+    "CAR"
+   ],
+   "debiles": [],
+   "rolNota": "Jefe: PV ×2. Represión (3 PA): Aterrado (Salvación SAB, Ud4).",
+   "encuentroTxt": "Cuenta como NA 23 al calcular el encuentro: 15, 19 como jefe, 21 por su aura, 22 por su tamaño y 23 por sus Axiomas.",
+   "contexto": "Ningún grupo de Nivel 10 puede vencerlo en combate: es una amenaza del Horizonte de Leyenda, o una escena que se resuelve descubriendo qué vino a quemar.",
+   "manual": {
+    "dano": "5d6+5 y 4d6+5"
+   },
+   "impreso": {
+    "pv": 600,
+    "g": 19,
+    "a": 7,
+    "vel": 30,
+    "atk": 12,
+    "dano": "5d6+5 y 4d6+5",
+    "cd": 29,
+    "ini": 2,
+    "moral": 25,
+    "attrs": {
+     "FUE": 5,
+     "DES": 2,
+     "CON": 4,
+     "INT": 3,
+     "SAB": 7,
+     "CAR": 7
+    },
+    "enc": 23
+   },
+   "idea": "«Santo, santo, santo. Lo que no lo sea, arde.»",
+   "botin": "Ninguno: lo que toca, se purifica o se consume",
+   "senal": "Las velas de todos los templos se encienden solas · el agua de las pilas hierve sin fuego · durante tres noches no hay sombras.",
+   "notas": "Única · Número: 1 · Inteligencia: genial, más allá de lo mortal · Moral: 25\n\nLos serafines son el coro más alto, «los ardientes», los que están más cerca del trono y nunca se apartan de él. Casi nunca descienden, y cuando lo hacen el mundo lo recuerda durante siglos. Su forma es una figura de fuego blanco de dos veces la altura de un hombre, con seis alas que no dejan ver lo que hay debajo, y su voz canta siempre la misma palabra. No odian ni castigan: purifican, y no distinguen entre lo que debe arder y lo que solo estaba cerca. El serafín ceniciento de las cortes menores es un eco suyo, y lo sabe.\n\nGanchos (d6):\n1 viene a quemar un pacto que uno de los personajes firmó\n2 la ciudad que va a purificar es la del grupo\n3 ha descendido por error y no sabe volver\n4 un culto quiere atraerlo para usar su fuego contra sus enemigos\n5 trae de vuelta a alguien a quien purificó hace siglos\n6 su canto se ha detenido, y nadie sabe qué significa"
   },
   "colmena_xenomorfa": {
    "nombre": "Colmena Xenomorfa",

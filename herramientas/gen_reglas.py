@@ -671,8 +671,20 @@ def comprobar(c, imp, attrs, salv, errores, solo=None):
             if k in imp and imp[k] != f[k]:
                 manual[km] = imp[k]
                 errores[:] = [e for e in errores if not (e[0] == c['nombre'] and e[1] == {'g': 'Guardia', 'atk': 'Ataque', 'cd': 'CD'}[k])]
+    for k, km in IMPRESO_A_MANO.get(c['nombre'], {}).items():
+        if imp.get(k) is not None and imp[k] != f[k]:
+            manual[km] = imp[k]
+            rot = {'dano': 'Daño', 'cd': 'CD'}[k]
+            errores[:] = [e for e in errores if not (e[0] == c['nombre'] and e[1] == rot)]
     if 'enc' in imp and imp['enc'] != f['enc']: errores.append((c['nombre'], 'NA de encuentro', f['enc'], imp['enc'], f'Potencial {f["gasto"]}/{f["max"]}'))
     return f, manual
+
+
+# Cifras impresas que no salen de las fórmulas y no se explican por el equipo.
+# La app las respeta como ajuste a mano y el README las anota como posibles
+# erratas del Manual (31-10-2026): el Arconte (NA 11) lleva el daño y la CD
+# del Serafín Ceniciento (NA 9); el Seraph, +5 al daño en lugar de +10.
+IMPRESO_A_MANO = {'Arconte': {'dano': 'dano', 'cd': 'cd'}, 'Seraph': {'dano': 'dano'}}
 
 
 TAM_PREF = {k[:5]: k for k in TAM}   # «diminutas» → diminuto, «grande» → grande
@@ -717,7 +729,12 @@ CUSTOM_PESO = {
     'Garras Paralizantes': ('Modificador', 3), 'Toque Paralizante': ('Modificador', 3), 'Mirada Dominante': ('Aptitud', 3),
     'Miembros que Siguen': ('Rasgo', 1), 'Hijos de la Noche': ('Aptitud', 0), 'Forma de Niebla': ('Rasgo', 0),
     'Filacteria': ('Rasgo', 0), 'Palabra Atada': ('Debilidad', 0),
+    # Criaturas celestiales (31-10-2026)
+    'Toque Sanador': ('Aptitud', 0), 'El Mensaje': ('Rasgo', 0), 'Prohibición': ('Aptitud', 2),
+    'Seis Alas': ('Aptitud', 3), 'Fuego que Purifica': ('Aura', 3), 'La Brasa': ('Aptitud', 0),
 }
+# Las que cuentan como Aptitud de área en su línea «Encuentro»
+CUSTOM_AREA = {'Prohibición': 2, 'Fuego que Purifica': 3}
 
 
 def poner_flags(r, flags):
@@ -732,7 +749,7 @@ def leer_encuentro(c, imp, txt):
     """«… cuenta como NA 11; como jefe, 15, y por sus Axiomas, 16.» → el último número."""
     c['encuentroTxt'] = txt
     nums = re.findall(r'NA (\d+)', txt) + re.findall(r', (\d+)(?:,| y |\.| \()', txt)
-    todos = [int(x) for x in re.findall(r'(?:NA |, )(\d+)', txt)]
+    todos = [int(x) for x in re.findall(r'(?:NA |, | y )(\d+)', txt)]
     imp['enc'] = todos[-1] if todos else None
 BEST = {}
 M_ACTUAL, M = M, BP   # el bucle lee la copia fija; M vuelve a ser el Manual al acabar
@@ -798,6 +815,7 @@ while j < i1:
                     elif nm in CUSTOM_PESO:
                         tp, peso = CUSTOM_PESO[nm]
                         r = {'custom': True, 'name': nm, 'tipo': tp, 'peso': peso, 'txt': txt}
+                        if nm in CUSTOM_AREA: r['area'] = CUSTOM_AREA[nm]
                         mc = re.match(r'(\d PA)(?: · ([^:]+))?: (.+)$', txt)
                         if mc: r['coste'] = mc.group(1); r['frec'] = mc.group(2) or ''; r['txt'] = mc.group(3)
                     else:
@@ -825,7 +843,8 @@ M = M_ACTUAL
 # Vuelo y trepar: la velocidad concreta del bestiario va en la nota del Rasgo
 VEL_NOTA = {'dron_centinela': ('vuelo', '30 pies'), 'fuego_fatuo': ('vuelo', '30 pies'), 'arpia': ('vuelo', '40 pies'),
             'manticora': ('vuelo', '50 pies'), 'elemental_de_tormenta': ('vuelo', '60 pies'),
-            'serafin_ceniciento': ('vuelo', '60 pies'), 'dragon_rojo_adulto': ('vuelo', '80 pies')}
+            'serafin_ceniciento': ('vuelo', '60 pies'), 'dragon_rojo_adulto': ('vuelo', '80 pies'),
+            'deva': ('vuelo', '90 pies'), 'arconte': ('vuelo', '60 pies'), 'seraph': ('vuelo', '120 pies')}
 for k, (rid, nota) in VEL_NOTA.items():
     for r in BEST[k]['rasgos']:
         if r.get('id') == rid: r['nota'] = nota

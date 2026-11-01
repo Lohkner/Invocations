@@ -998,7 +998,7 @@ Object.assign(app, {
     const cifras = this._concretar(i.txt, S);
     if (cifras.length) dcb.appendChild(this.h('div', 'js-grade-block grade-on', cifras.join(' · ')));
     if (r.id === 'uso_de_axiomas') dcb.appendChild(this.h('div', 'js-grade-block grade-on',
-      `Axiomas de hasta Nivel ${Math.min(9, Math.ceil(S.na / 2))} · CD ${S.cd} · Reserva ${S.na * 5} puntos`));
+      `Axiomas de hasta Nivel ${Math.min(9, Math.ceil(S.na / 2))} · CD ${S.cd} · Reserva ${S.na * 5} puntos · Esfuerzo hasta ${(S.na <= 6 ? 1 : S.na <= 12 ? 2 : 3) + (S.jefe ? 1 : 0)} (3 puntos cada uno)`));
     if (r.fijo) { card.append(dch, dcb); return card; }
 
     if (i.pide || r.nota) {

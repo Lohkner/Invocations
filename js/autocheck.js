@@ -102,7 +102,7 @@
       const gSinRasgos = S.calc.guardia - S.infos.reduce((a, x) => a + ((x.i.mod && x.i.mod.g) || 0), 0);
       const dif = [];
       app.ATTRS.forEach(a => { if (S.mod[a] !== imp.attrs[a]) dif.push(`${a} ${S.mod[a]}/${imp.attrs[a]}`); });
-      [['PV', S.calc.pv, imp.pv], ['Guardia', S.aMano.includes('guardia') ? S.guardia : gSinRasgos, imp.g], ['Ataque', S.aMano.includes('ataque') ? S.ataque : S.calc.ataque, imp.atk], ['Daño', S.calc.dano, imp.dano],
+      [['PV', S.calc.pv, imp.pv], ['Guardia', S.aMano.includes('guardia') ? S.guardia : gSinRasgos, imp.g], ['Ataque', S.aMano.includes('ataque') ? S.ataque : S.calc.ataque, imp.atk], ['Daño', S.aMano.includes('dano') ? S.dano : S.calc.dano, imp.dano],
        ['CD', S.cd, imp.cd], ['Iniciativa', S.calc.ini, imp.ini],
        // Armadura y velocidad: con lo que suman los Rasgos (Piel Gruesa, Lenta) y el equipo
        ['Armadura', S.armadura, imp.a], ['Velocidad', S.vel, imp.vel]].forEach(([k, sale, debe]) => { if (sale !== debe) dif.push(`${k} ${sale}/${debe}`); });

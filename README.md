@@ -4,6 +4,26 @@ La app hermana de **S&S Companion** para quien dirige *Stars & Sorcery*: crea
 amenazas, calibra encuentros y genera botín, zonas y facciones. PWA estática:
 sin build, sin dependencias, funciona sin conexión.
 
+## Novedades v1.4.4 — Manuales del 31-10-2026
+
+`CACHE_VERSION` es `ss-director-v25` y `RULES_DATA_VERSION`,
+`v1-monstruos-guia-r18`.
+
+- **Tres criaturas nuevas** en el bestiario (47 en total): Deva (NA 7),
+  Arconte (NA 11) y Seraph (NA 15, jefe). Como el Manual ya no separa sus
+  Rasgos, la app los separa en Rasgos de la Biblioteca y piezas propias
+  (Prohibición, Fuego que Purifica, Seis Alas…). Así su NA de encuentro sale
+  igual que en su línea «Encuentro»: 8, 14 y 23.
+- **Esfuerzo en los Axiomas de una criatura**: la tarjeta de Uso de Axiomas
+  muestra su Límite de Esfuerzo (1 hasta NA 6, 2 de NA 7 a 12, 3 desde NA 13;
+  +1 si es jefe), a 3 puntos de Reserva cada uno. El Liche y el Dragón Rojo
+  Adulto lo llevan en su ficha (hasta 3).
+- **Posibles erratas del Manual**: el Arconte imprime daño 4d6+4 y 3d6+4 y
+  CD 23, los mismos que el Serafín Ceniciento de NA 9; las fórmulas de NA 11
+  dan +8 al daño y CD 24. El Seraph imprime +5 al daño; las fórmulas dan +10.
+  La app respeta lo impreso como ajuste a mano hasta que el Manual diga otra
+  cosa.
+
 ## Novedades v1.4.3 — Manuales del 26-10-2026 (18:14)
 
 `CACHE_VERSION` es `ss-director-v24` y `RULES_DATA_VERSION`,
@@ -322,7 +342,7 @@ pelear con la caché: da de baja el worker y borra las cachés, ejecuta
 `python herramientas/verify.py` y abre `_verify.html?v=<algo único>`. Bórralo
 al terminar.
 
-- **Autodiagnóstico**: `?check=1`. Comprueba, entre otras cosas, que las 44
+- **Autodiagnóstico**: `?check=1`. Comprueba, entre otras cosas, que las 47
   criaturas del bestiario salen de las fórmulas —atributos, PV, Guardia,
   Armadura, ataque, daño, CD, Iniciativa, velocidad y Moral, frente a lo
   impreso—, que su NA de encuentro es el de su línea «Encuentro» y que el NA
