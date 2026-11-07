@@ -1080,9 +1080,17 @@ MALD = {slug(r[0]): {'name': r[0], 'txt': r[1], 'cura': r[2]} for r in rows[1:]}
 i = find(G, 'ROW: | Tipo | Ud | Fuente afín | Resonancia | Coste')
 rows, _ = rows_from(G, i)
 FOCOS = {slug(r[0]): {'name': r[0], 'ud': r[1], 'fuente': r[2], 'txt': r[3], 'coste': r[4]} for r in rows[1:]}
-i = find(G, 'ROW: | Módulo | CD instalación')
-rows, _ = rows_from(G, i)
-MODULOS = {slug(r[0]): {'name': r[0], 'cd': r[1], 'tipo': r[2], 'txt': r[3], 'coste': r[4]} for r in rows[1:]}
+# Desde el 04-11-2026 la tabla de Módulos está en el Manual Básico (Apéndice A),
+# con columna Ud; el tipo va al principio del efecto («Ofensivo. …»).
+find(G, 'La tabla de Módulos, con su CD de instalación, tipo, efecto y coste, está en el Manual Básico')
+i = find(MB, 'ROW: | Módulo | Coste | CD | Ud | Efecto')
+rows, _ = rows_from(MB, i)
+MODULOS = {}
+for nombre, coste, cd, ud, efecto in rows[1:]:
+    tipo, _, txt = efecto.partition('. ')
+    assert tipo in ('Ofensivo', 'Defensivo', 'Utilitario', 'Utilidad', 'Sensorial'), (nombre, tipo)
+    MODULOS[slug(nombre)] = {'name': nombre, 'cd': cd, 'tipo': tipo, 'txt': txt, 'coste': coste, 'ud': '' if ud == '—' else ud}
+assert len(MODULOS) == 8, len(MODULOS)
 
 # ───────────────────────── Etiquetas de Zona ─────────────────────────
 i = find(G, 'ROW: | d20 | Etiqueta | d20 | Etiqueta')

@@ -631,7 +631,7 @@ Object.assign(app, {
     grupo('Propiedades (d20)', this.DB.propiedades, e => [e.d20, e.txt]);
     grupo('Maldiciones', this.DB.maldiciones, e => ['', `${e.txt}\n\nCómo se elimina: ${e.cura}`]);
     grupo('Focos', this.DB.focos, e => [e.ud, `Fuente afín: ${e.fuente} · ${e.coste}\nResonancia: ${e.txt}`]);
-    grupo('Módulos de Mejora', this.DB.modulos, e => [e.coste, `${e.tipo} · instalación CD ${e.cd}\n${e.txt}`]);
+    grupo('Módulos de Mejora', this.DB.modulos, e => [e.coste, `${e.tipo} · instalación CD ${e.cd}${e.ud ? ' · ' + e.ud : ''}\n${e.txt}`]);
     grupo('Costes que generan decisiones', this.DB.costes, e => [e.coste, e.txt]);
     host.appendChild(this.h('p', 'dir-nota', 'Sintonía: máximo 3 objetos (Legendarios y Únicos cuentan 2); solo el Artífice con El Sintonizador llega a 5. Los bonos mágicos a un mismo eje no se suman: se aplica el mayor. Los Módulos de Mejora son para armas, armaduras y equipo; los Chips de un Construido son otra cosa (Manual Básico, Cap. 3).'));
   },

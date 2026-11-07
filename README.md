@@ -4,6 +4,17 @@ La app hermana de **S&S Companion** para quien dirige *Stars & Sorcery*: crea
 amenazas, calibra encuentros y genera botín, zonas y facciones. PWA estática:
 sin build, sin dependencias, funciona sin conexión.
 
+## Novedades v1.4.5 — Manuales del 04-11-2026
+
+`CACHE_VERSION` es `ss-director-v26` y `RULES_DATA_VERSION`,
+`v1-monstruos-guia-r19`.
+
+- **Módulos de Mejora**: su tabla pasa de la Guía al Manual Básico
+  (Apéndice A), y de ahí los lee ahora el generador. Los ocho Módulos no
+  cambian; en Mesa → Botín se ve además su Dado de Uso (Ud8 en Capa Ablativa y
+  Disipador de Energía).
+- El resto de la entrega (Catálogo, Compendio) no afecta a Director.
+
 ## Novedades v1.4.4 — Manuales del 31-10-2026
 
 `CACHE_VERSION` es `ss-director-v25` y `RULES_DATA_VERSION`,

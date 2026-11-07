@@ -7460,56 +7460,64 @@ const DEFAULT_DB = {
    "cd": "12",
    "tipo": "Ofensivo",
    "txt": "+1d4 de daño de Energía (sónico) en cada impacto; ignora 2 puntos de Armadura no mágica.",
-   "coste": "500 cr"
+   "coste": "500 cr",
+   "ud": ""
   },
   "carga_de_plasma": {
    "name": "Carga de Plasma",
    "cd": "15",
    "tipo": "Ofensivo",
    "txt": "1 vez por combate: +2d6 daño de plasma en un Ataque Normal.",
-   "coste": "1.800 cr"
+   "coste": "1.800 cr",
+   "ud": ""
   },
   "modulador_de_frecuencia": {
    "name": "Modulador de Frecuencia",
    "cd": "12",
    "tipo": "Ofensivo",
    "txt": "Como 0 PA al inicio del turno: cambia el tipo de daño del arma al tipo declarado.",
-   "coste": "600 cr"
+   "coste": "600 cr",
+   "ud": ""
   },
   "capa_ablativa": {
    "name": "Capa Ablativa",
    "cd": "12",
    "tipo": "Defensivo",
    "txt": "RD 2 permanente. Al inicio de cada combate tira Ud8; en 1–2, la RD baja a 1 hasta repararse.",
-   "coste": "800 cr"
+   "coste": "800 cr",
+   "ud": "Ud8"
   },
   "disipador_de_energia": {
    "name": "Disipador de Energía",
    "cd": "15",
    "tipo": "Defensivo",
    "txt": "Resistencia al tipo energético elegido al instalar. Tira Ud8 tras cada impacto resistido.",
-   "coste": "2.500 cr"
+   "coste": "2.500 cr",
+   "ud": "Ud8"
   },
   "refuerzo_de_articulaciones": {
    "name": "Refuerzo de Articulaciones",
    "cd": "12",
    "tipo": "Defensivo",
    "txt": "Elimina la penalización de Sigilo de armaduras medias.",
-   "coste": "1.000 cr"
+   "coste": "1.000 cr",
+   "ud": ""
   },
   "receptor_de_datos": {
    "name": "Receptor de Datos",
    "cd": "10",
    "tipo": "Utilitario",
    "txt": "Comunicación con dispositivos en red; enviar mensajes cuesta 0 PA.",
-   "coste": "200 cr"
+   "coste": "200 cr",
+   "ud": ""
   },
   "visor_termo_espectral": {
    "name": "Visor Termo-espectral",
    "cd": "12",
    "tipo": "Utilitario",
    "txt": "Visión en oscuridad total mediante calor residual.",
-   "coste": "700 cr"
+   "coste": "700 cr",
+   "ud": ""
   }
  },
  "etiquetas": {
