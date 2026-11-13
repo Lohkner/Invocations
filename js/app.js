@@ -100,8 +100,25 @@ Object.assign(app, {
   h(tag, cls, txt) {
     const e = document.createElement(tag);
     if (cls) e.className = cls;
-    if (txt != null) e.textContent = txt;
+    if (txt != null) {
+      if (String(txt).includes('⚡')) e.append(this._conIconos(String(txt)));
+      else e.textContent = txt;
+    }
     return e;
+  },
+  /** El ⚡ de las Reacciones se pinta con el icono propio del sprite: el emoji
+      sale en color en el móvil. En los datos sigue el ⚡ como marca. */
+  _conIconos(txt) {
+    const f = document.createDocumentFragment(), ns = 'http://www.w3.org/2000/svg';
+    txt.split('⚡').forEach((t, i) => {
+      if (i) {
+        const s = document.createElementNS(ns, 'svg'), u = document.createElementNS(ns, 'use');
+        s.setAttribute('class', 'ico-rayo'); s.setAttribute('aria-hidden', 'true');
+        u.setAttribute('href', '#i-rayo'); s.appendChild(u); f.appendChild(s);
+      }
+      if (t) f.appendChild(document.createTextNode(t));
+    });
+    return f;
   },
   _el(id) { return document.getElementById(id); },
   _signo(n) { return (n >= 0 ? '+' : '−') + Math.abs(n); },

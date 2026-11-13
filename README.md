@@ -4,6 +4,20 @@ La app hermana de **S&S Companion** para quien dirige *Stars & Sorcery*: crea
 amenazas, calibra encuentros y genera botín, zonas y facciones. PWA estática:
 sin build, sin dependencias, funciona sin conexión.
 
+## Novedades v1.4.6 — Icono propio y repaso
+
+`CACHE_VERSION` es `ss-director-v27`.
+
+- **Icono de Reacción**: el ⚡ (un emoji, que en el móvil salía en color) se
+  pinta ahora con un icono propio del sprite (`i-rayo`), del color del tipo
+  de pieza, como en S&S Companion. En los datos sigue el ⚡ como marca; lo
+  cambia `app.h()` al pintar.
+- **Accesibilidad**: los controles de zoom del recorte de retrato tienen
+  nombre, y los interruptores (Jugadores que empiezan, objetos de la Mesa)
+  tienen 44 px de zona táctil sin cambiar su aspecto.
+- Repaso: autodiagnóstico 10/10 con los cuatro tamaños de letra, sin errores
+  de consola ni desbordes a 390 px.
+
 ## Novedades v1.4.5 — Manuales del 04-11-2026
 
 `CACHE_VERSION` es `ss-director-v26` y `RULES_DATA_VERSION`,
