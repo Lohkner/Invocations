@@ -4,6 +4,20 @@ La app hermana de **S&S Companion** para quien dirige *Stars & Sorcery*: crea
 amenazas, calibra encuentros y genera botín, zonas y facciones. PWA estática:
 sin build, sin dependencias, funciona sin conexión.
 
+## Novedades v1.4.7 — Manuales del 12-11-2026
+
+`CACHE_VERSION` es `ss-director-v28` y `RULES_DATA_VERSION`,
+`v1-monstruos-guia-r20`.
+
+- **Arconte y Seraph corregidos en el Manual**: el Arconte pasa a 4d6+8 y
+  3d6+8 con CD 24, y el Seraph a 5d6+10 y 4d6+10. Ahora salen de las
+  fórmulas, sin ajuste a mano (las posibles erratas de la v1.4.4 quedan
+  resueltas).
+- «Voluntad de Hierro» en las Protecciones del bestiario pasa a «un Talento o
+  rasgo que proteja la voluntad», y el báculo del Liche da «+2 a su CD».
+- Raciones, Axiomas nuevos del Catálogo y equipo inicial: no afectan a
+  Director.
+
 ## Novedades v1.4.6 — Icono propio y repaso
 
 `CACHE_VERSION` es `ss-director-v27`.

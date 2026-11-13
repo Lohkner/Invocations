@@ -684,7 +684,8 @@ def comprobar(c, imp, attrs, salv, errores, solo=None):
 # La app las respeta como ajuste a mano y el README las anota como posibles
 # erratas del Manual (31-10-2026): el Arconte (NA 11) lleva el daño y la CD
 # del Serafín Ceniciento (NA 9); el Seraph, +5 al daño en lugar de +10.
-IMPRESO_A_MANO = {'Arconte': {'dano': 'dano', 'cd': 'cd'}, 'Seraph': {'dano': 'dano'}}
+# El 12-11-2026 el Manual corrigió las dos: ya salen de las fórmulas.
+IMPRESO_A_MANO = {}
 
 
 TAM_PREF = {k[:5]: k for k in TAM}   # «diminutas» → diminuto, «grande» → grande

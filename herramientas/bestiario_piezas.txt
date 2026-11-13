@@ -272,7 +272,7 @@ Voz Seductora. 2 PA · Ud6: una criatura a 30 pies, Salvación SAB CD 19 o Encan
 Dominar (especie, definitoria). 3 PA · Ud4: una criatura Encantada, Salvación SAB CD 19 o actúa como él decida.
 Leer Mentes. Una vez por ronda, pregunta a un jugador qué hará su personaje.
 Fotosensible. En luz brillante, Desventaja en ataques y Percepción.
-Protección. Luz brillante, y Voluntad de Hierro o un Axioma de protección mental: Ventaja contra su Voz y su Dominar; quien falla con Ventaja queda solo Encantado.
+Protección. Luz brillante, y un Talento o rasgo que proteja la voluntad o un Axioma de protección mental: Ventaja contra su Voz y su Dominar; quien falla con Ventaja queda solo Encantado.
 Señal. Gente que repite frases que no son suyas; dibujos idénticos hechos por desconocidos.
 Contexto táctico. Pelea con el grupo contra el grupo. Sabe lo que van a hacer y usa a uno de ellos para impedirlo. La luz y la distancia son las únicas armas que no puede volver en su contra.
 #Heading3 Deva (NA 7)
@@ -348,8 +348,8 @@ Filacteria (especie). Mientras no se destruya su filacteria, vuelve a formarse j
 Acción de Jefe. Al final del turno de cada personaje, gasta 1 PA de su siguiente turno (máx. 2 por ronda).
 Nombre Verdadero. Pronunciar su nombre de vivo (2 PA) lo deja Aturdido (Ud4), una vez por combate.
 Vulnerabilidad. Recibe ×1,5 de daño Radiante.
-Equipo de jefe. Báculo de la Filacteria (Muy Raro): +2 a la CD de Axioma (ya incluido: CD 25) y +1d8 Necrótico a su toque. Si cae, el báculo es botín.
-Protección. Destruir la filacteria antes. Voluntad de Hierro o un Axioma contra la muerte: Ventaja contra su Toque Paralizante y su Pavor.
+Equipo de jefe. Báculo de la Filacteria (Muy Raro): +2 a su CD (ya incluido: CD 25) y +1d8 Necrótico a su toque. Si cae, el báculo es botín.
+Protección. Destruir la filacteria antes. un Talento o rasgo que proteja la voluntad o un Axioma contra la muerte: Ventaja contra su Toque Paralizante y su Pavor.
 Encuentro. Pasa en 2 su presupuesto de Potencial: cuenta como NA 11; como jefe, 15, y por sus Axiomas, 16.
 Señal. Una biblioteca prohibida saqueada; un pueblo que dejó de envejecer.
 Contexto táctico. Matarlo no es vencerlo. La pelea contra el liche es un paso del camino: el grupo que no sabe dónde está la filacteria solo consigue unos días.
@@ -366,18 +366,18 @@ Acción de Jefe. Al final del turno de cada personaje, gasta 1 PA de su siguient
 Represalia. Reacción, 1/ronda: cuando falla un ataque cuerpo a cuerpo contra él, ataca a quien lo hizo.
 Aversión. No puede rechazar un trato sobre su tesoro; las armas forjadas con escamas de su madre ignoran su Resistencia.
 Equipo de jefe. Coraza del Tesoro (Muy Raro): gemas y monedas fundidas en las escamas del pecho; +2 de Armadura (ya incluido: Armadura 7) y +1 a la Guardia (ya incluido: Guardia 14). Arrancarlas del cadáver lleva una hora.
-Protección. Resistencia al Fuego: Ventaja contra su Aliento y la mitad de su daño. Voluntad de Hierro contra su Pavor. Nunca pelear en su guarida.
+Protección. Resistencia al Fuego: Ventaja contra su Aliento y la mitad de su daño. un Talento o rasgo que proteja la voluntad contra su Pavor. Nunca pelear en su guarida.
 Encuentro. Pasa en 2 su presupuesto de Potencial: cuenta como NA 11; como jefe, 15; con su Aliento, 17; por su tamaño, 18, y por sus Axiomas, 19.
 Señal. Una montaña que humea sin ser volcán; pueblos que pagan un tributo que nadie nombra.
 Contexto táctico. Aliento, vuelo y acciones entre turnos: el dragón no deja al grupo quedarse quieto ni juntarse. Nadie debería pelear contra él sin haber pensado antes cómo bajarlo del cielo. Es más listo que el grupo: negocia, miente y usa sus Axiomas para que nadie llegue entero a su guarida.
 #Heading3 Arconte (NA 11)
-Extraplanar · Grande · Comandante · PV 195 · Guardia 17 · Armadura 5 · Velocidad 30 pies, vuelo 60 pies · Iniciativa +2 · Ataque +11 · Daño 4d6+4 y 3d6+4 Radiante (lanza de la ley) · PA 5 · CD 23 · Moral 21
+Extraplanar · Grande · Comandante · PV 195 · Guardia 17 · Armadura 5 · Velocidad 30 pies, vuelo 60 pies · Iniciativa +2 · Ataque +11 · Daño 4d6+8 y 3d6+8 Radiante (lanza de la ley) · PA 5 · CD 24 · Moral 21
 FUE +6 · DES +2 · CON +2 · INT +2 · SAB +2 · CAR +5 · Salvaciones fuertes: CAR +10, FUE +11
 (Telepatía; Resistencia a Radiante y Fuego.) Aura de Mando.
 Nunca Desprevenida. Dentro de su tierra siente quién cruza sus fronteras y no puede ser sorprendido. Fuera de ella pierde esto y su Prohibición.
 Vuelo. Vuela a 60 pies.
-Prohibición (especie, definitoria). 2 PA · Ud6: declara una acción prohibida —atacar, mentir, huir o usar Axiomas de una escuela— en 60 pies, hasta el final de su próximo turno. Quien la haga recibe 4d6 Radiante (Salvación CAR CD 23 mitad). La anuncia en voz alta: siempre se sabe qué está prohibido.
-Uso de Axiomas. Conoce tres Axiomas de Divinidad de hasta Nivel 6: Misión Divina, Disipar el Mal y Barrera de Cuchillas; CD 23, Reserva 55, Esfuerzo hasta 2.
+Prohibición (especie, definitoria). 2 PA · Ud6: declara una acción prohibida —atacar, mentir, huir o usar Axiomas de una escuela— en 60 pies, hasta el final de su próximo turno. Quien la haga recibe 4d6 Radiante (Salvación CAR CD 24 mitad). La anuncia en voz alta: siempre se sabe qué está prohibido.
+Uso de Axiomas. Conoce tres Axiomas de Divinidad de hasta Nivel 6: Misión Divina, Disipar el Mal y Barrera de Cuchillas; CD 24, Reserva 55, Esfuerzo hasta 2.
 Nombre Verdadero. Pronunciar su nombre verdadero (2 PA) lo deja Aturdido (Ud4), una vez por combate.
 Aversión. No puede dañar a quien esté bajo su protección legítima —un ciudadano de su tierra, un huésped con salvoconducto—, aunque luche contra él.
 Encuentro. Cuenta como NA 14 al calcular el encuentro: 11, 13 por su Prohibición y 14 por sus Axiomas.
@@ -401,7 +401,7 @@ Encuentro. Como jefe cuenta como NA 17; con su Tormenta, 19, y por su tamaño, 2
 Señal. El suelo tiembla a intervalos regulares; una ciudad entera evacuada sin explicación.
 Contexto táctico. No se puede vencer desde fuera. El grupo tiene que subir, encontrar el núcleo que la fase deja al descubierto y salir antes de que la autodestrucción los alcance.
 #Heading3 Seraph (NA 15)
-Extraplanar · Enorme · Represor · Jefe · PV 600 · Guardia 19 · Armadura 7 · Velocidad 30 pies, vuelo 120 pies · Iniciativa +2 · Ataque +12 · Daño 5d6+5 y 4d6+5 Radiante y Fuego (llama) · PA 6 · CD 29 · Moral 25
+Extraplanar · Enorme · Represor · Jefe · PV 600 · Guardia 19 · Armadura 7 · Velocidad 30 pies, vuelo 120 pies · Iniciativa +2 · Ataque +12 · Daño 5d6+10 y 4d6+10 Radiante y Fuego (llama) · PA 6 · CD 29 · Moral 25
 FUE +5 · DES +2 · CON +4 · INT +3 · SAB +7 · CAR +7 · Salvaciones fuertes: SAB +14, CAR +14
 (Telepatía; Inmune a Fuego y Radiante.) Jefe: PV ×2. Represión (3 PA): Aterrado (Salvación SAB, Ud4).
 Seis Alas (racial mayor). Quien intente mirarle la cara hace Salvación CON CD 29 o queda Cegado (Ud6). 3 PA · 1/combate: descubre el rostro, y todas las criaturas a 60 pies que lo vean hacen esa Salvación con Desventaja.
@@ -486,7 +486,7 @@ Explosión Mental (✦, 3 PA, Ud6): cono de 60 pies. Todos en el cono hacen Salv
 Tentáculos ([t_pasivo], especie): al impactar a una criatura Paralizada o Aturdida, la apresa sin gastar PA.
 Extracción Cerebral (✦, 1 PA): contra una criatura Paralizada o Aturdida que tenga apresada con sus tentáculos: Salvación CON CD 19 o su Flesh cae a 0 —muere— y el Azotamente recupera 20 PV; si la supera, recibe 5d6 de daño Psíquico. El cuerpo queda como esclavo (zombie) al servicio del Azotamente.
 Uso de Axiomas ([t_pasivo], especie): conoce seis Axiomas de Psiónica de hasta Nivel 4, el doble que otras criaturas: Sondear, Desvío Mental, Paralización, Miedo Profundo, Confusión y Asesino Fantasmal. CD 19, Reserva 35.
-Protección ([t_pasivo]): Voluntad de Hierro, un Axioma que proteja la mente o un yelmo de plomo dan Ventaja contra la Explosión Mental y contra sus Axiomas. Separarse: el cono no alcanza a todos.
+Protección ([t_pasivo]): un Talento o rasgo que proteja la voluntad, un Axioma que proteja la mente o un yelmo de plomo dan Ventaja contra la Explosión Mental y contra sus Axiomas. Separarse: el cono no alcanza a todos.
 Encuentro ([t_pasivo]): su Explosión Mental le suma 3 y sus Axiomas, 1: cuenta como NA 11 al calcular el encuentro.
 Contexto táctico. El Azotamente es una amenaza de conocimiento, no de estadísticas brutas. Abre con la Explosión Mental desde la sombra, apresa con los tentáculos a quien quedó Aturdido y, en su siguiente turno, le extrae el cerebro. Un grupo que no lo esperaba puede perder a un personaje en dos rondas; uno que trae protección mental, se separa y lo derriba antes de su segundo turno tiene una pelea dura, pero ganable. Vuela, lo que complica que el Audaz lo ancle.
 #Heading2 Gigante de la Tormenta (NA 8)
@@ -520,7 +520,7 @@ Equipo ([t_pasivo], Muy Raro): Placas Negras, el +2 de Armadura de su ficha. Si 
 Orbe Infernal (✦, 3 PA, Ud6; definitoria): esfera de 15 pies de radio a 60 pies; Salvación DES CD 22, 6d6 de Fuego y Necrótico, la mitad si la supera. No la repite en su turno siguiente.
 Señor de la Tumba ([t_pasivo], especie, 30 pies): los no-muertos aliados tienen +2 al ataque y no tiran Moral.
 Juramento Roto ([t_pasivo], especie): si cae sin haber sido redimido, se alza de nuevo en su tumba al cabo de 1d4 días.
-Protección ([t_pasivo]): un símbolo consagrado o Voluntad de Hierro dan Ventaja contra su Pavor y su Aura de Conquista; separarse contra el Orbe.
+Protección ([t_pasivo]): un símbolo consagrado o un Talento o rasgo que proteja la voluntad dan Ventaja contra su Pavor y su Aura de Conquista; separarse contra el Orbe.
 Encuentro ([t_pasivo]): su Orbe le suma 2: cuenta como NA 11 al calcular el encuentro (Cap. 2). Sus guerreros quedan a más de cuatro NA de él y no cuentan.
 Contexto táctico. El Caballero de la Muerte (Guardia 17, Armadura 6, 165 PV, Ataque +10) es un desafío de diseño de encuentro. Con Guardia 17, un Audaz de Nivel 9 con PB +4 y FUE +3 impacta con 10 o más en 1d20 —alrededor del 55 %— pero su Armadura 6 se come buena parte de cada golpe. Contra él, el Esfuerzo volcado en daño y las armas Penetrantes rinden mucho más que acumular ataques pequeños. La Llamada Infernal genera presión de área que obliga al grupo a dividir la atención. La Marca Espectral convierte la movilidad del Caballero en una amenaza adicional: puede teletransportarse al Sagaz al fondo de la sala si lo Marcó en el primer turno.
 Pero lo más poderoso del Caballero de la Muerte como elemento de diseño es su historia: fue un héroe. Tiene un nombre, una tumba, una razón por la que no está en paz. El grupo que descubre esa historia puede tener una vía alternativa: no destruirlo, sino redimirlo o liberarlo. Si lo intenta y falla, el combate es más tenso porque las apuestas eran mayores.

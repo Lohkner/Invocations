@@ -4397,7 +4397,7 @@ const DEFAULT_DB = {
     "FUE"
    ],
    "rolNota": "Represión (3 PA): Conmocionado (Salvación SAB, Ud4).",
-   "proteccion": "Luz brillante, y Voluntad de Hierro o un Axioma de protección mental: Ventaja contra su Voz y su Dominar; quien falla con Ventaja queda solo Encantado.",
+   "proteccion": "Luz brillante, y un Talento o rasgo que proteja la voluntad o un Axioma de protección mental: Ventaja contra su Voz y su Dominar; quien falla con Ventaja queda solo Encantado.",
    "senal": "Gente que repite frases que no son suyas · dibujos idénticos hechos por desconocidos · un alcalde que ya no parpadea.",
    "contexto": "Pelea con el grupo contra el grupo. Sabe lo que van a hacer y usa a uno de ellos para impedirlo. La luz y la distancia son las únicas armas que no puede volver en su contra.",
    "impreso": {
@@ -4889,8 +4889,8 @@ const DEFAULT_DB = {
     "FUE"
    ],
    "rolNota": "Jefe: PV ×2. Represión (3 PA): Aterrado (Salvación SAB, Ud4).",
-   "equipo": "Báculo de la Filacteria (Muy Raro): +2 a la CD de Axioma (ya incluido: CD 25) y +1d8 Necrótico a su toque. Si cae, el báculo es botín.",
-   "proteccion": "Destruir la filacteria antes. Voluntad de Hierro o un Axioma contra la muerte: Ventaja contra su Toque Paralizante y su Pavor.",
+   "equipo": "Báculo de la Filacteria (Muy Raro): +2 a su CD (ya incluido: CD 25) y +1d8 Necrótico a su toque. Si cae, el báculo es botín.",
+   "proteccion": "Destruir la filacteria antes. un Talento o rasgo que proteja la voluntad o un Axioma contra la muerte: Ventaja contra su Toque Paralizante y su Pavor.",
    "encuentroTxt": "Pasa en 2 su presupuesto de Potencial: cuenta como NA 11; como jefe, 15, y por sus Axiomas, 16.",
    "senal": "Una biblioteca prohibida saqueada · un pueblo que dejó de envejecer · tumbas abiertas en orden alfabético.",
    "contexto": "Matarlo no es vencerlo. La pelea contra el liche es un paso del camino: el grupo que no sabe dónde está la filacteria solo consigue unos días.",
@@ -4919,7 +4919,7 @@ const DEFAULT_DB = {
    },
    "idea": "«Matarme es fácil. Lo difícil es que dure.»",
    "botin": "Una biblioteca prohibida, 2.000 cr y el Báculo de la Filacteria",
-   "notas": "Muy rara · Número: 1 (con sus no-muertos) · En su guarida: 90 % · Inteligencia: genial · Moral: 20\n\nUn liche fue un erudito que prefirió no morir. Encerró su vida en un objeto, la filacteria, y dejó que el cuerpo se secara alrededor de una mente que no para de estudiar. Es un esqueleto vestido con los ropajes de su orden, con dos luces frías donde tuvo los ojos. Lleva el Báculo de la Filacteria (Muy Raro): +2 a la CD de Axioma, ya incluido, y +1d8 Necrótico a su toque. El grupo que no sabe dónde está la filacteria solo consigue unos días.\n\nGanchos (d6):\n1 su filacteria es el colgante que lleva uno de los personajes\n2 busca un libro que el grupo encontró sin saber qué era\n3 quiere un aprendiz, y ha elegido\n4 fue el maestro de un personaje con Fuente\n5 su filacteria está en otra ciudad, en un museo\n6 duda: lleva un siglo pensando en morir de verdad"
+   "notas": "Muy rara · Número: 1 (con sus no-muertos) · En su guarida: 90 % · Inteligencia: genial · Moral: 20\n\nUn liche fue un erudito que prefirió no morir. Encerró su vida en un objeto, la filacteria, y dejó que el cuerpo se secara alrededor de una mente que no para de estudiar. Es un esqueleto vestido con los ropajes de su orden, con dos luces frías donde tuvo los ojos. Lleva el Báculo de la Filacteria (Muy Raro): +2 a su CD, ya incluido, y +1d8 Necrótico a su toque. El grupo que no sabe dónde está la filacteria solo consigue unos días.\n\nGanchos (d6):\n1 su filacteria es el colgante que lleva uno de los personajes\n2 busca un libro que el grupo encontró sin saber qué era\n3 quiere un aprendiz, y ha elegido\n4 fue el maestro de un personaje con Fuente\n5 su filacteria está en otra ciudad, en un museo\n6 duda: lleva un siglo pensando en morir de verdad"
   },
   "dragon_rojo_adulto": {
    "nombre": "Dragón Rojo Adulto",
@@ -4993,7 +4993,7 @@ const DEFAULT_DB = {
    "debiles": [],
    "rolNota": "Jefe: PV ×2. Ataque Masivo: derriba al impactar, una vez por ronda.",
    "equipo": "Coraza del Tesoro (Muy Raro): gemas y monedas fundidas en las escamas del pecho; +2 de Armadura (ya incluido: Armadura 7) y +1 a la Guardia (ya incluido: Guardia 14). Arrancarlas del cadáver lleva una hora.",
-   "proteccion": "Resistencia al Fuego: Ventaja contra su Aliento y la mitad de su daño. Voluntad de Hierro contra su Pavor. Nunca pelear en su guarida.",
+   "proteccion": "Resistencia al Fuego: Ventaja contra su Aliento y la mitad de su daño. un Talento o rasgo que proteja la voluntad contra su Pavor. Nunca pelear en su guarida.",
    "encuentroTxt": "Pasa en 2 su presupuesto de Potencial: cuenta como NA 11; como jefe, 15; con su Aliento, 17; por su tamaño, 18, y por sus Axiomas, 19.",
    "senal": "Una montaña que humea sin ser volcán · pueblos que pagan un tributo que nadie nombra · rebaños enteros desaparecidos en una noche.",
    "contexto": "Aliento, vuelo y acciones entre turnos: el dragón no deja al grupo quedarse quieto ni juntarse. Nadie debería pelear contra él sin haber pensado antes cómo bajarlo del cielo. Es más listo que el grupo: negocia, miente y usa sus Axiomas para que nadie llegue entero a su guarida.",
@@ -5056,7 +5056,7 @@ const DEFAULT_DB = {
      "name": "Prohibición",
      "tipo": "Aptitud",
      "peso": 2,
-     "txt": "declara una acción prohibida —atacar, mentir, huir o usar Axiomas de una escuela— en 60 pies, hasta el final de su próximo turno. Quien la haga recibe 4d6 Radiante (Salvación CAR CD 23 mitad). La anuncia en voz alta: siempre se sabe qué está prohibido.",
+     "txt": "declara una acción prohibida —atacar, mentir, huir o usar Axiomas de una escuela— en 60 pies, hasta el final de su próximo turno. Quien la haga recibe 4d6 Radiante (Salvación CAR CD 24 mitad). La anuncia en voz alta: siempre se sabe qué está prohibido.",
      "area": 2,
      "coste": "2 PA",
      "frec": "Ud6",
@@ -5065,7 +5065,7 @@ const DEFAULT_DB = {
     },
     {
      "id": "uso_de_axiomas",
-     "txt": "Conoce tres Axiomas de Divinidad de hasta Nivel 6: Misión Divina, Disipar el Mal y Barrera de Cuchillas; CD 23, Reserva 55, Esfuerzo hasta 2.",
+     "txt": "Conoce tres Axiomas de Divinidad de hasta Nivel 6: Misión Divina, Disipar el Mal y Barrera de Cuchillas; CD 24, Reserva 55, Esfuerzo hasta 2.",
      "peso": 3
     },
     {
@@ -5088,18 +5088,14 @@ const DEFAULT_DB = {
    "rolNota": "Aura de Mando.",
    "encuentroTxt": "Cuenta como NA 14 al calcular el encuentro: 11, 13 por su Prohibición y 14 por sus Axiomas.",
    "contexto": "Pelear en su tierra es pelear con sus leyes: cada Prohibición cambia lo que el grupo puede hacer esa ronda. Sacarlo de su jurisdicción, o ponerse bajo su protección, desarma la mitad de su poder.",
-   "manual": {
-    "dano": "4d6+4 y 3d6+4",
-    "cd": 23
-   },
    "impreso": {
     "pv": 195,
     "g": 17,
     "a": 5,
     "vel": 30,
     "atk": 11,
-    "dano": "4d6+4 y 3d6+4",
-    "cd": 23,
+    "dano": "4d6+8 y 3d6+8",
+    "cd": 24,
     "ini": 2,
     "moral": 21,
     "attrs": {
@@ -5297,16 +5293,13 @@ const DEFAULT_DB = {
    "rolNota": "Jefe: PV ×2. Represión (3 PA): Aterrado (Salvación SAB, Ud4).",
    "encuentroTxt": "Cuenta como NA 23 al calcular el encuentro: 15, 19 como jefe, 21 por su aura, 22 por su tamaño y 23 por sus Axiomas.",
    "contexto": "Ningún grupo de Nivel 10 puede vencerlo en combate: es una amenaza del Horizonte de Leyenda, o una escena que se resuelve descubriendo qué vino a quemar.",
-   "manual": {
-    "dano": "5d6+5 y 4d6+5"
-   },
    "impreso": {
     "pv": 600,
     "g": 19,
     "a": 7,
     "vel": 30,
     "atk": 12,
-    "dano": "5d6+5 y 4d6+5",
+    "dano": "5d6+10 y 4d6+10",
     "cd": 29,
     "ini": 2,
     "moral": 25,
@@ -5906,7 +5899,7 @@ const DEFAULT_DB = {
    "debiles": [
     "FUE"
    ],
-   "proteccion": "Voluntad de Hierro, un Axioma que proteja la mente o un yelmo de plomo dan Ventaja contra la Explosión Mental y contra sus Axiomas. Separarse: el cono no alcanza a todos.",
+   "proteccion": "Un Talento o rasgo que proteja la voluntad, un Axioma que proteja la mente o un yelmo de plomo dan Ventaja contra la Explosión Mental y contra sus Axiomas. Separarse: el cono no alcanza a todos.",
    "encuentroTxt": "Su Explosión Mental le suma 3 y sus Axiomas, 1: cuenta como NA 11 al calcular el encuentro.",
    "contexto": "El Azotamente es una amenaza de conocimiento, no de estadísticas brutas. Abre con la Explosión Mental desde la sombra, apresa con los tentáculos a quien quedó Aturdido y, en su siguiente turno, le extrae el cerebro. Un grupo que no lo esperaba puede perder a un personaje en dos rondas; uno que trae protección mental, se separa y lo derriba antes de su segundo turno tiene una pelea dura, pero ganable. Vuela, lo que complica que el Audaz lo ancle.",
    "impreso": {
@@ -6198,7 +6191,7 @@ const DEFAULT_DB = {
    ],
    "debiles": [],
    "equipo": "Muy Raro: Placas Negras, el +2 de Armadura de su ficha. Si cae, son botín: una armadura de placas que susurra el juramento que él rompió.",
-   "proteccion": "Un símbolo consagrado o Voluntad de Hierro dan Ventaja contra su Pavor y su Aura de Conquista; separarse contra el Orbe.",
+   "proteccion": "Un símbolo consagrado o un Talento o rasgo que proteja la voluntad dan Ventaja contra su Pavor y su Aura de Conquista; separarse contra el Orbe.",
    "encuentroTxt": "Su Orbe le suma 2: cuenta como NA 11 al calcular el encuentro (Cap. 2). Sus guerreros quedan a más de cuatro NA de él y no cuentan.",
    "contexto": "El Caballero de la Muerte (Guardia 17, Armadura 6, 165 PV, Ataque +10) es un desafío de diseño de encuentro. Con Guardia 17, un Audaz de Nivel 9 con PB +4 y FUE +3 impacta con 10 o más en 1d20 —alrededor del 55 %— pero su Armadura 6 se come buena parte de cada golpe. Contra él, el Esfuerzo volcado en daño y las armas Penetrantes rinden mucho más que acumular ataques pequeños. La Llamada Infernal genera presión de área que obliga al grupo a dividir la atención. La Marca Espectral convierte la movilidad del Caballero en una amenaza adicional: puede teletransportarse al Sagaz al fondo de la sala si lo Marcó en el primer turno.\n\nPero lo más poderoso del Caballero de la Muerte como elemento de diseño es su historia: fue un héroe. Tiene un nombre, una tumba, una razón por la que no está en paz. El grupo que descubre esa historia puede tener una vía alternativa: no destruirlo, sino redimirlo o liberarlo. Si lo intenta y falla, el combate es más tenso porque las apuestas eran mayores.",
    "manual": {
